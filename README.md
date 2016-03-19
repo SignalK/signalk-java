@@ -26,10 +26,9 @@ $ sudo apt-get update
 $ sudo apt-get install git maven node
 $ git clone https://github.com/SignalK/signalk-server.git
 $ cd signalk-server
-$ mvn install
 $ mvn exec:java
 ```
-
+Use Cntrl-C to stop the server, it takes 10 secs or so.
 Now open a modern web browser to http://[ip_address_of_the_pi]:8080/
 You should get a pretty start page!
 
