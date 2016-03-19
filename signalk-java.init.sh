@@ -15,9 +15,9 @@
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Signal K Server web based navigation"
-NAME=signalk-server
+NAME=signalk-java
 #DAEMON=/usr/sbin/$NAME
-DAEMON=/home/pi/signalk-server/startpi.sh
+DAEMON=/home/pi/signalk-java/startpi.sh
 EXTRA_ARGS="-c pi --background --make-pidfile"
 DAEMON_ARGS=""
 PIDFILE=/var/run/$NAME.pid

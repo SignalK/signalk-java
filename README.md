@@ -24,8 +24,8 @@ $ cd ~
 $ curl -sLS https://apt.adafruit.com/add | sudo bash
 $ sudo apt-get update
 $ sudo apt-get install git maven node
-$ git clone https://github.com/SignalK/signalk-server.git
-$ cd signalk-server
+$ git clone https://github.com/SignalK/signalk-java.git
+$ cd signalk-java
 $ mvn exec:java
 ```
 Now open a modern web browser (eg not IE) to `http://[ip_address_of_the_pi]:8080`
