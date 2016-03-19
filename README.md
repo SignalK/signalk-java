@@ -19,7 +19,7 @@ In summary we already have java jdk8 on the pi, so we will install  git, maven, 
 The pi must be connected to the internet for the install.
 Open a console on the RPI, or ssh onto it. Log in as user pi. At the command prompt execute the following:
 
-```
+```shell
 $ cd ~
 $ curl -sLS https://apt.adafruit.com/add | sudo bash
 $ sudo apt-get update
@@ -28,11 +28,11 @@ $ git clone https://github.com/SignalK/signalk-server.git
 $ cd signalk-server
 $ mvn exec:java
 ```
-Use Cntrl-C to stop the server, it takes 10 secs or so.
-Now open a modern web browser to http://[ip_address_of_the_pi]:8080/
-You should get a pretty start page!
+Now open a modern web browser (eg not IE) to `http://[ip_address_of_the_pi]:8080`
+You should get a pretty start page! Go to configuration and turn on the demo. Then stop start the server, use Cntrl-C to stop the server, it takes 10 secs or so.
 
-* webserver on `http://localhost:8080` 
+After the restart you should find:
+* webserver on `http://localhost:8080` if you have a screen and keyboard on the pi, otherwise `http://[ip_address_of_the_pi]:8080` 
 	* REST api on `http://localhost:8080/signalk/v1/api/`
 	* Authentication on `http://localhost:8080/signalk/v1/auth` - but its a pass all for now so you dont need to login
 * websockets server on `http://localhost:3000`. 
