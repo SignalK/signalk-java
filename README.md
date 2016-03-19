@@ -1,4 +1,4 @@
-Signal K java server
+Signal K java
 =================================================
 
 An Signal K server setup for easy deployment onto an RPi, or any Debian based Linux PC. 
