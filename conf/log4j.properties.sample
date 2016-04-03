@@ -15,7 +15,7 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 
-log4j.rootLogger=INFO, out
+log4j.rootLogger=INFO, out, file
 
 # CONSOLE appender not used by default
 log4j.appender.out=org.apache.log4j.ConsoleAppender

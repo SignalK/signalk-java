@@ -7,24 +7,43 @@
 	<packaging>pom</packaging>
 	<name>Signalk Java</name>
 	<description>The Signalk java server, packaged as a maven install, ready to run.</description>
+	<properties>
+		<!-- <bundle.name>nsb-${project.version}</bundle.name> -->
+		<signalk.server.version>0.0.1-SNAPSHOT</signalk.server.version>
+	</properties>
 	<repositories>
 		<repository>
 		    <id>jitpack.io</id>
 		    <url>https://jitpack.io</url>
 		</repository>
 	</repositories>
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<dependencies>
+				<dependency>
+					<groupId>nz.co.fortytwo.signalk.server</groupId>
+					<artifactId>signalk-server-java</artifactId>
+					<version>${signalk.server.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>release</id>
+			<activation>
+	            <activeByDefault>true</activeByDefault>
+	        </activation>
+			<dependencies>
+				<dependency>
+					<groupId>com.github.SignalK</groupId>
+					<artifactId>signalk-server-java</artifactId>
+					<version>JIT-Deploy-04</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 	<dependencies>
 
-		<dependency>
-			<groupId>com.github.SignalK</groupId>
-			<artifactId>signalk-core-java</artifactId>
-			<version>JIT-Deploy-01</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.SignalK</groupId>
-			<artifactId>signalk-server-java</artifactId>
-			<version>JIT-Deploy-03</version>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
