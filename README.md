@@ -2,7 +2,6 @@ Signal K java
 =================================================
 
 An Signal K server setup for easy deployment onto an RPi, or any Debian based Linux PC. 
-**NOTE: 19-Mar-2016 - this is incomplete! Ive pushed it up so I can test the deployment to my Pi. Feel free to try it, if it works great, but probably you will need to raise an issue. Try to include all the info you can, and exactly what you did, and any screen output
 
 Other linux types should be simple, just use the appropriate package manager instead of apt.
 
@@ -90,7 +89,7 @@ You should now have a SignalK server running, on http://localhost:8080. There is
 Development
 -----------
 The project is developed and built using maven and eclipse. You will need to clone the signalk-core-java project and build it with maven , then the signalk-server-java project.
-The signalk-core-java project is usuable separately and contains the core model, and useful helpers.
+The signalk-core-java project is usable separately and contains the core model, and useful helpers.
 
 
 See http://www.42.co.nz/freeboard and http://http://signalk.github.io/ for more.
