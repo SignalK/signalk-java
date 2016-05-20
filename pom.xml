@@ -52,6 +52,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
+					
 					<configuration>
 						<mainClass>nz.co.fortytwo.signalk.server.SignalKServer</mainClass>
 						<includePluginDependencies>false</includePluginDependencies>
