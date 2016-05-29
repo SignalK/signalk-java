@@ -339,6 +339,45 @@
 
 							"properties": 
 							{
+								"ws": 
+								{
+									"id": "http://jsonschema.net/signalk/config/server/client/ws",
+									"type": "object",
+									"additionalProperties": false,
+									"title": "Websocket clients",
+									"description": "server:port/path?param=value.., eg iKommunicate:8080/signalk/v1/stream?delta=true",
+									"name": "ws",
+									"required": 
+									[
+										"connect"
+									],
+
+									"properties": 
+									{
+										"connect": 
+										{
+											"id": "http://jsonschema.net/signalk/config/server/client/tcp/connect",
+											"type": "array",
+											"minItems": 0,
+											"uniqueItems": true,
+											"additionalItems": true,
+											"title": "Address",
+											"description": "server:port for the remote tcp connection, eg localhost:1234",
+											"name": "connect",
+											"format": "table",
+											"items": 
+											{
+												"id": "http://jsonschema.net/signalk/config/server/client/tcp/connect/0",
+												"type": "string",
+												"minLength": 1,
+												"title": "TCP address",
+												"description": "",
+												"name": "0",
+												"default": ""
+											}
+										}
+									}
+								},
 								"tcp": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/client/tcp",
@@ -887,6 +926,27 @@
 											"title": "Generate0183",
 											"description": "",
 											"name": "generate0183",
+											"default": true
+										}
+									}
+								},
+								"zeroconf": 
+								{
+									"id": "http://jsonschema.net/signalk/config/server/server/zeroconf",
+									"type": "object",
+									"additionalProperties": false,
+									"title": "Zeroconf",
+									"description": "Zeroconf connection to services",
+									"name": "zeroconf",
+									"properties": 
+									{
+										"auto": 
+										{
+											"id": "http://jsonschema.net/signalk/config/server/server/nmea/zeroconf/auto",
+											"type": "boolean",
+											"title": "Auto connect to signalk sources",
+											"description": "True to discover and auto connect to signalk devices on the local network",
+											"name": "auto",
 											"default": true
 										}
 									}
