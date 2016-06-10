@@ -332,6 +332,7 @@
 							"name": "client",
 							"required": 
 							[
+								"ws",
 								"tcp",
 								"mqtt",
 								"stomp"
@@ -361,7 +362,7 @@
 											"minItems": 0,
 											"uniqueItems": true,
 											"additionalItems": true,
-											"title": "Address",
+											"title": "Websocket Addresses",
 											"description": "server:port for the remote tcp connection, eg localhost:1234",
 											"name": "connect",
 											"format": "table",
@@ -370,7 +371,7 @@
 												"id": "http://jsonschema.net/signalk/config/server/client/tcp/connect/0",
 												"type": "string",
 												"minLength": 1,
-												"title": "TCP address",
+												"title": "Websocket address",
 												"description": "",
 												"name": "0",
 												"default": ""
@@ -383,7 +384,7 @@
 									"id": "http://jsonschema.net/signalk/config/server/client/tcp",
 									"type": "object",
 									"additionalProperties": false,
-									"title": "Tcp clients",
+									"title": "TCP/IP clients",
 									"description": "",
 									"name": "tcp",
 									"required": 
@@ -400,7 +401,7 @@
 											"minItems": 0,
 											"uniqueItems": true,
 											"additionalItems": true,
-											"title": "Address",
+											"title": "TCP/IP Addresses",
 											"description": "server:port for the remote tcp connection, eg localhost:1234",
 											"name": "connect",
 											"format": "table",
@@ -440,7 +441,7 @@
 											"minItems": 0,
 											"uniqueItems": true,
 											"additionalItems": true,
-											"title": "Url",
+											"title": "MQTT Urls",
 											"description": "Url of the remote MQTT service, eg localhost:1883?subscribeTopicName=signalk.test.mqtt.topic",
 											"name": "connect",
 											"format": "table",
@@ -480,7 +481,7 @@
 											"minItems": 0,
 											"uniqueItems": true,
 											"additionalItems": true,
-											"title": "Url",
+											"title": "Stomp Urls",
 											"description": "Url of the remote Stomp service, eg localhost:61613?subscribeTopicName=signalk.test.stomp.topic",
 											"name": "connect",
 											"format": "table",
