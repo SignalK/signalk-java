@@ -145,7 +145,7 @@
 			jQuery('#hawtioBtn').attr('href', url );
 		
 			$.ajax({
-				url : "/signalk/endpoints/v1",
+				url : "/signalk",
 				dataType: "text",
 				success : function (data) {
 					var jsonData = JSON.parse(data);
