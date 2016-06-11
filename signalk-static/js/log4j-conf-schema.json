@@ -1,59 +1,54 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
-  "title": "Root schema.",
-  "description": "An explanation about the purpose of this instance.",
+  "title": "Log4j Configuration",
+  "description": "Control logging output",
   "properties": {
     "configuration": {
       "type": "object",
-      "title": "Configuration schema.",
-      "description": "An explanation about the purpose of this instance.",
+      "title": "Configuration",
+      "description": "",
       "properties": {
         "status": {
           "type": "string",
           "minLength": 1,
-          "title": "Status schema.",
-          "description": "An explanation about the purpose of this instance.",
+          "title": "Root logger level",
+          "description": "From most detailed to least: TRACE, DEBUG, INFO, WARN, ERROR, FATAL",
           "default": "error",
           "id": "status"
         },
         "monitorInterval": {
           "type": "string",
           "minLength": 1,
-          "title": "MonitorInterval schema.",
-          "description": "An explanation about the purpose of this instance.",
+          "title": "Reload Config Interval",
+          "description": "The configuration is reloaded every n seconds to allow dynamic changes to apply",
           "default": "30",
           "id": "monitorInterval"
         },
         "properties": {
           "type": "object",
-          "title": "Properties schema.",
-          "description": "An explanation about the purpose of this instance.",
+          "title": "Log4j2 Properties",
+          "description": "Add/edit properties as required",
           "properties": {
             "property": {
               "type": "array",
               "uniqueItems": false,
-              "title": "Property schema.",
-              "description": "An explanation about the purpose of this instance.",
+              "title": "Properties",
               "items": {
                 "type": "object",
-                "title": "1 schema.",
-                "description": "An explanation about the purpose of this instance.",
+                "title": "Property",
+                "description": "The property key",
                 "properties": {
                   "name": {
                     "type": "string",
                     "minLength": 1,
-                    "title": "Name schema.",
-                    "description": "An explanation about the purpose of this instance.",
-                    "default": "FileName",
+                    "title": "Key",
                     "id": "name"
                   },
                   "value": {
                     "type": "string",
                     "minLength": 1,
-                    "title": "Value schema.",
-                    "description": "An explanation about the purpose of this instance.",
-                    "default": "signalk.log",
+                    "title": "Value",
                     "id": "value"
                   }
                 },
@@ -73,32 +68,30 @@
         },
         "appenders": {
           "type": "object",
-          "title": "Appenders schema.",
-          "description": "An explanation about the purpose of this instance.",
+          "title": "Log4j2 Appenders",
+          "description": "Add/edit appenders as required",
           "properties": {
             "Console": {
               "type": "object",
-              "title": "Console schema.",
-              "description": "An explanation about the purpose of this instance.",
+              "title": "Console",
+              "description": "Console appender writes to std out and std error, eg the console",
               "properties": {
                 "name": {
                   "type": "string",
                   "minLength": 1,
-                  "title": "Name schema.",
-                  "description": "An explanation about the purpose of this instance.",
+                  "title": "Name",
                   "default": "STDOUT",
                   "id": "name"
                 },
                 "patternlayout": {
                   "type": "object",
-                  "title": "Patternlayout schema.",
-                  "description": "An explanation about the purpose of this instance.",
+                  "title": "Pattern layout",
+                  "description": "Log output format",
                   "properties": {
                     "pattern": {
                       "type": "string",
                       "minLength": 1,
-                      "title": "Pattern schema.",
-                      "description": "An explanation about the purpose of this instance.",
+                      "title": "Pattern",
                       "default": "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n",
                       "id": "pattern"
                     }
@@ -117,43 +110,42 @@
             },
             "RollingFile": {
               "type": "object",
-              "title": "RollingFile schema.",
-              "description": "An explanation about the purpose of this instance.",
+              "title": "Rolling File",
+              "description": "Log to file, rolling after time or size limit is reached",
               "properties": {
                 "name": {
                   "type": "string",
                   "minLength": 1,
-                  "title": "Name schema.",
-                  "description": "An explanation about the purpose of this instance.",
-                  "default": "File",
+                  "description": "Appender name",
+                  "title": "Name",
+                  "default": "File1",
                   "id": "name"
                 },
                 "fileName": {
                   "type": "string",
                   "minLength": 1,
-                  "title": "FileName schema.",
-                  "description": "An explanation about the purpose of this instance.",
+                  "title": "FileName",
+                  "description": "Fully qualified or relative (to server install) file name",
                   "default": "${Directory}/${FileName}",
                   "id": "fileName"
                 },
                 "filePattern": {
                   "type": "string",
                   "minLength": 1,
-                  "title": "FilePattern schema.",
-                  "description": "An explanation about the purpose of this instance.",
+                  "title": "File Pattern",
+                  "description": "Pattern to rename the files as they roll over",
                   "default": "${Directory}/${date:yyyy-MM}/test-%d{MM-dd-yyyy}-%i.log.gz",
                   "id": "filePattern"
                 },
                 "PatternLayout": {
                   "type": "object",
-                  "title": "PatternLayout schema.",
-                  "description": "An explanation about the purpose of this instance.",
+                  "title": "Pattern Layout",
+                  "description": "Log output format",
                   "properties": {
                     "pattern": {
                       "type": "string",
                       "minLength": 1,
-                      "title": "Pattern schema.",
-                      "description": "An explanation about the purpose of this instance.",
+                      "title": "Pattern",
                       "default": "%d %p %logger{36} [%t] %m%n",
                       "id": "pattern"
                     }
@@ -165,20 +157,19 @@
                 },
                 "Policies": {
                   "type": "object",
-                  "title": "Policies schema.",
-                  "description": "An explanation about the purpose of this instance.",
+                  "title": "Policies",
+                  "description": "Roll-over policies",
                   "properties": {
                     "SizeBasedTriggeringPolicy": {
                       "type": "object",
-                      "title": "SizeBasedTriggeringPolicy schema.",
-                      "description": "An explanation about the purpose of this instance.",
+                      "title": "Size Based Triggering Policy",
+                      "description": "Roll-over the file when it reaches a certain size",
                       "properties": {
                         "size": {
                           "type": "string",
                           "minLength": 1,
-                          "title": "Size schema.",
-                          "description": "An explanation about the purpose of this instance.",
-                          "default": "1 MB",
+                          "title": "Size",
+                          "default": "10 MB",
                           "id": "size"
                         }
                       },
@@ -195,14 +186,13 @@
                 },
                 "DefaultRolloverStrategy": {
                   "type": "object",
-                  "title": "DefaultRolloverStrategy schema.",
-                  "description": "An explanation about the purpose of this instance.",
+                  "title": "Default Rollover Strategy",
+                  "description": "Number of files to keep",
                   "properties": {
                     "max": {
                       "type": "string",
                       "minLength": 1,
-                      "title": "Max schema.",
-                      "description": "An explanation about the purpose of this instance.",
+                      "title": "Max",
                       "default": "10",
                       "id": "max"
                     }
@@ -232,37 +222,36 @@
         },
         "loggers": {
           "type": "object",
-          "title": "Loggers schema.",
-          "description": "An explanation about the purpose of this instance.",
+          "title": "Loggers",
+          "description": "Define the individual loggers",
           "properties": {
             "root": {
               "type": "object",
-              "title": "Root schema.",
-              "description": "An explanation about the purpose of this instance.",
+              "title": "Root Logger",
+              "description": "The root logger",
               "properties": {
                 "level": {
                   "type": "string",
                   "minLength": 1,
-                  "title": "Level schema.",
-                  "description": "An explanation about the purpose of this instance.",
+                  "title": "Level",
+                  "description": "From most detailed to least: TRACE, DEBUG, INFO, WARN, ERROR, FATAL",
                   "default": "error",
                   "id": "level"
                 },
                 "appender-ref": {
                   "type": "array",
                   "uniqueItems": false,
-                  "title": "Appender-ref schema.",
-                  "description": "An explanation about the purpose of this instance.",
+                  "title": "Target Appender",
+                  "description": "Log to this appender",
                   "items": {
                     "type": "object",
-                    "title": "1 schema.",
-                    "description": "An explanation about the purpose of this instance.",
+                    "title": "Appender",
                     "properties": {
                       "ref": {
                         "type": "string",
                         "minLength": 1,
-                        "title": "Ref schema.",
-                        "description": "An explanation about the purpose of this instance.",
+                        "title": "Appender Name",
+                        "description": "The name of this appender",
                         "default": "File",
                         "id": "ref"
                       }
@@ -284,31 +273,31 @@
             "logger": {
               "type": "array",
               "uniqueItems": false,
-              "title": "Logger schema.",
-              "description": "An explanation about the purpose of this instance.",
+              "title": "Logger",
+              "description": "Custom loggers",
               "items": {
                 "type": "object",
-                "title": "6 schema.",
-                "description": "An explanation about the purpose of this instance.",
+                "title": "Logger",
+                "description": "A logger instance.",
                 "properties": {
                   "name": {
                     "type": "string",
                     "minLength": 1,
-                    "title": "Name schema.",
-                    "description": "An explanation about the purpose of this instance.",
-                    "default": "mjson",
+                    "title": "Name",
+                    "description": "The package name of the logger, eg nz.co.fortytwo.signalk.server",
+                    "default": "nz.co.fortytwo.signalk",
                     "id": "name"
                   },
                   "level": {
                     "type": "string",
                     "minLength": 1,
-                    "title": "Level schema.",
-                    "description": "An explanation about the purpose of this instance.",
+                    "title": "Level",
+                    "description": "From most detailed to least: TRACE, DEBUG, INFO, WARN, ERROR, FATAL",
                     "default": "error",
                     "id": "level"
                   }
                 },
-                "id": "6",
+                "id": "1",
                 "required": [
                   "name",
                   "level"
