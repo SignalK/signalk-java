@@ -5,7 +5,6 @@
 #SIGNALK_HOME=/home/pi/signalk-server
 SIGNALK_HOME=`pwd`
 
-JAR=signalk-server-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 #
 cd $SIGNALK_HOME
 mkdir logs
@@ -16,9 +15,9 @@ export LD_LIBRARY_PATH=$SIGNALK_HOME/jna
 EXT="-Djava.util.Arrays.useLegacyMergeSort=true"
 MEM="-Xmx32m -XX:PermSize=32m -XX:MaxPermSize=48m"
 
-LOG4J=-Dlog4j.configuration=file://$SIGNALK_HOME/conf/log4j.properties
+LOG4J=-Dlog4j.configuration=file://$SIGNALK_HOME/conf/log4j2.json
 
 cd $SIGNALK_HOME
-echo "Starting: $JAVA $EXT $LOG4J $MEM -jar target/$JAR >>logs/start.log 2>&1 &" >>logs/start.log 2>&1 &
-$JAVA $EXT $LOG4J $MEM -jar target/$JAR 
+mvn $EXT $LOG4J exec:java 2>&1 &" >>logs/start.log 2>&1 &
+mvn $EXT $LOG4J exec:java 
 #>>logs/start.log 2>&1 &
