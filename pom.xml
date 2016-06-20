@@ -10,6 +10,7 @@
 	<properties>
 		<!-- <bundle.name>nsb-${project.version}</bundle.name> -->
 		<signalk.server.version>0.0.1-SNAPSHOT</signalk.server.version>
+		<signalk.core.version>0.0.1-SNAPSHOT</signalk.core.version>
 	</properties>
 	<repositories>
 		<repository>
@@ -25,6 +26,11 @@
 					<groupId>nz.co.fortytwo.signalk.server</groupId>
 					<artifactId>signalk-server-java</artifactId>
 					<version>${signalk.server.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>nz.co.fortytwo.signalk.core</groupId>
+					<artifactId>signalk-core-java</artifactId>
+					<version>${signalk.core.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
