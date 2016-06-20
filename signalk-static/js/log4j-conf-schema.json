@@ -8,13 +8,22 @@
       "type": "object",
       "title": "Configuration",
       "description": "",
+      "format":"grid",
       "properties": {
         "status": {
           "type": "string",
           "minLength": 1,
           "title": "Root logger level",
           "description": "From most detailed to least: TRACE, DEBUG, INFO, WARN, ERROR, FATAL",
-          "default": "error",
+          "default": "ERROR",
+          "enum": [
+		                "FATAL",
+		                "ERROR",
+		                "WARN",
+		                "INFO",
+		                "DEBUG",
+		                "TRACE"
+		              ],
           "id": "status"
         },
         "monitorInterval": {
@@ -27,13 +36,14 @@
         },
         "properties": {
           "type": "object",
-          "title": "Log4j2 Properties",
+          "title": "Properties",
           "description": "Add/edit properties as required",
           "properties": {
             "property": {
               "type": "array",
               "uniqueItems": false,
-              "title": "Properties",
+              "title": " ",
+              "format": "table",
               "items": {
                 "type": "object",
                 "title": "Property",
@@ -112,6 +122,7 @@
               "type": "object",
               "title": "Rolling File",
               "description": "Log to file, rolling after time or size limit is reached",
+              
               "properties": {
                 "name": {
                   "type": "string",
@@ -229,20 +240,32 @@
               "type": "object",
               "title": "Root Logger",
               "description": "The root logger",
+              
               "properties": {
                 "level": {
                   "type": "string",
+                 
                   "minLength": 1,
                   "title": "Level",
                   "description": "From most detailed to least: TRACE, DEBUG, INFO, WARN, ERROR, FATAL",
-                  "default": "error",
+                  "default": "ERROR",
+                  "enum": [
+		                "FATAL",
+		                "ERROR",
+		                "WARN",
+		                "INFO",
+		                "DEBUG",
+		                "TRACE"
+		              ],
+		           
                   "id": "level"
                 },
                 "appender-ref": {
                   "type": "array",
                   "uniqueItems": false,
-                  "title": "Target Appender",
-                  "description": "Log to this appender",
+                  "title": "Target Appenders",
+                  "description": "Log to these appenders",
+                  "format": "table",
                   "items": {
                     "type": "object",
                     "title": "Appender",
@@ -273,27 +296,38 @@
             "logger": {
               "type": "array",
               "uniqueItems": false,
-              "title": "Logger",
-              "description": "Custom loggers",
+              "title": "Loggers",
+              "description": "Name: The package name of the logger, eg nz.co.fortytwo.signalk.server,<br/>Level: select from list",
+              "format": "table",
+              
               "items": {
                 "type": "object",
                 "title": "Logger",
                 "description": "A logger instance.",
+                "format": "grid",
+                
                 "properties": {
                   "name": {
                     "type": "string",
                     "minLength": 1,
                     "title": "Name",
-                    "description": "The package name of the logger, eg nz.co.fortytwo.signalk.server",
+                    
                     "default": "nz.co.fortytwo.signalk",
                     "id": "name"
                   },
                   "level": {
                     "type": "string",
-                    "minLength": 1,
+                    "enum": [
+		                "FATAL",
+		                "ERROR",
+		                "WARN",
+		                "INFO",
+		                "DEBUG",
+		                "TRACE"
+		              ],
                     "title": "Level",
-                    "description": "From most detailed to least: TRACE, DEBUG, INFO, WARN, ERROR, FATAL",
-                    "default": "error",
+                    
+                    "default": "ERROR",
                     "id": "level"
                   }
                 },

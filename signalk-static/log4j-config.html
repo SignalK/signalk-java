@@ -78,7 +78,7 @@ body {
 		
 								// Get the current config 
 								$.ajax({
-									url : '/signalk/v1/logging',
+									url : '/signalk/v1/logger',
 									dataType: 'json',
 									mimeType: 'application/json',
 									success : function (data) {
@@ -90,8 +90,8 @@ body {
 										editor.on("change",  function() {
 											var cfg = JSON.stringify(editor.getValue());
 										  console.log(cfg);
-										  $.ajax("/signalk/v1/logging/", {
-											    data : JSON.stringify(editor.getValue()),
+										  $.ajax("/signalk/v1/logger/", {
+											    data : JSON.stringify(editor.getValue(),null, 4),
 											    contentType : 'application/json',
 											    type : 'POST'
 										  });
