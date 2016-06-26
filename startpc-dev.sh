@@ -34,5 +34,5 @@ cd $SIGNALK_HOME
 #echo "Starting : mvn $EXT $LOG4J exec:java 2>&1 &" >>logs/start.log 2>&1 &
 #mvn -P dev $EXT $LOG4J exec:java
 echo "Starting offline: mvn $EXT $LOG4J $HAWTIO exec:java 2>&1 &" >>logs/start.log 2>&1 &
-mvn -P dev -Dexec.args="'$EXT' '$LOG4J' '$HAWTIO'" exec:java
+mvn -Dsignalk.build=dev -Dexec.args="'$EXT' '$LOG4J' '$HAWTIO'" exec:java
 #>>logs/start.log 2>&1 &

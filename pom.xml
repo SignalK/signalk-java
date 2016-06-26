@@ -21,16 +21,17 @@
 	<profiles>
 		<profile>
 			<id>dev</id>
+			<activation>
+				<property>
+			        <name>signalk.build</name>
+			        <value>dev</value>
+			    </property>
+			</activation>
 			<dependencies>
 				<dependency>
 					<groupId>nz.co.fortytwo.signalk.server</groupId>
 					<artifactId>signalk-server-java</artifactId>
 					<version>${signalk.server.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>nz.co.fortytwo.signalk.core</groupId>
-					<artifactId>signalk-core-java</artifactId>
-					<version>${signalk.core.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
