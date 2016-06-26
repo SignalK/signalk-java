@@ -88,7 +88,14 @@ You should now have a SignalK server running, on http://localhost:8080. There is
 
 Development
 -----------
-The project is developed and built using maven and eclipse. You will need to clone the signalk-core-java project and build it with maven , then the signalk-server-java project.
+The project is developed and built using maven and eclipse. 
+
+You will need to clone the signalk-core-java project and build it with maven , then the signalk-server-java project. The default build uses the most recent jitpack.io builds, for dev you need to set the system property in maven as follows. This will cause the builds to use the dev dependencies, from your local repository.
+
+```
+mvn -Dsignalk.build=dev install
+```
+
 The signalk-core-java project is usable separately and contains the core model, and useful helpers.
 
 
