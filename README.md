@@ -40,12 +40,21 @@ After the restart you should find:
 * nmea output will be streamed as TCP over port 55557. On linux you can watch this with `$ ncat localhost 55557`, or use telnet to connect.
 * nmea output will be streamed as UDP over port 55556.
 
-It will be streaming a demo file and dumping logging to screen. Control logging by editing conf/log4j.properties.
+Click the 'Configuration' button, change the Demo mode Start option to true. Clicking anywhere out of the field will automatically save the change. 
 
-It currently streams out a demo file taken from a boat sailing in a race in San Francisco. The output includes AIS data. 
+Restart the server. (Use Cntrl-C to stop it).
+
+It will be streaming a demo file of some sailing in San Francisco. The output includes AIS data.  It may take a few minutes to bring up the vessel, or you may need a second restart.
+
+Control logging by using the 'Log Configuration' button on the index page, or editing conf/log4j2.json.
+
 If you edit the configuration and make demo=false (default=true), then it will stop doing that.
-Normally it only sends output in signalk delta format to subscribed clients, so clients MUST subscribe or you see only the heartbeat message every 1000ms.
-You can subscribe by sending the following json. It supports * and ? wildcards In linux you can paste it into the screen you opened earlier and press [Enter]. :
+
+Using the server for your own client
+------------------------------------
+
+Normally the server only sends output in signalk delta format to subscribed clients, so clients MUST subscribe or you see only the heartbeat message every 1000ms.
+You can subscribe by sending the following json. It supports * and ? wildcards :
 ```
 {"context":"vessels.self","subscribe":[{"path":"environment.depth.belowTransducer"},{"path":"navigation.position"}]}
 ``` 
