@@ -6,7 +6,7 @@
 		"properties": {
 			"property": [{
 					"name": "Directory",
-					"value": "./logs"
+					"value": "./signalk-static/logs"
 				},
 
 				{
@@ -25,7 +25,7 @@
 			"RollingFile": {
 				"name": "File",
 				"fileName": "${Directory}/${FileName}",
-				"filePattern": "${Directory}/${date:yyyy-MM}/test-%d{MM-dd-yyyy}-%i.log.gz",
+				"filePattern": "${Directory}/signalk-%d{MM-dd-yyyy}-%i.log",
 				"PatternLayout": {
 					"pattern": "%d %p %logger{36} [%t] %m%n"
 				},

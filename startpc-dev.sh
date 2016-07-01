@@ -7,7 +7,7 @@ SIGNALK_HOME=`pwd`
 
 #
 cd $SIGNALK_HOME
-mkdir logs
+mkdir -p signalk-static/logs
 
 #temporary until linux-arm.jar is in purejavacom.jar
 export LD_LIBRARY_PATH=$SIGNALK_HOME/jna
@@ -33,6 +33,6 @@ HAWTIO=-Dhawtio.authenticationEnabled=false
 cd $SIGNALK_HOME
 #echo "Starting : mvn $EXT $LOG4J exec:java 2>&1 &" >>logs/start.log 2>&1 &
 #mvn -P dev $EXT $LOG4J exec:java
-echo "Starting offline: mvn $EXT $LOG4J $HAWTIO exec:java 2>&1 &" >>logs/start.log 2>&1 &
+echo "Starting offline: mvn $EXT $LOG4J $HAWTIO exec:java 2>&1 &" >>signalk-static/logs/start.log 2>&1 &
 mvn -Dsignalk.build=dev -Dexec.args="'$EXT' '$LOG4J' '$HAWTIO'" exec:java
 #>>logs/start.log 2>&1 &

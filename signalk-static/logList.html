@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="cleartype" content="on">
+<meta name="MobileOptimized" content="320">
+<meta name="HandheldFriendly" content="True">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="css/bootstrap-theme.css">
+<link rel="stylesheet" data-aload="styles/fonts.css">
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<style>
+body {
+	padding-top: 5px;
+	padding-bottom: 5px; //
+	background-color: #eee;
+	width: 100%;
+	height: 100%;
+}
+
+.btn-primary a {
+	color: aliceblue;
+}
+
+.btn {
+	width: 90%;
+}
+
+.row {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border: 1px;
+	border-bottom: 1px solid #EEE;
+}
+</style>
+<title>Freeboard K - Log Files</title>
+</head>
+
+<div class="container">
+	<div class="page-header">
+		<h1>Signal K - Log Files</h1>
+	</div>
+	<div class="row">
+		<div id="log_holder" class="col-md-10"></div>
+	</div>
+
+
+</div>
+<script>
+	jQuery(document)
+			.ready(
+					function() {
+						$.ajax({
+							url : 'signalk/v1/listLogs',
+							dataType: 'json',
+							mimeType: 'application/json',
+							success : function (logData) {
+								console.log(JSON.stringify(logData));
+								$.each(logData, function(r, obj) {
+									
+									$('#log_holder').append('<li class="list-group-item" >'
+										 
+										  +'<a href="signalk/v1/getLogs?logFile='+obj+'">'+obj+'</a>&nbsp;'
+										  
+										  +'</li>');
+								});
+		
+						}});
+						
+					});
+</script>
+</body>
+</html>
