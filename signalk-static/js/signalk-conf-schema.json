@@ -134,6 +134,28 @@
 										}
 									}
 								},
+								"maps": 
+								{
+									"id": "http://jsonschema.net/signalk/config/server/files/maps",
+									"type": "object",
+									"additionalProperties": false,
+									"title": "Map Cache File Directory",
+									"description": "Map cache directory for map tiles and resources",
+									"name": "maps",
+									"properties": 
+									{
+										"dir": 
+										{
+											"id": "http://jsonschema.net/signalk/config/server/files/static/dir",
+											"type": "string",
+											"minLength": 1,
+											"title": "Directory",
+											"description": "Relative to the static directory",
+											"name": "maps",
+											"default": "./mapcache"
+										}
+									}
+								},
 
 								"storage": 
 								{
