@@ -128,9 +128,9 @@
 											"type": "string",
 											"minLength": 1,
 											"title": "Directory",
-											"description": "Relative to the server install root",
+											"description": "Relative to the server install root, ends with /",
 											"name": "dir",
-											"default": "./signalk-static"
+											"default": "./signalk-static/"
 										}
 									}
 								},
@@ -150,9 +150,9 @@
 											"type": "string",
 											"minLength": 1,
 											"title": "Directory",
-											"description": "Relative to the static directory",
+											"description": "Relative to the static directory, ends with /",
 											"name": "maps",
-											"default": "./mapcache"
+											"default": "./mapcache/"
 										}
 									}
 								},
@@ -173,7 +173,7 @@
 											"type": "string",
 											"minLength": 1,
 											"title": "Directory",
-											"description": "Relative to server install root",
+											"description": "Relative to server install root, ends with /",
 											"name": "root",
 											"default": "./storage/"
 										}
