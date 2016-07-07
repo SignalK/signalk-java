@@ -41,10 +41,10 @@
 	            <activeByDefault>true</activeByDefault>
 	        </activation>
 			<dependencies>
-				<dependency>
+				<dependency> 
 					<groupId>com.github.SignalK</groupId>
 					<artifactId>signalk-server-java</artifactId>
-					<version>JIT-Deploy-08</version>
+					<version>JIT-Deploy-09</version>
 				</dependency>
 			</dependencies>
 		</profile>
