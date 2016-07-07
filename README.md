@@ -13,9 +13,9 @@ Provided under an Apache 2 licence
 Install on RPi
 --------------
 
-In summary we already have java jdk8 on the pi, so we will install  git, maven, and node. The server doesnt need nodejs, but the client installs do use `npm` which comes with it. . I expect to stabilise it quite quickly.
+In summary we already have java jdk8 on the pi, so we will install  git, maven, and node. The server doesnt need nodejs, but the client installs do use `npm` which comes with it.
 
-The pi must be connected to the internet for the install.
+The pi must be connected to the internet for the install. This was tested with a std Raspbian Jessie image.
 Open a console on the RPI, or ssh onto it. Log in as user pi. At the command prompt execute the following:
 
 ```shell
@@ -23,6 +23,8 @@ $ cd ~
 $ curl -sLS https://apt.adafruit.com/add | sudo bash
 $ sudo apt-get update
 $ sudo apt-get install git maven node
+//make sure to select sun jdk8 here - its much faster
+$ sudo update-alternatives --config java
 $ git clone https://github.com/SignalK/signalk-java.git
 $ cd signalk-java
 $ mvn exec:java
@@ -40,15 +42,19 @@ After the restart you should find:
 * nmea output will be streamed as TCP over port 55557. On linux you can watch this with `$ ncat localhost 55557`, or use telnet to connect.
 * nmea output will be streamed as UDP over port 55556.
 
+Use the 'Install' buttons to install the 3 apps (Freeboard-sk, Instrument Panel, Sailgauge)
+
 Click the 'Configuration' button, change the Demo mode Start option to true. Clicking anywhere out of the field will automatically save the change. 
 
 Restart the server. (Use Cntrl-C to stop it).
 
-It will be streaming a demo file of some sailing in San Francisco. The output includes AIS data.  It may take a few minutes to bring up the vessel, or you may need a second restart.
+It will be streaming a demo file of some sailing in San Francisco. The output includes AIS data.  It may take a few minutes to bring up the vessel, or you may need a second restart. If you edit the configuration and make demo=false (default=true), then it will stop doing that.
 
-Control logging by using the 'Log Configuration' button on the index page, or editing conf/log4j2.json.
+Control logging by using the 'Log Configuration' button on the index page, or editing conf/log4j2.json. 
 
-If you edit the configuration and make demo=false (default=true), then it will stop doing that.
+Upload charts using the 'Upload Charts' button. The format is the zip file output by the freeboard-installer (https://github.com/rob42/freeboard-installer)
+
+
 
 Using the server for your own client
 ------------------------------------
