@@ -2,3 +2,6 @@
 /mapcache/*.zip
 /mapcache/*.kap
 /mapcache/*.KAP
+/mapcache/NZ*
+/mapcache/US*
+/mapcache/UK*

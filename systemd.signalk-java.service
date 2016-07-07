@@ -1,0 +1,13 @@
+[Unit]
+Description=Signalk Java Server
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/signalk-java
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/signalk-java
+ExecStart=/home/pi/signalk-java/startpi.sh
+
+[Install]
+WantedBy=multi-user.target
