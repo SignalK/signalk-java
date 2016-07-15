@@ -21,5 +21,5 @@ cd $SIGNALK_HOME
 #mvn $EXT $LOG4J exec:java 2>&1 &" >>signalk-static/logs/start.log 2>&1 &
 #mvn $EXT $LOG4J exec:java 
 #>>logs/start.log 2>&1 &
-echo "Starting offline: mvn -Dexec.args='$EXT' '$LOG4J' '$HAWTIO' exec:java 2>&1 &" >>signalk-static/logs/start.log 2>&1 &
-mvn -Dexec.args="'$EXT' '$LOG4J' '$HAWTIO'" exec:java >>signalk-static/logs/start.log 2>&1 &
+echo "Starting offline: mvn -o -Dexec.args='$EXT' '$LOG4J' '$HAWTIO' exec:java 2>&1" >>signalk-static/logs/start.log 2>&1 
+mvn -o -Dexec.args="'$EXT' '$LOG4J' '$HAWTIO'" exec:java >>signalk-static/logs/start.log 2>&1
