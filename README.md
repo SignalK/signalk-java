@@ -13,24 +13,33 @@ Provided under an Apache 2 licence
 Install on RPi
 --------------
 
-In summary we already have java jdk8 on the pi, so we will install  git, maven, and node. The server doesnt need nodejs, but the client installs do use `npm` which comes with it.
+In summary we already have java jdk8 on the pi, so we will install  git and maven.
 
 The pi must be connected to the internet for the install. This was tested with a std Raspbian Jessie image.
 Open a console on the RPI, or ssh onto it. Log in as user pi. At the command prompt execute the following:
 
 ```shell
 $ cd ~
-$ curl -sLS https://apt.adafruit.com/add | sudo bash
+
 $ sudo apt-get update
-$ sudo apt-get install git maven node
+$ sudo apt-get install git maven
 //make sure to select sun jdk8 here - its much faster
 $ sudo update-alternatives --config java
 $ git clone https://github.com/SignalK/signalk-java.git
 $ cd signalk-java
 $ mvn exec:java
+
+//there is a script that sets up your wifi, dns, and server auto-start.
+//its a bit troublesome at present, so YMMV
+$ chmod 755 setup_raspbian.sh
+$ ./setup_raspbian.sh
 ```
 Now open a modern web browser (eg not IE) to `http://[ip_address_of_the_pi]:8080`
-You should get a pretty start page! Go to configuration and turn on the demo. Then stop start the server, use Cntrl-C to stop the server, it takes 10 secs or so.
+You should get a pretty start page! 
+
+Go to configuration and turn on the demo. (Click the 'Configuration' button, change the Demo mode Start option to true. Clicking anywhere out of the field will automatically save the change.)
+
+Then stop start the server, use Cntrl-C to stop the server, it takes 10 secs or so.
 
 After the restart you should find:
 * webserver on `http://localhost:8080` if you have a screen and keyboard on the pi, otherwise `http://[ip_address_of_the_pi]:8080` 
@@ -43,8 +52,6 @@ After the restart you should find:
 * nmea output will be streamed as UDP over port 55556.
 
 Use the 'Install' buttons to install the 3 apps (Freeboard-sk, Instrument Panel, Sailgauge)
-
-Click the 'Configuration' button, change the Demo mode Start option to true. Clicking anywhere out of the field will automatically save the change. 
 
 Restart the server. (Use Cntrl-C to stop it).
 
@@ -84,16 +91,14 @@ Try:
 
 ``` 
 
-Devices (aka GPS) attached on serial>USB adaptors will be automatically found and used. The input can be NMEA0183 compatible, or signalk, and expects 38400 baud by default. The configuration can be changed by editing conf/signalk.cfg
+Devices (aka GPS) attached on serial>USB adaptors will be automatically found and used. The input can be NMEA0183 compatible, or signalk, and expects 38400 baud by default. The configuration can be changed by editing the configuration
 
 
 Installation for Windows
 ------------------------
 
-You will need Java 1.7+ installed, maven3 (https://maven.apache.org/install.html), and git (https://git-scm.com/downloads). 
+You will need Java 1.8+ installed, maven3 (https://maven.apache.org/install.html), and git (https://git-scm.com/downloads). 
 You need to be able to type 'java' on the command line and get java responding, same for maven and git.
-Same for `npm`, so install `nodejs` from https://nodejs.org/ The server doesnt need nodejs, but the client installs do use `npm` which comes with it.
-
 
 Thats all the prep, then:
 
