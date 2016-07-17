@@ -119,110 +119,116 @@
               ]
             },
             "RollingFile": {
-              "type": "object",
-              "title": "Rolling File",
-              "description": "Log to file, rolling after time or size limit is reached",
-              
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "minLength": 1,
-                  "description": "Appender name",
-                  "title": "Name",
-                  "default": "File1",
-                  "id": "name"
-                },
-                "fileName": {
-                  "type": "string",
-                  "minLength": 1,
-                  "title": "FileName",
-                  "description": "Fully qualified or relative (to server install) file name",
-                  "default": "${Directory}/${FileName}",
-                  "id": "fileName"
-                },
-                "filePattern": {
-                  "type": "string",
-                  "minLength": 1,
-                  "title": "File Pattern",
-                  "description": "Pattern to rename the files as they roll over",
-                  "default": "${Directory}/${date:yyyy-MM}/test-%d{MM-dd-yyyy}-%i.log.gz",
-                  "id": "filePattern"
-                },
-                "PatternLayout": {
-                  "type": "object",
-                  "title": "Pattern Layout",
-                  "description": "Log output format",
-                  "properties": {
-                    "pattern": {
-                      "type": "string",
-                      "minLength": 1,
-                      "title": "Pattern",
-                      "default": "%d %p %logger{36} [%t] %m%n",
-                      "id": "pattern"
-                    }
-                  },
-                  "id": "PatternLayout",
-                  "required": [
-                    "pattern"
-                  ]
-                },
-                "Policies": {
-                  "type": "object",
-                  "title": "Policies",
-                  "description": "Roll-over policies",
-                  "properties": {
-                    "SizeBasedTriggeringPolicy": {
-                      "type": "object",
-                      "title": "Size Based Triggering Policy",
-                      "description": "Roll-over the file when it reaches a certain size",
-                      "properties": {
-                        "size": {
-                          "type": "string",
-                          "minLength": 1,
-                          "title": "Size",
-                          "default": "10 MB",
-                          "id": "size"
-                        }
-                      },
-                      "id": "SizeBasedTriggeringPolicy",
-                      "required": [
-                        "size"
-                      ]
-                    }
-                  },
-                  "id": "Policies",
-                  "required": [
-                    "SizeBasedTriggeringPolicy"
-                  ]
-                },
-                "DefaultRolloverStrategy": {
-                  "type": "object",
-                  "title": "Default Rollover Strategy",
-                  "description": "Number of files to keep",
-                  "properties": {
-                    "max": {
-                      "type": "string",
-                      "minLength": 1,
-                      "title": "Max",
-                      "default": "10",
-                      "id": "max"
-                    }
-                  },
-                  "id": "DefaultRolloverStrategy",
-                  "required": [
-                    "max"
-                  ]
-                }
-              },
-              "id": "RollingFile",
-              "required": [
-                "name",
-                "fileName",
-                "filePattern",
-                "PatternLayout",
-                "Policies",
-                "DefaultRolloverStrategy"
-              ]
+            	"type": "array",
+              "uniqueItems": false,
+              "title": " ",
+              "format": "tabs",
+              "items": {
+								"type": "object",
+								"title": "Rolling File",
+								"description": "Log to file, rolling after time or size limit is reached",
+								
+								"properties": {
+									"name": {
+										"type": "string",
+										"minLength": 1,
+										"description": "Appender name",
+										"title": "Name",
+										"default": "MyFile",
+										"id": "name"
+									},
+									"fileName": {
+										"type": "string",
+										"minLength": 1,
+										"title": "FileName",
+										"description": "Fully qualified or relative (to server install) file name",
+										"default": "${Directory}/${FileName}",
+										"id": "fileName"
+									},
+									"filePattern": {
+										"type": "string",
+										"minLength": 1,
+										"title": "File Pattern",
+										"description": "Pattern to rename the files as they roll over",
+										"default": "${Directory}/${date:yyyy-MM}/myfile-%d{MM-dd-yyyy}-%i.log",
+										"id": "filePattern"
+									},
+									"PatternLayout": {
+										"type": "object",
+										"title": "Pattern Layout",
+										"description": "Log output format",
+										"properties": {
+											"pattern": {
+												"type": "string",
+												"minLength": 1,
+												"title": "Pattern",
+												"default": "%d %p %logger{36} [%t] %m%n",
+												"id": "pattern"
+											}
+										},
+										"id": "PatternLayout",
+										"required": [
+											"pattern"
+										]
+									},
+									"Policies": {
+										"type": "object",
+										"title": "Policies",
+										"description": "Roll-over policies",
+										"properties": {
+											"SizeBasedTriggeringPolicy": {
+												"type": "object",
+												"title": "Size Based Triggering Policy",
+												"description": "Roll-over the file when it reaches a certain size",
+												"properties": {
+													"size": {
+														"type": "string",
+														"minLength": 1,
+														"title": "Size",
+														"default": "10 MB",
+														"id": "size"
+													}
+												},
+												"id": "SizeBasedTriggeringPolicy",
+												"required": [
+													"size"
+												]
+											}
+										},
+										"id": "Policies",
+										"required": [
+											"SizeBasedTriggeringPolicy"
+										]
+									},
+									"DefaultRolloverStrategy": {
+										"type": "object",
+										"title": "Default Rollover Strategy",
+										"description": "Number of files to keep",
+										"properties": {
+											"max": {
+												"type": "string",
+												"minLength": 1,
+												"title": "Max",
+												"default": "10",
+												"id": "max"
+											}
+										},
+										"id": "DefaultRolloverStrategy",
+										"required": [
+											"max"
+										]
+									}
+								},
+								"id": "RollingFile",
+								"required": [
+									"name",
+									"fileName",
+									"filePattern",
+									"PatternLayout",
+									"Policies",
+									"DefaultRolloverStrategy"
+								]
+							}
             }
           },
           "id": "appenders",
@@ -328,8 +334,51 @@
                     "title": "Level",
                     
                     "default": "ERROR",
-                    "id": "level"
-                  }
+                    "id": "level",
+                    "options": {
+												"input_width":"150px"
+											}
+                  },
+									"additivity":{
+										"type": "boolean",
+										"title": "Additivity",
+										"default": true,
+										"id": "additivity",
+										"options": {
+												"hidden":true
+											}
+									},
+									"appender-ref": {
+										"type": "array",
+										"uniqueItems": false,
+										"title": "Appenders",
+										"description": "Log to these appenders",
+										"format": "table",
+										"options": {
+												"disable_array_add": true,
+												"disable_array_delete": true,
+												"input_width":"100px",
+												"remove_empty_properties":true
+											},
+										"items": {
+											"type": "object",
+											"title": "Appender",
+											"properties": {
+												"ref": {
+													"type": "string",
+													"minLength": 1,
+													"title": "Name",
+													"default": "File",
+													"id": "ref"
+												}
+											},
+											"id": "1",
+											"required": [
+												"ref"
+											]
+										},
+										"id": "appender-ref"
+									}
                 },
                 "id": "1",
                 "required": [

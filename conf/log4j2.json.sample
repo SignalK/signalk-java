@@ -22,22 +22,40 @@
 					"pattern": "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
 				}
 			},
-			"RollingFile": {
-				"name": "File",
-				"fileName": "${Directory}/${FileName}",
-				"filePattern": "${Directory}/signalk-%d{MM-dd-yyyy}-%i.log",
-				"PatternLayout": {
-					"pattern": "%d %p %logger{36} [%t] %m%n"
-				},
-				"Policies": {
-					"SizeBasedTriggeringPolicy": {
-						"size": "1 MB"
-					}
-				},
-				"DefaultRolloverStrategy": {
-					"max": "10"
-				}
-			}
+			"RollingFile": [
+                {
+                    "name": "File",
+                    "fileName": "${Directory}/${FileName}",
+                    "filePattern": "${Directory}/${date:yyyy-MM}/test-%d{MM-dd-yyyy}-%i.log.gz",
+                    "PatternLayout": {
+                        "pattern": "%d %p %logger{36} [%t] %m%n"
+                    },
+                    "Policies": {
+                        "SizeBasedTriggeringPolicy": {
+                            "size": "1 MB"
+                        }
+                    },
+                    "DefaultRolloverStrategy": {
+                        "max": "10"
+                    }
+                },
+                {
+                    "name": "History",
+                    "fileName": "${Directory}/${HistoryFileName}",
+                    "filePattern": "${Directory}/history-${date:yyyy-MM}/history-%d{MM-dd-yyyy}-%i.log",
+                    "PatternLayout": {
+                        "pattern": "%m%n"
+                    },
+                    "Policies": {
+                        "SizeBasedTriggeringPolicy": {
+                            "size": "10 MB"
+                        }
+                    },
+                    "DefaultRolloverStrategy": {
+                        "max": "10"
+                    }
+                }
+            ]
 		},
 		"loggers": {
 
