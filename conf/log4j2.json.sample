@@ -71,7 +71,18 @@
 					"ref": "File"
 				}]
 			},
-			"logger": [{
+			"logger": [
+			{
+                "name": "nz.co.fortytwo.signalk.history",
+                "level": "INFO",
+                "additivity": false,
+                "appender-ref": [
+                    {
+                        "ref": "History"
+                    }
+                ]
+            },
+            {
 				"name": "nz.co.fortytwo.signalk",
 				"level": "info"
 			},
