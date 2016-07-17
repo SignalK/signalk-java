@@ -12,6 +12,10 @@
 				{
 					"name": "FileName",
 					"value": "signalk.log"
+				},
+				{
+					"name": "HistoryFileName",
+					"value": "history.log"
 				}
 			]
 		},
