@@ -35,22 +35,161 @@
 							"additionalProperties": false,
 							"title": "Vessel",
 							"description": "",
+							"format":"grid",
 							"name": "vessel",
 							"properties": 
 							{
 								"uuid": 
 								{
-									"id": "http://jsonschema.net/signalk/config/server/vessel/self",
+									"id": "http://jsonschema.net/signalk/config/server/vessel/uuid",
 									"type": "string",
 									"minLength": 1,
-									"title": "Self",
-									"description": "Enter MMSI number, or unique vessel identifier",
+									"title": "UUID (self)",
+									"description": "Enter uuid (unique vessel identifier)",
 									"name": "uuid",
-									"default": "self"
+								"default": "self"								},
+								"name": 
+								{
+									"id": "http://jsonschema.net/signalk/config/server/vessel/name",
+									"type": "string",
+									"minLength": 1,
+									"title": "Name",
+									"description": "The common name of the vessel",
+									"name": "name",
+								"default": "No name"								},
+								"mmsi": {
+									"id": "http://jsonschema.net/signalk/config/server/vessel/mmsi",
+									"type": "string",
+									"minLength": 1,
+									"title": "MMSI",
+									"description": "Enter MMSI number",
+									"name": "mmsi"									
+								},
+								"flag": {
+									"id": "http://jsonschema.net/signalk/config/server/vessel/flag",
+									"type": "string",
+									"name":"flag",
+									"title": "Flag",
+									"description": "The country of ship registration, or flag state of the vessel",
+								"example": "NZ"								},
+								"port": {
+									"id": "http://jsonschema.net/signalk/config/server/vessel/port",
+									"type": "string",
+									"name":"port",
+									"title": "Port",
+									"description": "The home port of the vessel",
+								"example": "Nelson"								},
+								"registrations": {
+									"type": "object",
+									"name": "registrations",
+									"title":"Registrations",
+									"description": "The various registrations of the vessel.",
+									"example": "eg for a New Zealand Part B recreational vessel: 'NZ654'",
+									"properties": {
+										"imo": {
+											"type": "string",
+											"name": "imo",
+											"description": "The IMO number of the vessel.",
+											"example": "IMO 9074729",
+											"maxLength": 11,
+											"minLength": 11
+										},
+										"national": {
+											"type": "array",
+											"minItems": 0,
+											"uniqueItems": true,
+											"additionalItems": true,
+											"name": "national",
+											"format":"table",
+											"description": "The national registration number of the vessel.",
+											"items": {
+												"type": "object",
+												"properties": {
+													"country": {
+														"type": "string",
+														"name":"country",
+														"description": "The ISO 3166-2 country code.",
+														"example": "NZ",
+														"maxLength": 2,
+														"minLength": 2
+													},
+													"registration": {
+														"type": "string",
+														"name":"registration",
+														"description": "The registration code",
+													"example": "NZ654"													},
+													"description": {
+														"type": "string",
+														"name":"description",
+														"description": "The registration description",
+													"example": "New Zealand Part B recreational vessel"													}
+												}
+											}
+										},
+										"local": {
+											"type": "array",
+											"minItems": 0,
+											"uniqueItems": true,
+											"additionalItems": true,
+											"format":"table",
+											"name": "local",
+											"description": "A local or state registration number of the vessel.",
+											"items": {
+												"type": "object",
+												"properties": {
+													"registration": {
+														"type": "string",
+														"name":"registration",
+														"description": "The registration code",
+													"example": "NZCG-2345"														},
+													"description": {
+														"type": "string",
+														"name":"description",
+														"description": "The registration description",
+													"example": "Nelson Coast Guard Membership"														}
+												}
+											}
+										},
+										"other": {
+											"type": "array",
+											"minItems": 0,
+											"uniqueItems": true,
+											"additionalItems": true,
+											"format":"table",
+											"name": "other",
+											"description": "Other registration or permits for the vessel.",
+											"items": {
+												"type": "object",
+												"properties": {
+													"registration": {
+														"type": "string",
+														"description": "The registration code",
+													"example": "DOC-2345"														},
+													"description": {
+														"type": "string",
+														"description": "The registration description",
+													"example": "Tasmanian National Parks Access Permit 2015"														}
+												}
+											}
+										}
+									},
+									"required":[
+										"imo",
+										"national",
+										"local",
+										"other"
+									]
 								}
-							}
+							},
+							"required": 
+							[
+								"uuid",
+								"name",
+								"mmsi",
+								"flag",
+								"port",
+							"registrations"							]
 						},
-
 						"version": 
 						{
 							"id": "http://jsonschema.net/signalk/config/server/version",
@@ -59,9 +198,7 @@
 							"title": "Version",
 							"description": "Current server version",
 							"name": "version",
-							"default": "0.1"
-						},
-
+						"default": "0.1"						},
 						"demo": 
 						{
 							"id": "http://jsonschema.net/signalk/config/server/demo",
@@ -80,9 +217,7 @@
 									"title": "Start",
 									"description": "Run in demo mode on next startup?",
 									"name": "start",
-									"default": false
-								},
-
+								"default": false								},
 								"file": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/demo/file",
@@ -91,17 +226,13 @@
 									"title": "File",
 									"description": "Demo file, relative to the src/test/resources/samples/ dir",
 									"name": "file",
-									"default": "PacCupStartNMEA.txt"
-								}
+								"default": "PacCupStartNMEA.txt"								}
 							},
-
 							"required": 
 							[
 								"start",
-								"file"
-							]
+							"file"							]
 						},
-
 						"files": 
 						{
 							"id": "http://jsonschema.net/signalk/config/server/files",
@@ -130,8 +261,7 @@
 											"title": "Directory",
 											"description": "Relative to the server install root, ends with /",
 											"name": "dir",
-											"default": "./signalk-static/"
-										}
+										"default": "./signalk-static/"										}
 									}
 								},
 								"maps": 
@@ -152,11 +282,9 @@
 											"title": "Directory",
 											"description": "Relative to the static directory, ends with /",
 											"name": "maps",
-											"default": "./mapcache/"
-										}
+										"default": "./mapcache/"										}
 									}
 								},
-
 								"storage": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/files/storage",
@@ -175,11 +303,9 @@
 											"title": "Directory",
 											"description": "Relative to server install root, ends with /",
 											"name": "root",
-											"default": "./storage/"
-										}
+										"default": "./storage/"										}
 									}
 								},
-
 								"usb": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/files/usb",
@@ -198,13 +324,11 @@
 											"title": "Usbdrive location",
 											"description": "Absolute path to USB drive",
 											"name": "usbdrive",
-											"default": "/media/usb0"
-										}
+										"default": "/media/usb0"										}
 									}
 								}
 							}
 						},
-
 						"security": 
 						{
 							"id": "http://jsonschema.net/signalk/config/server/security",
@@ -217,9 +341,7 @@
 							[
 								"deny",
 								"white",
-								"config"
-							],
-
+							"config"							],
 							"properties": 
 							{
 								"deny": 
@@ -232,9 +354,7 @@
 									"name": "deny",
 									"required": 
 									[
-										"ip"
-									],
-
+									"ip"									],
 									"properties": 
 									{
 										"ip": 
@@ -256,12 +376,10 @@
 												"title": "IP address",
 												"description": "",
 												"name": "0",
-												"default": ""
-											}
+											"default": ""											}
 										}
 									}
 								},
-							
 								"white": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/security/white",
@@ -272,9 +390,7 @@
 									"name": "white",
 									"required": 
 									[
-										"ip"
-									],
-
+									"ip"									],
 									"properties": 
 									{
 										"ip": 
@@ -296,12 +412,10 @@
 												"title": "IP address",
 												"description": "",
 												"name": "0",
-												"default": ""
-											}
+											"default": ""											}
 										}
 									}
 								},
-						
 								"config": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/security/config",
@@ -312,9 +426,7 @@
 									"name": "config",
 									"required": 
 									[
-										"ip"
-									],
-
+									"ip"									],
 									"properties": 
 									{
 										"ip": 
@@ -336,14 +448,12 @@
 												"title": "IP address",
 												"description": "",
 												"name": "0",
-												"default": ""
-											}
+											"default": ""											}
 										}
 									}
 								}
 							}
 						},
-
 						"client": 
 						{
 							"id": "http://jsonschema.net/signalk/config/server/client",
@@ -357,9 +467,7 @@
 								"ws",
 								"tcp",
 								"mqtt",
-								"stomp"
-							],
-
+							"stomp"							],
 							"properties": 
 							{
 								"ws": 
@@ -372,9 +480,7 @@
 									"name": "ws",
 									"required": 
 									[
-										"connect"
-									],
-
+									"connect"									],
 									"properties": 
 									{
 										"connect": 
@@ -396,8 +502,7 @@
 												"title": "Websocket address",
 												"description": "",
 												"name": "0",
-												"default": ""
-											}
+											"default": ""											}
 										}
 									}
 								},
@@ -411,9 +516,7 @@
 									"name": "tcp",
 									"required": 
 									[
-										"connect"
-									],
-
+									"connect"									],
 									"properties": 
 									{
 										"connect": 
@@ -435,12 +538,10 @@
 												"title": "TCP address",
 												"description": "",
 												"name": "0",
-												"default": ""
-											}
+											"default": ""											}
 										}
 									}
 								},
-
 								"mqtt": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/client/mqtt",
@@ -451,9 +552,7 @@
 									"name": "mqtt",
 									"required": 
 									[
-										"connect"
-									],
-
+									"connect"									],
 									"properties": 
 									{
 										"connect": 
@@ -475,12 +574,10 @@
 												"title": "MQTT URL",
 												"description": "",
 												"name": "0",
-												"default": ""
-											}
+											"default": ""											}
 										}
 									}
 								},
-
 								"stomp": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/client/stomp",
@@ -491,9 +588,7 @@
 									"name": "stomp",
 									"required": 
 									[
-										"connect"
-									],
-
+									"connect"									],
 									"properties": 
 									{
 										"connect": 
@@ -515,14 +610,12 @@
 												"title": "Stomp URL",
 												"description": "",
 												"name": "0",
-												"default": ""
-											}
+											"default": ""											}
 										}
 									}
 								}
 							}
 						},
-
 						"serial": 
 						{
 							"id": "http://jsonschema.net/signalk/config/server/serial",
@@ -552,10 +645,8 @@
 										"title": "Port",
 										"description": "The serial port name, eg /dev/ttyUSB0",
 										"name": "0",
-										"default": ""
-									}
+									"default": ""									}
 								},
-
 								"baud": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/serial/baud",
@@ -582,11 +673,9 @@
 									"title": "Enable Serial",
 									"description": "Enable incoming data via serial",
 									"name": "enable",
-									"default": true
-								}
+								"default": true								}
 							}
 						},
-
 						"clock": 
 						{
 							"id": "http://jsonschema.net/signalk/config/server/clock",
@@ -608,12 +697,10 @@
 									"enum": 
 									[
 										"system",
-										"gps"
-									]
+									"gps"									]
 								}
 							}
 						},
-
 						"apps": 
 						{
 							"id": "http://jsonschema.net/signalk/config/server/apps",
@@ -642,11 +729,9 @@
 											"title": "Allow",
 											"description": "",
 											"name": "allow",
-											"default": true
-										}
+										"default": true										}
 									}
 								},
-
 								"upgrade": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/apps/upgrade",
@@ -664,13 +749,11 @@
 											"title": "Allow",
 											"description": "",
 											"name": "allow",
-											"default": true
-										}
+										"default": true										}
 									}
 								}
 							}
 						},
-
 						"server": 
 						{
 							"id": "http://jsonschema.net/signalk/config/server/server",
@@ -707,7 +790,6 @@
 											"name": "port",
 											"default": 1883
 										},
-
 										"start": 
 										{
 											"id": "http://jsonschema.net/signalk/config/server/server/mqtt/start",
@@ -715,11 +797,9 @@
 											"title": "Start",
 											"description": "Start mqtt service on next server restart",
 											"name": "start",
-											"default": true
-										}
+										"default": true										}
 									}
 								},
-
 								"stomp": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/server/stomp",
@@ -745,7 +825,6 @@
 											"name": "port",
 											"default": 61613
 										},
-
 										"start": 
 										{
 											"id": "http://jsonschema.net/signalk/config/server/server/stomp/start",
@@ -753,11 +832,9 @@
 											"title": "Start",
 											"description": "Start stomp service on next server restart",
 											"name": "start",
-											"default": true
-										}
+										"default": true										}
 									}
 								},
-
 								"udp": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/server/udp",
@@ -783,7 +860,6 @@
 											"name": "port",
 											"default": 5554
 										},
-
 										"nmea": 
 										{
 											"id": "http://jsonschema.net/signalk/config/server/server/udp/nmea",
@@ -812,7 +888,6 @@
 										}
 									}
 								},
-
 								"websocket": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/server/websocket",
@@ -839,7 +914,6 @@
 										}
 									}
 								},
-
 								"rest": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/server/rest",
@@ -866,7 +940,6 @@
 										}
 									}
 								},
-
 								"tcp": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/server/tcp",
@@ -891,7 +964,6 @@
 											"name": "port",
 											"default": 5555
 										},
-
 										"nmea": 
 										{
 											"id": "http://jsonschema.net/signalk/config/server/server/tcp/nmea",
@@ -920,7 +992,6 @@
 										}
 									}
 								},
-
 								"hostname": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/server/hostname",
@@ -929,9 +1000,7 @@
 									"title": "Hostname",
 									"description": "Server hostname",
 									"name": "hostname",
-									"default": "10.0.0.64"
-								},
-
+								"default": "10.0.0.64"								},
 								"nmea": 
 								{
 									"id": "http://jsonschema.net/signalk/config/server/server/nmea",
@@ -949,8 +1018,7 @@
 											"title": "Generate0183",
 											"description": "",
 											"name": "generate0183",
-											"default": true
-										}
+										"default": true										}
 									}
 								},
 								"zeroconf": 
@@ -970,14 +1038,12 @@
 											"title": "Auto connect to signalk sources",
 											"description": "True to discover and auto connect to signalk devices on the local network",
 											"name": "auto",
-											"default": true
-										}
+										"default": true										}
 									}
 								}
 							}
 						}
 					},
-
 					"required": 
 					[
 						"vessel",
@@ -989,10 +1055,8 @@
 						"serial",
 						"clock",
 						"apps",
-						"server"
-					]
+					"server"					]
 				},
-
 				"hawtio": 
 				{
 					"id": "http://jsonschema.net/signalk/config/hawtio",
@@ -1018,7 +1082,6 @@
 							"name": "port",
 							"default": 8000
 						},
-
 						"context": 
 						{
 							"id": "http://jsonschema.net/hawtio/context",
@@ -1027,9 +1090,7 @@
 							"title": "Context",
 							"description": "",
 							"name": "context",
-							"default": "/hawtio"
-						},
-
+						"default": "/hawtio"						},
 						"start": 
 						{
 							"id": "http://jsonschema.net/hawtio/start",
@@ -1037,9 +1098,7 @@
 							"title": "Start",
 							"description": "Start on next server restart",
 							"name": "start",
-							"default": false
-						},
-
+						"default": false						},
 						"authenticationEnabled": 
 						{
 							"id": "http://jsonschema.net/hawtio/authenticationEnabled",
@@ -1047,9 +1106,7 @@
 							"title": "Use Authentication",
 							"description": "",
 							"name": "authenticationEnabled",
-							"default": false
-						},
-
+						"default": false						},
 						"war": 
 						{
 							"id": "http://jsonschema.net/hawtio/war",
@@ -1058,8 +1115,7 @@
 							"title": "War location",
 							"description": "the location of the hawtio.war file",
 							"name": "war",
-							"default": "./hawtio/hawtio-default-offline-1.4.48.war"
-						}
+						"default": "./hawtio/hawtio-default-offline-1.4.48.war"						}
 					}
 				},
 				"jolokia": 
@@ -1087,7 +1143,6 @@
 							"name": "port",
 							"default": 8001
 						},
-
 						"context": 
 						{
 							"id": "http://jsonschema.net/jolokia/context",
@@ -1096,10 +1151,7 @@
 							"title": "Context",
 							"description": "",
 							"name": "context",
-							"default": "/jolokia"
-						},
-
-
+						"default": "/jolokia"						},
 						"authenticationEnabled": 
 						{
 							"id": "http://jsonschema.net/jolokia/authenticationEnabled",
@@ -1107,9 +1159,7 @@
 							"title": "Use Authentication",
 							"description": "",
 							"name": "authenticationEnabled",
-							"default": false
-						},
-
+						"default": false						},
 						"war": 
 						{
 							"id": "http://jsonschema.net/jolokia/war",
@@ -1118,17 +1168,14 @@
 							"title": "War location",
 							"description": "The location of the jolokia.war file",
 							"name": "war",
-							"default": "./hawtio/jolokia-war-1.3.3.war"
-						}
+						"default": "./hawtio/jolokia-war-1.3.3.war"						}
 					}
 				}
 			},
-
 			"required": 
 			[
 				"server",
-				"hawtio"
-			]
+			"hawtio"			]
 		}
 	}
 }
