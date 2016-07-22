@@ -37,9 +37,13 @@ $ ./setup_raspbian.sh
 Now open a modern web browser (eg not IE) to `http://[ip_address_of_the_pi]:8080`
 You should get a pretty start page! 
 
+Go to the 'server' tab and install the 3 apps (Freeboard-sk, Instrument Panel, Sailgauge)
 Go to configuration and turn on the demo. (Click the 'Configuration' button, change the Demo mode Start option to true. Clicking anywhere out of the field will automatically save the change.)
 
-Then stop start the server, use Cntrl-C to stop the server, it takes 10 secs or so.
+Then stop the server, use Cntrl-C to stop the server, it takes 10 secs or so. On the RPi you can simply turn off the power.
+Restart by rebooting or:
+
+$ sudo systemctl start signalk-java
 
 After the restart you should find:
 * webserver on `http://localhost:8080` if you have a screen and keyboard on the pi, otherwise `http://[ip_address_of_the_pi]:8080` 
@@ -51,15 +55,13 @@ After the restart you should find:
 * nmea output will be streamed as TCP over port 55557. On linux you can watch this with `$ ncat localhost 55557`, or use telnet to connect.
 * nmea output will be streamed as UDP over port 55556.
 
-Use the 'Install' buttons to install the 3 apps (Freeboard-sk, Instrument Panel, Sailgauge)
-
-Restart the server. (Use Cntrl-C to stop it).
+Try the apps. (Sailgauge is broken at present, expect a fix shortly.)
 
 It will be streaming a demo file of some sailing in San Francisco. The output includes AIS data.  It may take a few minutes to bring up the vessel, or you may need a second restart. If you edit the configuration and make demo=false (default=true), then it will stop doing that.
 
 Control logging by using the 'Log Configuration' button on the index page, or editing conf/log4j2.json. 
 
-Upload charts using the 'Upload Charts' button. The format is the zip file output by the freeboard-installer (https://github.com/rob42/freeboard-installer)
+Upload your charts using the 'Upload Charts' button. The format is the zip file output by the freeboard-installer (https://github.com/rob42/freeboard-installer)
 
 
 

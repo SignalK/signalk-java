@@ -34,126 +34,162 @@
 			}
 
 		</style>
-		<title>Freeboard K - Install menu</title>
+		<title>Freeboard K - Home</title>
 	</head>
 
 	<div class="container">
 		<div class="page-header">
 			<h1>Signal K - Start menu</h1>
 		</div>
-		<div class="row">
-			<div id="addresses" class="col-md-4">
-			</div>
-			<div class="col-md-8">
-				<h4>Installation</h4>
-				<div class="col-md-3">
-					<a class="btn  btn-default" role="button" href="/logs.html">Log</a>
-				</div>
-				<div class="col-md-9">
-				<p>The three blue buttons launch applications that must be separately installed. To do this you need <a href="https://nodejs.org/">nodejs</a> installed on your server so that npm works from the command-line. 
-					Then use the relevant <b>Install</b> or <b>Upgrade</b> buttons</p>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-4">
-				<a class="btn btn-primary btn-lg" role="button" href="./freeboard-sk/">Freeboard SK</a>
-			</div>
-			<div class="col-md-8">
-				<div class="col-md-3">
-					<a class="btn  btn-default" role="button" href="/signalk/v1/install/freeboard-sk">Install</a>
-				</div>
-				<div class="col-md-3">
-					<a class="btn b btn-default" role="button" href="/signalk/v1/upgrade/freeboard-sk">Upgrade</a>
-				</div>
-				<p>The Freeboard Chartplotter, ported to Signal K <br/><a href="https://github.com/SignalK/freeboard-sk">https://github.com/SignalK/freeboard-sk</a></p>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-4">
-				<a class="btn btn-primary btn-lg" role="button" href="./instrumentpanel/">Instrument Panel</a>			
-			</div>
-			<div class="col-md-8">
-				<div class="col-md-3">
-					<a class="btn  btn-default" role="button" href="/signalk/v1/install/instrumentpanel">Install</a>
-				</div>
-				<div class="col-md-3">
-					<a class="btn b btn-default" role="button" href="/signalk/v1/upgrade/instrumentpanel">Upgrade</a>
-				</div>
-				<p>The Signal K instrumentpanel project <br/> <a href="https://github.com/SignalK/instrumentpanel">https://github.com/SignalK/instrumentpanel</a></p>
-			</div>
+		<ul class="nav nav-tabs">
+		  <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+		  <li><a data-toggle="tab" href="#server">Server</a></li>
+		</ul>
+		<div class="tab-content">
 			
-		</div>
-		<div class="row">
-			<div class="col-md-4">
-				<a class="btn btn-primary btn-lg" role="button" href="./sailgauge">Sailgauge</a>			
-			</div>
-			<div class="col-md-8">
-				<div class="col-md-3">
-					<a class="btn  btn-default" role="button" href="/signalk/v1/install/sailgauge">Install</a>
+			<div id="home" class="tab-pane fade in active">
+				
+					<div class="row">
+						<div class="col-md-4">
+							<a class="btn btn-primary btn-lg" role="button" href="./freeboard-sk/">Freeboard SK</a>
+						</div>
+						<div class="col-md-8">
+							<p>The Freeboard Chartplotter, ported to Signal K <br/><a href="https://github.com/SignalK/freeboard-sk">https://github.com/SignalK/freeboard-sk</a></p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<a class="btn btn-primary btn-lg" role="button" href="./instrumentpanel/">Instrument Panel</a>			
+						</div>
+						<div class="col-md-8">
+							<p>The Signal K instrumentpanel project <br/> <a href="https://github.com/SignalK/instrumentpanel">https://github.com/SignalK/instrumentpanel</a></p>
+						</div>
+						
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<a class="btn btn-primary btn-lg" role="button" href="./sailgauge">Sailgauge</a>			
+						</div>
+						<div class="col-md-8">
+							<p>The Signal K Sailgauge project <br/><a href="https://github.com/SignalK/sailgauge">https://github.com/SignalK/sailgauge</a></p>
+						</div>
+					</div>
+					<div class="row">
+						<p></p>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<a id="logsBtn" class="btn btn-default btn-lg" role="button" href="/upload.html">Upload Charts</a>
+						</div>
+						<div class="col-md-8">
+							<p>Upload charts</p>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-4">
+							<a class="btn btn-default btn-lg" role="button" href="/signalk/v1/api/vessels/*">Signal K REST API</a>
+						</div>
+						<div class="col-md-8">
+							<p>The REST API lets you make calls with a web browser to get data from the Signal K server. By default it will open at <i>http://localhost:8080/signalk/v1/api/vessels/*</i></p>
+							<p>You can navigate through the tree by appending directories as you would for files, 
+								eg <a href="/signalk/v1/api/vessels/self/navigation" >http://..../signalk/v1/api/vessels/self/navigation</a> or <a href="/signalk/v1/api/vessels/self/environment" >http://.../signalk/v1/api/vessels/self/environment</a></p>
+							<p>The content mime type is application/json, your browser may not display it directly. 
+								On firefox just install <a href="https://addons.mozilla.org/en-us/firefox/addon/jsonovich/?src=search">https://addons.mozilla.org/en-us/firefox/addon/jsonovich/?src=search</a></p>
+						</div>
+					</div>
 				</div>
-				<div class="col-md-3">
-					<a class="btn b btn-default" role="button" href="/signalk/v1/upgrade/sailgauge">Upgrade</a>
-				</div>
-				<p>The Signal K Sailgauge project <br/><a href="https://github.com/SignalK/sailgauge">https://github.com/SignalK/sailgauge</a></p>
+			<div id="server" class="tab-pane fade in ">
+				
+					<div class="row">
+						<div id="addresses" class="col-md-4">
+						</div>
+						<div class="col-md-8">
+							<h4>Server Installation</h4>
+							<div class="col-md-9">
+							<p>The three blue buttons launch applications that must be separately installed to your signalk server.  
+								Use the relevant <b>Install</b> or <b>Upgrade</b> buttons to do this.</p>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<label class="btn  btn-lg">Freeboard SK</label>
+						</div>
+						<div class="col-md-8">
+							<div class="col-md-3">
+								<a class="btn  btn-default" role="button" href="/signalk/v1/install/freeboard-sk">Install</a>
+							</div>
+							<div class="col-md-3">
+								<a class="btn b btn-default" role="button" href="/signalk/v1/upgrade/freeboard-sk">Upgrade</a>
+							</div>
+							<p>The Freeboard Chartplotter, ported to Signal K <br/><a href="https://github.com/SignalK/freeboard-sk">https://github.com/SignalK/freeboard-sk</a></p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<label class="btn  btn-lg">Instrument Panel</label>			
+						</div>
+						<div class="col-md-8">
+							<div class="col-md-3">
+								<a class="btn  btn-default" role="button" href="/signalk/v1/install/instrumentpanel">Install</a>
+							</div>
+							<div class="col-md-3">
+								<a class="btn b btn-default" role="button" href="/signalk/v1/upgrade/instrumentpanel">Upgrade</a>
+							</div>
+							<p>The Signal K instrumentpanel project <br/> <a href="https://github.com/SignalK/instrumentpanel">https://github.com/SignalK/instrumentpanel</a></p>
+						</div>
+						
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<label class="btn  btn-lg">Sailgauge</label>			
+						</div>
+						<div class="col-md-8">
+							<div class="col-md-3">
+								<a class="btn  btn-default" role="button" href="/signalk/v1/install/sailgauge">Install</a>
+							</div>
+							<div class="col-md-3">
+								<a class="btn b btn-default" role="button" href="/signalk/v1/upgrade/sailgauge">Upgrade</a>
+							</div>
+							<p>The Signal K Sailgauge project <br/><a href="https://github.com/SignalK/sailgauge">https://github.com/SignalK/sailgauge</a></p>
+						</div>
+					</div>
+				<div class="row">
+						<div class="col-md-4">
+							<a id="cfgBtn" class="btn btn-default btn-lg" role="button" href="/config.html">Configuration</a>
+						</div>
+						<div class="col-md-8">
+							<p>Manage the configuration of the server</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<a id="logsBtn" class="btn btn-default btn-lg" role="button" href="/logList.html">Logs</a>
+						</div>
+						<div class="col-md-8">
+							<p>View the log files, useful for support</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<a id="logCfgBtn" class="btn btn-default btn-lg" role="button" href="/log4j-config.html">Log Management</a>
+						</div>
+						<div class="col-md-8">
+							<p>Manage the log4j logging, if you dont know what that is, dont go here</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<a id="hawtioBtn" class="btn btn-default btn-lg" role="button" href="#">Hawtio Management</a>
+						</div>
+						<div class="col-md-8">
+							<p>This launches the Hawtio management service if its turned on. Its JMX based, very technical, looks great and will be of little use unless you know java pretty well. 
+							If its turned off (default) you can access it remotely from other Hawtio management service servers. Very useful to watch/debug/trace your RPi from your laptop</p>
+						</div>
+					</div>
 			</div>
 		</div>
-		<div class="row">
-			<p></p>
-		</div>
-		<div class="row">
-			<div class="col-md-4">
-				<a id="cfgBtn" class="btn btn-default btn-lg" role="button" href="/config.html">Configuration</a>
-			</div>
-			<div class="col-md-8">
-				<p>Manage the configuration of the server</p>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-4">
-				<a id="logCfgBtn" class="btn btn-default btn-lg" role="button" href="/log4j-config.html">Log Configuration</a>
-			</div>
-			<div class="col-md-8">
-				<p>Manage the log4j logging, if you dont know what that is, dont go here</p>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-4">
-				<a id="logsBtn" class="btn btn-default btn-lg" role="button" href="/logList.html">Logs</a>
-			</div>
-			<div class="col-md-8">
-				<p>View the log files, useful for support</p>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-4">
-				<a id="logsBtn" class="btn btn-default btn-lg" role="button" href="/upload.html">Upload Charts</a>
-			</div>
-			<div class="col-md-8">
-				<p>Upload charts</p>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-4">
-				<a id="hawtioBtn" class="btn btn-default btn-lg" role="button" href="#">Management</a>
-			</div>
-			<div class="col-md-8">
-				<p>This launches the Hawtio management service. Its JMX based, very technical, looks great and will be of little use unless you know java pretty well.</p>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-4">
-				<a class="btn btn-default btn-lg" role="button" href="/signalk/v1/api/vessels/*">Signal K REST API</a>
-			</div>
-			<div class="col-md-8">
-				<p>The REST API lets you make calls with a web browser to get data from the Signal K server. By default it will open at <i>http://localhost:8080/signalk/v1/api/vessels/*</i></p>
-				<p>You can navigate through the tree by appending directories as you would for files, 
-					eg <a href="/signalk/v1/api/vessels/self/navigation" >http://..../signalk/v1/api/vessels/self/navigation</a> or <a href="/signalk/v1/api/vessels/self/environment" >http://.../signalk/v1/api/vessels/self/environment</a></p>
-				<p>The content mime type is application/json, your browser may not display it directly. 
-					On firefox just install <a href="https://addons.mozilla.org/en-us/firefox/addon/jsonovich/?src=search">https://addons.mozilla.org/en-us/firefox/addon/jsonovich/?src=search</a></p>
-			</div>
-		</div>
-
 	</div>
 	<script>
 		jQuery(document).ready(function(){
