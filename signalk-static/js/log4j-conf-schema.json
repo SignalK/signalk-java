@@ -241,6 +241,9 @@
           "type": "object",
           "title": "Loggers",
           "description": "Define the individual loggers",
+          "options": {
+		    "remove_empty_properties": true
+		  },
           "properties": {
             "root": {
               "type": "object",
@@ -269,6 +272,9 @@
                 "appender-ref": {
                   "type": "array",
                   "uniqueItems": false,
+                  "options": {
+				    "remove_empty_properties": true
+				  },
                   "title": "Target Appenders",
                   "description": "Log to these appenders",
                   "format": "table",
@@ -295,8 +301,7 @@
               },
               "id": "root",
               "required": [
-                "level",
-                "appender-ref"
+                "level"
               ]
             },
             "logger": {

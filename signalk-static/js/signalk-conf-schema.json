@@ -89,6 +89,7 @@
 										"imo": {
 											"type": "string",
 											"name": "imo",
+											"title": "IMO",
 											"description": "The IMO number of the vessel.",
 											"example": "IMO 9074729",
 											"maxLength": 11,
@@ -100,6 +101,7 @@
 											"uniqueItems": true,
 											"additionalItems": true,
 											"name": "national",
+											"title": "National",
 											"format":"table",
 											"description": "The national registration number of the vessel.",
 											"items": {
@@ -108,6 +110,7 @@
 													"country": {
 														"type": "string",
 														"name":"country",
+														"title": "Country",
 														"description": "The ISO 3166-2 country code.",
 														"example": "NZ",
 														"maxLength": 2,
@@ -116,10 +119,12 @@
 													"registration": {
 														"type": "string",
 														"name":"registration",
+														"title": "Registration",
 														"description": "The registration code",
 													"example": "NZ654"													},
 													"description": {
 														"type": "string",
+														"title": "Description",
 														"name":"description",
 														"description": "The registration description",
 													"example": "New Zealand Part B recreational vessel"													}
@@ -133,6 +138,7 @@
 											"additionalItems": true,
 											"format":"table",
 											"name": "local",
+											"title": "Local",
 											"description": "A local or state registration number of the vessel.",
 											"items": {
 												"type": "object",
@@ -140,11 +146,13 @@
 													"registration": {
 														"type": "string",
 														"name":"registration",
+														"title": "Registration",
 														"description": "The registration code",
 													"example": "NZCG-2345"														},
 													"description": {
 														"type": "string",
 														"name":"description",
+														"title": "Description",
 														"description": "The registration description",
 													"example": "Nelson Coast Guard Membership"														}
 												}
@@ -157,16 +165,21 @@
 											"additionalItems": true,
 											"format":"table",
 											"name": "other",
+											"title": "Other",
 											"description": "Other registration or permits for the vessel.",
 											"items": {
 												"type": "object",
 												"properties": {
 													"registration": {
 														"type": "string",
+														"name":"registration",
+														"title": "Registration",
 														"description": "The registration code",
 													"example": "DOC-2345"														},
 													"description": {
 														"type": "string",
+														"name":"description",
+														"title": "Description",
 														"description": "The registration description",
 													"example": "Tasmanian National Parks Access Permit 2015"														}
 												}
