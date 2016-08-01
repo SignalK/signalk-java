@@ -246,6 +246,80 @@
 								"start",
 							"file"							]
 						},
+						"xmpp": 
+						{
+							"id": "http://jsonschema.net/signalk/config/server/xmpp",
+							"type": "array",
+							"additionalProperties": false,
+							"title": "Sharing Data",
+							"description": "Shares data with others.",
+							"name": "xmpp",
+							"format": "table",
+							"items": 
+							{
+								"type": "object",
+								"properties": {
+									"server": 
+									{
+										"id": "http://jsonschema.net/signalk/config/server/xmpp/server",
+										"type": "string",
+										"title": "XMPP server",
+										"description": "XMPP server name, eg xmpp.www.42.co.nz",
+										"name": "server",
+									"default": "xmpp.www.42.co.nz"								
+									},
+									"user": 
+									{
+										"id": "http://jsonschema.net/signalk/config/server/xmpp/user",
+										"type": "string",
+										"minLength": 1,
+										"title": "User",
+										"description": "XMPP login user name, no @xmpp.www.42.co.nz extension",
+										"name": "user",
+										"default": "motu"								
+									},
+									"passwd":
+									{
+										"id": "http://jsonschema.net/signalk/config/server/xmpp/passwd",
+										"type": "string",
+										"minLength": 1,
+										"title": "Password",
+										"description": "XMPP login password",
+										"name": "passwd",
+										"default": ""								
+									},
+									"room":
+									{
+										"id": "http://jsonschema.net/signalk/config/server/xmpp/room",
+										"type": "string",
+										"minLength": 1,
+										"title": "Group",
+										"description": "XMPP chat group",
+										"name": "room",
+										"default": "signalk"								
+									},
+									"filter":
+									{
+										"id": "http://jsonschema.net/signalk/config/server/xmpp/filter",
+										"type": "string",
+										"minLength": 1,
+										"title": "Filter",
+										"description": "comma separated list of keys to send to the group, default is similar to AIS",
+										"name": "filter",
+										"default": "vessels.self.navigation.position,vessels.self.navigation.course*,vessels.self.navigation.speed*,vessels.self.name,vessels.self.uuid,vessels.self.mmsi,vessels.self.communication.callsignVhf"								
+									}
+								},
+								"required": 
+								[
+									"xmpp",
+									"user",
+									"passwd",
+									"room",
+									"filter"
+									]
+							}
+							
+						},
 						"files": 
 						{
 							"id": "http://jsonschema.net/signalk/config/server/files",
@@ -1063,6 +1137,7 @@
 						"demo",
 						"version",
 						"files",
+						"xmpp",
 						"security",
 						"client",
 						"serial",

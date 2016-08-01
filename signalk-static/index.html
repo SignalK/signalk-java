@@ -155,12 +155,20 @@
 							<p>The Signal K Sailgauge project <br/><a href="https://github.com/SignalK/sailgauge">https://github.com/SignalK/sailgauge</a></p>
 						</div>
 					</div>
-				<div class="row">
+					<div class="row">
 						<div class="col-md-4">
 							<a id="cfgBtn" class="btn btn-default btn-lg" role="button" href="/config.html">Configuration</a>
 						</div>
 						<div class="col-md-8">
 							<p>Manage the configuration of the server</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<a id="restartBtn" class="btn btn-default btn-lg" role="button" href="">Restart Server</a>
+						</div>
+						<div class="col-md-8">
+							<p>Restart the server</p>
 						</div>
 					</div>
 					<div class="row">
@@ -204,7 +212,15 @@
 					$("#addresses").html('<pre>'+JSON.stringify(jsonData, null, 2)+'</pre>');
 				}
 			});
-		
+			$("#restartBtn").on('click', function() {
+				$.ajax({
+					url : "/signalk/v1/restart",
+					dataType: "text",
+					success : function (data) {
+						alert(data);
+					}
+				});
+			});
 	
 		});
 	</script>
