@@ -9,6 +9,7 @@ Its also possible (and should be quite simple) on a windows PC, but you have to 
 
 Provided under an Apache 2 licence
 
+**NOTE:**This version starts implementing security features!. The impact so far is that you will need to be on the same local network to be able to use the web configuration features. This can be adjusted to suit by altering DENY, CONFIG and WHITE list ip addresses.
 
 Install on RPi
 --------------
