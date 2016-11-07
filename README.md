@@ -11,6 +11,8 @@ Provided under an Apache 2 licence
 
 **NOTE:**This version starts implementing security features!. The impact so far is that you will need to be on the same local network to be able to use the web configuration features. This can be adjusted to suit by altering DENY, CONFIG and WHITE list ip addresses.
 
+**NOTE:** There is now a admin login. Its hard-wired to "admin" and "s3cr3t" for now.
+
 Install on RPi
 --------------
 
