@@ -15,6 +15,9 @@ Provided under an Apache 2 licence
 
 Install on RPi
 --------------
+See also https://github.com/SignalK/specification/wiki/Raspberry-Pi-Installation-(Java-Server)
+
+Quickstart
 
 In summary we already have java jdk8 on the pi, so we will install  git and maven.
 
