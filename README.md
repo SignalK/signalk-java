@@ -108,7 +108,12 @@ Installation for Windows
 You will need Java 1.8+ installed, maven3 (https://maven.apache.org/install.html), and git (https://git-scm.com/downloads). 
 You need to be able to type 'java' on the command line and get java responding, same for maven and git.
 
-Thats all the prep, then:
+Thats all the prep, then open a command console:
+```
+C:\dev> git clone https://github.com/SignalK/signalk-java.git
+C:\dev\> cd signalk-java
+C:\dev\signalk-java> mvn exec:java
+```
 
 NOTE: Windows users - DONT put any of this in directories with spaces or anything but simple ascii names. Use something like eg C:\dev\signalk-server
 
