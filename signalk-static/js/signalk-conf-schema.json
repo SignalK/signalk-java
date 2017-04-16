@@ -1237,9 +1237,19 @@
                   "id": "http://jsonschema.net/signalk/config/environment/depth/surfaceToTransducer",
                   "type": "number",
                   "additionalProperties": false,
-                  "title": "Transducer Offset",
+                  "title": "Surface To Transducer",
                   "description": "Distance from surface to depth transducer",
                   "name": "surfaceToTransducer",
+                  "default": 0.5,
+                  "minimum": 0
+                },
+                "transducerToKeel": {
+                  "id": "http://jsonschema.net/signalk/config/environment/depth/transducerToKeel",
+                  "type": "number",
+                  "additionalProperties": false,
+                  "title": "TransducerToKeel",
+                  "description": "Distance from depth transducer to keel",
+                  "name": "transducerToKeel",
                   "default": 1.5,
                   "minimum": 0
                 },
@@ -1341,7 +1351,7 @@
 			"hawtio",
 			"jolokia"
 			]
+        }
       }
     }
   }
-}

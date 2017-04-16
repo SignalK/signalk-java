@@ -1,0 +1,21 @@
+pi@raspberrypi:~ $ history
+   sudo nano /etc/wpa_supplicant/wpa_supplicant.conf 
+   sudo ifdown wlan0
+   sudo ifup wlan0
+   cd /home/pi/
+   sudo raspi-config
+   sudo apt-get update
+   sudo apt-get upgrade
+   sudo apt-get install oracle-java8-jdk git
+   java -version
+   git clone https://github.com/SignalK/signalk-server-java.git
+   cd signalk-server-java/
+   ./startpc.sh
+
+   #had to add 'ifconfig wlan0 192.168.0.1' to near the bottom of /etc/rc.local to get correct address
+   #had to add jna library
+   # used sudo systemctl set-default multi-user.target to stop graphical start up
+   # had to add sudo su -c "service hostapd restart" to make wifi run on startup
+   # had to add sudo ifconfig wlan0 192.168.0.1 to get the right ip
+   # turn off avahi-daemon so mDns works
+   #
