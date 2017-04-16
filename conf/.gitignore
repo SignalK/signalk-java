@@ -4,3 +4,5 @@
 /log4j2.json
 /signalk-attr.json
 /signalk-restart
+/signalk-config.json.bak
+/signalk-config.json~

@@ -1346,8 +1346,12 @@
               }
             }
           }
+        },
+		"required": [
+			"hawtio",
+			"jolokia"
+			]
         }
       }
     }
   }
-}
