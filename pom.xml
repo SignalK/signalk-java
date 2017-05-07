@@ -44,7 +44,7 @@
 				<dependency> 
 					<groupId>com.github.SignalK</groupId>
 					<artifactId>signalk-server-java</artifactId>
-					<version>JIT-Deploy-34</version>
+					<version>JIT-Deploy-35</version>
 				</dependency>
 			</dependencies>
 		</profile>
