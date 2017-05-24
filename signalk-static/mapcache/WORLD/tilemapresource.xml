@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 	<TileMap version="1.0.0" tilemapservice="http://tms.osgeo.org/1.0.0">
-	  <Title>temp.vrt</Title>
+	  <Title>World Outline</Title>
 	  <Abstract></Abstract>
 	  <SRS>EPSG:900913</SRS>
 	  <BoundingBox minx="-85.05112878000000" miny="-180.00000000000000" maxx="83.64310000000003" maxy="179.95295325327942"/>
