@@ -1,7 +1,7 @@
 Signal K java
 =================================================
 
-An Signal K server setup for easy deployment onto an RPi, or any Debian based Linux PC. 
+A Signal K server setup for easy deployment onto an RPi, or any Debian based Linux PC. 
 
 Other linux types should be simple, just use the appropriate package manager instead of apt.
 
@@ -9,6 +9,15 @@ Its also possible (and should be quite simple) on a windows PC, but you have to 
 
 Provided under an Apache 2 licence
 
+New Artemis Server
+==================
+The old signalk-java server began long before signalk, and has changed so much its become too difficult to maintain. Its replaced by the Artemis server  (https://github.com/SignalK/artemis-server).
+
+To install the new server, or upgrade your current installation, see the 'ARTEMIS' notes in the Quickstart below. 
+
+
+Security
+========
 **NOTE:**This version starts implementing security features!. The impact so far is that you will need to be on the same local network to be able to use the web configuration features. This can be adjusted to suit by altering DENY, CONFIG and WHITE list ip addresses.
 
 **NOTE:** There is now a admin login. Its hard-wired to "admin" and "s3cr3t" for now.
@@ -33,6 +42,7 @@ $ sudo apt-get install git maven
 $ sudo update-alternatives --config java
 $ git clone https://github.com/SignalK/signalk-java.git
 $ cd signalk-java
+[ARTEMIS] $ git checkout artemis
 $ mvn exec:java
 
 //there is a script that sets up your wifi, dns, and server auto-start.
