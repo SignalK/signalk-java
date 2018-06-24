@@ -1045,6 +1045,7 @@
           "required": [
             "vessel",
             "demo",
+            "internet",
             "version",
             "files",
             "xmpp",

@@ -1,7 +1,7 @@
 Signal K java
 =================================================
 
-An Signal K server setup for easy deployment onto an RPi, or any Debian based Linux PC. 
+A Signal K server setup for easy deployment onto an RPi, or any Debian based Linux PC. 
 
 Other linux types should be simple, just use the appropriate package manager instead of apt.
 
