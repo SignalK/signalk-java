@@ -42,7 +42,27 @@ $ sudo apt-get install git maven
 $ sudo update-alternatives --config java
 $ git clone https://github.com/SignalK/signalk-java.git
 $ cd signalk-java
-[ARTEMIS] $ git checkout artemis
+
+[ARTEMIS]   $ git checkout artemis
+		    $ sudo apt install apt-transport-https
+		  
+		    $ curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+			$ lsb_release -a  
+				This gives us the OS version could be wheezy, jessie, stretch..
+				
+			For jessie or Debian 8.0
+				$ echo "deb https://repos.influxdata.com/debian jessie stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+							
+			For wheezy or Debian 7.0
+				$ echo "deb https://repos.influxdata.com/debian wheezy stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+			
+			Then
+			$ sudo apt update
+			$ sudo apt-get install influxdb
+			
+		You can start it immediately so we can continue setting up the server
+			$ sudo service influxdb start
+				
 $ mvn exec:java
 
 //there is a script that sets up your wifi, dns, and server auto-start.
