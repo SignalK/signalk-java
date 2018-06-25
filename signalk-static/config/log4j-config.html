@@ -11,9 +11,9 @@
 <link rel="stylesheet" href="../css/bootstrap.css">
 <link rel="stylesheet" href="../css/bootstrap-theme.css">
 <link rel="stylesheet" data-aload="../styles/fonts.css">
-<script src="../js/jquery.min.js"></script>
-<script src="../js/bootstrap.min.js"></script>
-<script src="../js/jsoneditor.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/jsoneditor.js"></script>
 <style>
 body {
 	padding-top: 5px;
@@ -51,8 +51,8 @@ body {
 
 
 </div>
-<script>
-	jQuery(document)
+<script type="text/javascript" >
+	$(document)
 			.ready(
 					function() {
 						$.ajax({
@@ -78,7 +78,7 @@ body {
 		
 								// Get the current config 
 								$.ajax({
-									url : '/signalk/v1/logger',
+									url : '/signalk/v1/logger/config',
 									dataType: 'json',
 									mimeType: 'application/json',
 									success : function (data) {
@@ -90,7 +90,7 @@ body {
 										editor.on("change",  function() {
 											var cfg = JSON.stringify(editor.getValue());
 										  console.log(cfg);
-										  $.ajax("/signalk/v1/logger/", {
+										  $.ajax("/signalk/v1/logger/config", {
 											    data : JSON.stringify(editor.getValue(),null, 4),
 											    contentType : 'application/json',
 											    type : 'POST'

@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 		<meta charset="utf-8">
 		<meta http-equiv="cleartype" content="on">
 		<meta name="MobileOptimized" content="320">
@@ -10,8 +13,8 @@
 		<link rel="stylesheet" href="css/bootstrap.css" >
 		<link rel="stylesheet" href="css/bootstrap-theme.css" >
 		<link rel="stylesheet" data-aload="styles/fonts.css">
-		<script src="js/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
 		<style>
 			body {
 				padding-top: 5px;
@@ -200,7 +203,7 @@
 		</div>
 	</div>
 	<script>
-		jQuery(document).ready(function(){
+		$(document).ready(function(){
 			var url = 'http://'+window.location.hostname +':8000/hawtio';
 			jQuery('#hawtioBtn').attr('href', url );
 		
