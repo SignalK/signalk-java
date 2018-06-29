@@ -1,32 +1,27 @@
 {
-	"configuration": {
-
-		"status": "error",
-		"monitorInterval":"30",
-		"properties": {
-			"property": [{
-					"name": "Directory",
-					"value": "./signalk-static/logs"
-				},
-
-				{
-					"name": "FileName",
-					"value": "signalk.log"
-				},
-				{
-					"name": "HistoryFileName",
-					"value": "history.log"
-				}
-			]
-		},
-		"appenders": {
-			"Console": {
-				"name": "STDOUT",
-				"patternlayout": {
-					"pattern": "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
-				}
-			},
-			"RollingFile": [
+    "configuration": {
+        "status": "ERROR",
+        "monitorInterval": "30",
+        "properties": {
+            "property": [
+                {
+                    "name": "Directory",
+                    "value": "./signalk-static/logs"
+                },
+                {
+                    "name": "FileName",
+                    "value": "signalk.log"
+                }
+            ]
+        },
+        "appenders": {
+            "Console": {
+                "name": "STDOUT",
+                "patternlayout": {
+                    "pattern": "%d{HH:mm:ss.SSS} %-5level %c{1.} - %msg%n"
+                }
+            },
+            "RollingFile": [
                 {
                     "name": "File",
                     "fileName": "${Directory}/${FileName}",
@@ -42,74 +37,209 @@
                     "DefaultRolloverStrategy": {
                         "max": "10"
                     }
-                },
-                {
-                    "name": "History",
-                    "fileName": "${Directory}/${HistoryFileName}",
-                    "filePattern": "${Directory}/history-${date:yyyy-MM}/history-%d{MM-dd-yyyy}-%i.log",
-                    "PatternLayout": {
-                        "pattern": "%m%n"
-                    },
-                    "Policies": {
-                        "SizeBasedTriggeringPolicy": {
-                            "size": "10 MB"
-                        }
-                    },
-                    "DefaultRolloverStrategy": {
-                        "max": "10"
-                    }
                 }
             ]
-		},
-		"loggers": {
-
-			"root": {
-				"level": "error",
-				"appender-ref": [{
-					"ref": "STDOUT"
-				}, {
-					"ref": "File"
-				}]
-			},
-			"logger": [
-			{
-                "name": "nz.co.fortytwo.signalk.history",
-                "level": "INFO",
-                "additivity": false,
+        },
+        "loggers": {
+            "root": {
+                "level": "ERROR",
                 "appender-ref": [
                     {
-                        "ref": "History"
+                        "ref": "STDOUT"
+                    },
+                    {
+                        "ref": "File"
                     }
                 ]
             },
-            {
-				"name": "nz.co.fortytwo.signalk",
-				"level": "info"
-			},
-			{
-				"name": "nz.co.fortytwo.signalk.model",
-				"level": "error"
-			},
-			{
-				"name": "nz.co.fortytwo.signalk.handler",
-				"level": "error"
-			},
-			{
-				"name": "nz.co.fortytwo.signalk.processor",
-				"level": "error"
-			},
-			{
-				"name": "nz.co.fortytwo.signalk.util",
-				"level": "error"
-			},
-			{
-				"name": "org.apache.camel",
-				"level": "error"
-			},
-			{
-				"name": "mjson",
-				"level": "error"
-			}]
-		}
-	}
+            "logger": [
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.intercept",
+                    "level": "INFO",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk",
+                    "level": "ERROR",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.intercept.MapToDeltaInterceptor",
+                    "level": "WARN",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.intercept.UpdateMsgInterceptor",
+                    "level": "ERROR",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.util.Config",
+                    "level": "WARN",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.util.Util",
+                    "level": "WARN",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.server.SerialPortReader",
+                    "level": "ERROR",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.server.SerialPortManager",
+                    "level": "ERROR",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.service",
+                    "level": "ERROR",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.service.InfluxDbService",
+                    "level": "WARN",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.service.StaticService",
+                    "level": "ERROR",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.util.JsonSerializer",
+                    "level": "ERROR",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "org.atmosphere.nettosphere.BridgeRuntime",
+                    "level": "WARN",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "org.atmosphere.nettosphere",
+                    "level": "WARN",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "io.netty",
+                    "level": "WARN",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "org.apache.activemq.artemis",
+                    "level": "INFO",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "mjson",
+                    "level": "ERROR",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.service.ChartService",
+                    "level": "INFO",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.service.LogListService",
+                    "level": "WARN",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.service.GetLogService",
+                    "level": "WARN",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.intercept.GetMsgInterceptor",
+                    "level": "ERROR",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.service.SignalkMapConvertor",
+                    "level": "ERROR",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.server.Subscription",
+                    "level": "INFO",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.server.SubscriptionManagerService",
+                    "level": "INFO",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.server.ArtemisServer",
+                    "level": "INFO",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "com.sun.jersey",
+                    "level": "WARN",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "javax.ws.rs",
+                    "level": "WARN",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.service.SignalkStreamService",
+                    "level": "INFO",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "nz.co.fortytwo.signalk.artemis.service.BaseApiService",
+                    "level": "INFO",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "org.atmosphere.jersey.util.JerseyBroadcasterUtil",
+                    "level": "INFO",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
+                    "name": "org.atmosphere",
+                    "level": "INFO",
+                    "additivity": true,
+                    "appender-ref": []
+                }
+            ]
+        }
+    }
 }

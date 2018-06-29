@@ -1339,7 +1339,9 @@
         },
 		"required": [
 			"hawtio",
-			"jolokia"
+			"jolokia",
+			"environment",
+			"navigation"
 			]
       }
     }
