@@ -34,6 +34,7 @@ $ sudo update-alternatives --config java
 $ git clone https://github.com/SignalK/signalk-java.git
 $ cd signalk-java
 $ mvn exec:java
+//it may take a minute or two to fully boot up
 
 //there is a script that sets up your wifi, dns, and server auto-start.
 //its a bit troublesome at present, so YMMV
@@ -55,15 +56,13 @@ After the restart you should find:
 * webserver on `http://localhost:8080` if you have a screen and keyboard on the pi, otherwise `http://[ip_address_of_the_pi]:8080` 
 	* REST api on `http://localhost:8080/signalk/v1/api/`
 	* Authentication on `http://localhost:8080/signalk/v1/auth` - but its a pass all for now so you dont need to login
-* websockets server on `http://localhost:3000`. 
+* websockets server on `http://localhost:8080`. 
 * signalk output streamed as TCP over port 55555. On linux you can watch this with `$ ncat localhost 55555` **see below for subscriptions
 * signalk output streamed as UDP over port 55554.
 * nmea output will be streamed as TCP over port 55557. On linux you can watch this with `$ ncat localhost 55557`, or use telnet to connect.
 * nmea output will be streamed as UDP over port 55556.
 
 Try the apps. (Sailgauge is broken at present, expect a fix shortly.)
-
-It will be streaming a demo file of some sailing in San Francisco. The output includes AIS data.  It may take a few minutes to bring up the vessel, or you may need a second restart. If you edit the configuration and make demo=false (default=true), then it will stop doing that.
 
 Control logging by using the 'Log Configuration' button on the index page, or editing conf/log4j2.json. 
 

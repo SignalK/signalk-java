@@ -121,10 +121,10 @@
 						</div>
 						<div class="col-md-8">
 							<div class="col-md-3">
-								<a class="btn  btn-default" role="button" href="/signalk/v1/install/freeboard-sk">Install</a>
+								<a class="btn  btn-default" role="button" href="/signalk/apps/install?project=freeboard-sk&npm=true">Install</a>
 							</div>
 							<div class="col-md-3">
-								<a class="btn b btn-default" role="button" href="/signalk/v1/upgrade/freeboard-sk">Upgrade</a>
+								<a class="btn b btn-default" role="button" href="/signalk/apps/upgrade/?project=freeboard-sk&npm=true">Upgrade</a>
 							</div>
 							<p>The Freeboard Chartplotter, ported to Signal K <br/><a href="https://github.com/SignalK/freeboard-sk">https://github.com/SignalK/freeboard-sk</a></p>
 						</div>
@@ -135,10 +135,10 @@
 						</div>
 						<div class="col-md-8">
 							<div class="col-md-3">
-								<a class="btn  btn-default" role="button" href="/signalk/v1/install/instrumentpanel">Install</a>
+								<a class="btn  btn-default" role="button" href="/signalk/apps/install/?project=instrumentpanel&npm=true">Install</a>
 							</div>
 							<div class="col-md-3">
-								<a class="btn b btn-default" role="button" href="/signalk/v1/upgrade/instrumentpanel">Upgrade</a>
+								<a class="btn b btn-default" role="button" href="/signalk/apps/upgrade/?project=instrumentpanel&npm=true">Upgrade</a>
 							</div>
 							<p>The Signal K instrumentpanel project <br/> <a href="https://github.com/SignalK/instrumentpanel">https://github.com/SignalK/instrumentpanel</a></p>
 						</div>
@@ -150,10 +150,10 @@
 						</div>
 						<div class="col-md-8">
 							<div class="col-md-3">
-								<a class="btn  btn-default" role="button" href="/signalk/v1/install/sailgauge">Install</a>
+								<a class="btn  btn-default" role="button" href="/signalk/apps/install/?project=sailgauge&npm=true">Install</a>
 							</div>
 							<div class="col-md-3">
-								<a class="btn b btn-default" role="button" href="/signalk/v1/upgrade/sailgauge">Upgrade</a>
+								<a class="btn b btn-default" role="button" href="/signalk/apps/upgrade/?project=sailgauge&npm=true">Upgrade</a>
 							</div>
 							<p>The Signal K Sailgauge project <br/><a href="https://github.com/SignalK/sailgauge">https://github.com/SignalK/sailgauge</a></p>
 						</div>
@@ -190,22 +190,12 @@
 							<p>Manage the log4j logging, if you dont know what that is, dont go here</p>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-4">
-							<a id="hawtioBtn" class="btn btn-default btn-lg" role="button" href="#">Hawtio Management</a>
-						</div>
-						<div class="col-md-8">
-							<p>This launches the Hawtio management service if its turned on. Its JMX based, very technical, looks great and will be of little use unless you know java pretty well. 
-							If its turned off (default) you can access it remotely from other Hawtio management service servers. Very useful to watch/debug/trace your RPi from your laptop</p>
-						</div>
-					</div>
+					
 			</div>
 		</div>
 	</div>
 	<script>
 		$(document).ready(function(){
-			var url = 'http://'+window.location.hostname +':8000/hawtio';
-			jQuery('#hawtioBtn').attr('href', url );
 		
 			$.ajax({
 				url : "/signalk",
@@ -217,7 +207,7 @@
 			});
 			$("#restartBtn").on('click', function() {
 				$.ajax({
-					url : "/signalk/v1/restart",
+					url : "/signalk/control/restart",
 					dataType: "text",
 					success : function (data) {
 						alert(data);
