@@ -13,8 +13,9 @@ New Artemis Server
 ==================
 The old signalk-java server began long before signalk, and has changed so much its become too difficult to maintain. Its replaced by the Artemis server  (https://github.com/SignalK/artemis-server).
 
-To install the new server, or upgrade your current installation, see the 'ARTEMIS' notes in the Quickstart below. 
+To install the new artemis server, you need to switch to the artemis branch (https://github.com/SignalK/signalk-java/tree/artemis and follow the README.)
 
+The rest of this doc is for the old server install
 
 Security
 ========
@@ -27,6 +28,7 @@ Install on RPi
 See also https://github.com/SignalK/specification/wiki/Raspberry-Pi-Installation-(Java-Server)
 
 Quickstart
+----------
 
 In summary we already have java jdk8 on the pi, so we will install  git and maven.
 
