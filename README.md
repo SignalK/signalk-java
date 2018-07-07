@@ -16,7 +16,8 @@ __The various *.sh scripts are untried with raspbian jessie and the artemis serv
 
 See also https://github.com/SignalK/specification/wiki/Raspberry-Pi-Installation-(Java-Server)
 
-__This new version is easiest from a fresh install. Goto INSATLL.md__
+__This new version is easiest from a fresh install. __
+__Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.md) __
 
 Now open a modern web browser (eg not IE) to `http://[ip_address_of_the_pi]:8080`
 You should get a pretty start page! 
