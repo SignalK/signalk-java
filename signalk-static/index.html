@@ -125,6 +125,20 @@
 					</div>
 					<div class="row">
 						<div class="col-md-4">
+							<label class="btn  btn-lg">Shutdown or Restart</label>			
+						</div>
+						<div class="col-md-8">
+							<div class="col-md-3">
+								<a id="shutdownBtn"  class="btn  btn-default" role="button" href="#">Shutdown</a>
+							</div>
+							<div class="col-md-3">
+								<a id="restartBtn" class="btn b btn-default" role="button" href="#">Restart</a>
+							</div>
+							<p>Safely stop and start the server. Only works on RPi.</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
 							<label class="btn  btn-lg">Freeboard SK</label>
 						</div>
 						<div class="col-md-8">
@@ -166,20 +180,7 @@
 							<p>The Signal K Sailgauge project <br/><a href="https://github.com/SignalK/sailgauge">https://github.com/SignalK/sailgauge</a></p>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-4">
-							<label class="btn  btn-lg">Kip</label>			
-						</div>
-						<div class="col-md-8">
-							<div class="col-md-3">
-								<a class="btn  btn-default" role="button" href="/signalk/apps/install/?project=mxtommy/Kip&npm=true">Install</a>
-							</div>
-							<div class="col-md-3">
-								<a class="btn b btn-default" role="button" href="/signalk/apps/upgrade/?project=mxtommy/Kip&npm=true">Upgrade</a>
-							</div>
-							<p>The Signal K Kip project <br/><a href="https://github.com/mxtommy/Kip">https://github.com/mxtommy/Kip</a></p>
-						</div>
-					</div>
+					
 					<div class="row">
 						<div class="col-md-4">
 							<a id="cfgBtn" class="btn btn-default btn-lg" role="button" href="/config/config.html">Configuration</a>
@@ -196,14 +197,7 @@
 							<p>Manage Users and Security</p>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-4">
-							<a id="restartBtn" class="btn btn-default btn-lg" role="button" href="#">Restart Server</a>
-						</div>
-						<div class="col-md-8">
-							<p>Restart the server</p>
-						</div>
-					</div>
+					
 					<div class="row">
 						<div class="col-md-4">
 							<a id="logsBtn" class="btn btn-default btn-lg" role="button" href="/config/logList.html">Logs</a>
@@ -243,7 +237,19 @@
 						alert(data);
 					},
 					error : function (data) {
-						alert("Error:"+JSON.stringify(data));
+						alert("Error:"+JSON.stringify(data.responseText));
+					}
+				});
+			});
+			$("#shutdownBtn").on('click', function() {
+				$.ajax({
+					url : "/signalk/control/shutdown",
+					dataType: "text",
+					success : function (data) {
+						alert(data);
+					},
+					error : function (data) {
+						alert("Error:"+JSON.stringify(data.responseText));
 					}
 				});
 			});
