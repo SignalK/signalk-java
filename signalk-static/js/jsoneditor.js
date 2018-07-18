@@ -7534,8 +7534,8 @@ JSONEditor.defaults.themes.bootstrap2 = JSONEditor.AbstractTheme.extend({
   getTable: function() {
     var el = document.createElement('table');
     el.className = 'table table-bordered';
-    el.style.width = 'auto';
-    el.style.maxWidth = 'none';
+    //el.style.width = 'auto';
+    //el.style.maxWidth = 'none';
     return el;
   },
   addInputError: function(input,text) {
@@ -7780,8 +7780,8 @@ JSONEditor.defaults.themes.bootstrap3 = JSONEditor.AbstractTheme.extend({
   getTable: function() {
     var el = document.createElement('table');
     el.className = 'table table-bordered';
-    el.style.width = 'auto';
-    el.style.maxWidth = 'none';
+    //el.style.width = 'auto';
+    //el.style.maxWidth = 'none';
     return el;
   },
 
@@ -7972,8 +7972,8 @@ JSONEditor.defaults.themes.bootstrap4 = JSONEditor.AbstractTheme.extend({
   getTable: function() {
     var el = document.createElement("table");
     el.className = "table-bordered table-sm";
-    el.style.width = "auto";
-    el.style.maxWidth = "none";
+    //el.style.width = "auto";
+    //el.style.maxWidth = "none";
     return el;
   },
 

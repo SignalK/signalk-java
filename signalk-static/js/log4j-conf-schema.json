@@ -1,133 +1,132 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "title": "Log4j Configuration",
-  "description": "Control logging output",
-  "properties": {
-    "configuration": {
-      "type": "object",
-      "title": "Configuration",
-      "description": "",
-      "format":"grid",
-      "properties": {
-        "status": {
-          "type": "string",
-          "minLength": 1,
-          "title": "Root logger level",
-          "description": "From most detailed to least: TRACE, DEBUG, INFO, WARN, ERROR, FATAL",
-          "default": "ERROR",
-          "enum": [
-		                "FATAL",
-		                "ERROR",
-		                "WARN",
-		                "INFO",
-		                "DEBUG",
-		                "TRACE"
-		              ],
-          "id": "status"
-        },
-        "monitorInterval": {
-          "type": "string",
-          "minLength": 1,
-          "title": "Reload Config Interval",
-          "description": "The configuration is reloaded every n seconds to allow dynamic changes to apply",
-          "default": "30",
-          "id": "monitorInterval"
-        },
-        "properties": {
-          "type": "object",
-          "title": "Properties",
-          "description": "Add/edit properties as required",
-          "properties": {
-            "property": {
-              "type": "array",
-              "uniqueItems": false,
-              "title": " ",
-              "format": "table",
-              "items": {
-                "type": "object",
-                "title": "Property",
-                "description": "The property key",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "title": "Key",
-                    "id": "name"
-                  },
-                  "value": {
-                    "type": "string",
-                    "minLength": 1,
-                    "title": "Value",
-                    "id": "value"
-                  }
-                },
-                "id": "1",
-                "required": [
-                  "name",
-                  "value"
-                ]
-              },
-              "id": "property"
-            }
-          },
-          "id": "properties",
-          "required": [
-            "property"
-          ]
-        },
-        "appenders": {
-          "type": "object",
-          "title": "Log4j2 Appenders",
-          "description": "Add/edit appenders as required",
-          "properties": {
-            "Console": {
-              "type": "object",
-              "title": "Console",
-              "description": "Console appender writes to std out and std error, eg the console",
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "minLength": 1,
-                  "title": "Name",
-                  "default": "STDOUT",
-                  "id": "name"
-                },
-                "patternlayout": {
-                  "type": "object",
-                  "title": "Pattern layout",
-                  "description": "Log output format",
-                  "properties": {
-                    "pattern": {
-                      "type": "string",
-                      "minLength": 1,
-                      "title": "Pattern",
-                      "default": "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n",
-                      "id": "pattern"
-                    }
-                  },
-                  "id": "patternlayout",
-                  "required": [
-                    "pattern"
-                  ]
-                }
-              },
-              "id": "Console",
-              "required": [
-                "name",
-                "patternlayout"
-              ]
-            },
-            "RollingFile": {
-            	"type": "array",
-              "uniqueItems": false,
-              "title": " ",
-              "format": "tabs",
-              "items": {
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"title": "Log4j Configuration",
+	"description": "Control logging output",
+	"properties": {
+		"configuration": {
+			"type": "object",
+			"title": "Configuration",
+			"description": "",
+			"format": "grid",
+			"properties": {
+				"status": {
+					"type": "string",
+					"minLength": 1,
+					"title": "Root logger level",
+					"description": "From most detailed to least: TRACE, DEBUG, INFO, WARN, ERROR, FATAL",
+					"default": "ERROR",
+					"enum": [
+						"FATAL",
+						"ERROR",
+						"WARN",
+						"INFO",
+						"DEBUG",
+						"TRACE"
+					],
+					"id": "status"
+				},
+				"monitorInterval": {
+					"type": "string",
+					"minLength": 1,
+					"title": "Reload Config Interval",
+					"description": "The configuration is reloaded every n seconds to allow dynamic changes to apply",
+					"default": "30",
+					"id": "monitorInterval"
+				},
+				"properties": {
+					"type": "object",
+					"title": "Properties",
+					"description": "Add/edit properties as required",
+					"properties": {
+						"property": {
+							"type": "array",
+							"uniqueItems": false,
+							"title": " ",
+							"format": "table",
+							"items": {
+								"type": "object",
+								"title": "Property",
+								"description": "The property key",
+								"properties": {
+									"name": {
+										"type": "string",
+										"minLength": 1,
+										"title": "Key",
+										"id": "name"
+									},
+									"value": {
+										"type": "string",
+										"minLength": 1,
+										"title": "Value",
+										"id": "value"
+									}
+								},
+								"id": "1",
+								"required": [
+									"name",
+									"value"
+								]
+							},
+							"id": "property"
+						}
+					},
+					"id": "properties",
+					"required": [
+						"property"
+					]
+				},
+				"appenders": {
+					"type": "object",
+					"title": "Log4j2 Appenders",
+					"description": "Add/edit appenders as required",
+					"properties": {
+						"Console": {
+							"type": "object",
+							"title": "Console",
+							"description": "Console appender writes to std out and std error, eg the console",
+							"properties": {
+								"name": {
+									"type": "string",
+									"minLength": 1,
+									"title": "Name",
+									"default": "STDOUT",
+									"id": "name"
+								},
+								"patternlayout": {
+									"type": "object",
+									"title": "Pattern layout",
+									"description": "Log output format",
+									"properties": {
+										"pattern": {
+											"type": "string",
+											"minLength": 1,
+											"title": "Pattern",
+											"default": "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n",
+											"id": "pattern"
+										}
+									},
+									"id": "patternlayout",
+									"required": [
+										"pattern"
+									]
+								}
+							},
+							"id": "Console",
+							"required": [
+								"name",
+								"patternlayout"
+							]
+						},
+						"RollingFile": {
+							"type": "array",
+							"uniqueItems": false,
+							"title": " ",
+							"format": "tabs",
+							"items": {
 								"type": "object",
 								"title": "Rolling File",
 								"description": "Log to file, rolling after time or size limit is reached",
-								
 								"properties": {
 									"name": {
 										"type": "string",
@@ -229,129 +228,122 @@
 									"DefaultRolloverStrategy"
 								]
 							}
-            }
-          },
-          "id": "appenders",
-          "required": [
-            "Console",
-            "RollingFile"
-          ]
-        },
-        "loggers": {
-          "type": "object",
-          "title": "Loggers",
-          "description": "Define the individual loggers",
-          "options": {
-		    "remove_empty_properties": true
-		  },
-          "properties": {
-            "root": {
-              "type": "object",
-              "title": "Root Logger",
-              "description": "The root logger",
-              
-              "properties": {
-                "level": {
-                  "type": "string",
-                 
-                  "minLength": 1,
-                  "title": "Level",
-                  "description": "From most detailed to least: TRACE, DEBUG, INFO, WARN, ERROR, FATAL",
-                  "default": "ERROR",
-                  "enum": [
-		                "FATAL",
-		                "ERROR",
-		                "WARN",
-		                "INFO",
-		                "DEBUG",
-		                "TRACE"
-		              ],
-		           
-                  "id": "level"
-                },
-                "appender-ref": {
-                  "type": "array",
-                  "uniqueItems": false,
-                  "options": {
-				    "remove_empty_properties": true
-				  },
-                  "title": "Target Appenders",
-                  "description": "Log to these appenders",
-                  "format": "table",
-                  "items": {
-                    "type": "object",
-                    "title": "Appender",
-                    "properties": {
-                      "ref": {
-                        "type": "string",
-                        "minLength": 1,
-                        "title": "Appender Name",
-                        "description": "The name of this appender",
-                        "default": "File",
-                        "id": "ref"
-                      }
-                    },
-                    "id": "1",
-                    "required": [
-                      "ref"
-                    ]
-                  },
-                  "id": "appender-ref"
-                }
-              },
-              "id": "root",
-              "required": [
-                "level"
-              ]
-            },
-            "logger": {
-              "type": "array",
-              "uniqueItems": false,
-              "title": "Loggers",
-              "description": "Name: The package name of the logger, eg nz.co.fortytwo.signalk.server,<br/>Level: select from list",
-              "format": "table",
-              
-              "items": {
-                "type": "object",
-                "title": "Logger",
-                "description": "A logger instance.",
-                "format": "grid",
-                
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "title": "Name",
-                    
-                    "default": "nz.co.fortytwo.signalk",
-                    "id": "name"
-                  },
-                  "level": {
-                    "type": "string",
-                    "enum": [
-		                "FATAL",
-		                "ERROR",
-		                "WARN",
-		                "INFO",
-		                "DEBUG",
-		                "TRACE"
-		              ],
-                    "title": "Level",
-                    
-                    "default": "ERROR",
-                    "id": "level",
-                    "options": {
-												"input_width":"150px"
+						}
+					},
+					"id": "appenders",
+					"required": [
+						"Console",
+						"RollingFile"
+					]
+				},
+				"loggers": {
+					"type": "object",
+					"title": "Loggers",
+					"description": "Define the individual loggers",
+					"options": {
+						"remove_empty_properties": true
+					},
+					"properties": {
+						"root": {
+							"type": "object",
+							"title": "Root Logger",
+							"description": "The root logger",
+							"properties": {
+								"level": {
+									"type": "string",
+									"minLength": 1,
+									"title": "Level",
+									"description": "From most detailed to least: TRACE, DEBUG, INFO, WARN, ERROR, FATAL",
+									"default": "ERROR",
+									"enum": [
+										"FATAL",
+										"ERROR",
+										"WARN",
+										"INFO",
+										"DEBUG",
+										"TRACE"
+									],
+									"id": "level"
+								},
+								"appender-ref": {
+									"type": "array",
+									"uniqueItems": false,
+									"options": {
+										"remove_empty_properties": true
+									},
+									"title": "Target Appenders",
+									"description": "Log to these appenders",
+									"format": "table",
+									"items": {
+										"type": "object",
+										"title": "Appender",
+										"properties": {
+											"ref": {
+												"type": "string",
+												"minLength": 1,
+												"title": "Appender Name",
+												"description": "The name of this appender",
+												"default": "File",
+												"id": "ref"
 											}
-                  },
-									"additivity":{
+										},
+										"id": "1",
+										"required": [
+											"ref"
+										]
+									},
+									"id": "appender-ref"
+								}
+							},
+							"id": "root",
+							"required": [
+								"level"
+							]
+						},
+						"logger": {
+							"type": "array",
+							"uniqueItems": false,
+							"title": "Loggers",
+							"description": "Name: The package name of the logger, eg nz.co.fortytwo.signalk.server,<br/>Level: select from list",
+							"format": "table",
+							"items": {
+								"type": "object",
+								"title": "Logger",
+								"description": "A logger instance.",
+								"format": "grid",
+								"properties": {
+									"name": {
+										"type": "string",
+										"minLength": 1,
+										"title": "Name",
+										"default": "nz.co.fortytwo.signalk",
+										"id": "name"
+									},
+									"level": {
+										"type": "string",
+										"enum": [
+											"FATAL",
+											"ERROR",
+											"WARN",
+											"INFO",
+											"DEBUG",
+											"TRACE"
+										],
+										"title": "Level",
+										"default": "ERROR",
+										"id": "level",
+										"options": {
+											"input_width": "150px"
+										}
+									},
+									"additivity": {
 										"type": "boolean",
 										"title": "Additivity",
 										"default": true,
 										"id": "additivity",
 										"options": {
-												"hidden":true
-											}
+											"hidden": true
+										}
 									},
 									"appender-ref": {
 										"type": "array",
@@ -360,11 +352,12 @@
 										"description": "Log to these appenders",
 										"format": "table",
 										"options": {
-												"disable_array_add": true,
-												"disable_array_delete": true,
-												"input_width":"100px",
-												"remove_empty_properties":true
-											},
+											"disable_array_add": true,
+											"disable_array_delete": true,
+											"input_width": "100px",
+											"remove_empty_properties": true,
+											"hidden": true
+										},
 										"items": {
 											"type": "object",
 											"title": "Appender",
@@ -384,35 +377,35 @@
 										},
 										"id": "appender-ref"
 									}
-                },
-                "id": "1",
-                "required": [
-                  "name",
-                  "level"
-                ]
-              },
-              "id": "logger"
-            }
-          },
-          "id": "loggers",
-          "required": [
-            "root",
-            "logger"
-          ]
-        }
-      },
-      "id": "configuration",
-      "required": [
-        "status",
-        "monitorInterval",
-        "properties",
-        "appenders",
-        "loggers"
-      ]
-    }
-  },
-  "id": "/",
-  "required": [
-    "configuration"
-  ]
+								},
+								"id": "1",
+								"required": [
+									"name",
+									"level"
+								]
+							},
+							"id": "logger"
+						}
+					},
+					"id": "loggers",
+					"required": [
+						"root",
+						"logger"
+					]
+				}
+			},
+			"id": "configuration",
+			"required": [
+				"status",
+				"monitorInterval",
+				"properties",
+				"appenders",
+				"loggers"
+			]
+		}
+	},
+	"id": "/",
+	"required": [
+		"configuration"
+	]
 }
