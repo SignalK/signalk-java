@@ -45,7 +45,7 @@
 			        <div class="progress-bar progress-bar-success"></div>
 			    </div>
 			    <!-- The container for the uploaded files -->
-			    <div id="files" class="files"></div>
+			    <div id="filenames" class="files"></div>
 		</div>
 	</div>
 
@@ -61,9 +61,15 @@ $(function () {
         dataType: 'json',
         maxChunkSize: 1048000,
         done: function (e, data) {
-            $.each(data.result.files, function (index, file) {
-                $('<p/>').text(file.name).appendTo('#files');
-            });
+            $("<p/>").text(data.result.name+' = '+data.textStatus).appendTo('#filenames');
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+        	console.log(jqXHR);
+            $("<p/>").text(jqXHR.responseText).appendTo('#filenames');
+            $('#progress .progress-bar').css(
+                    'width',
+                    '0%'
+                );
         },
         progressall: function (e, data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);
