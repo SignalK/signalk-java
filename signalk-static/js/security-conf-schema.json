@@ -269,6 +269,121 @@
 				]
 			}
 		},
+		"net": {
+          "id": "http://jsonschema.net/signalk/config/server/security",
+          "type": "object",
+          "additionalProperties": false,
+          "title": "Network Access",
+          "description": "Control access by network or IP",
+          "format": "categories",
+          "name": "net",
+          "required": [
+            "deny",
+            "white",
+            "config"
+          ],
+          "properties": {
+            "deny": {
+              "id": "http://jsonschema.net/signalk/config/server/security/deny",
+              "type": "object",
+              "additionalProperties": false,
+              "title": "Black List",
+              "description": "Deny these source addresses",
+              "name": "deny",
+              "required": [
+                "ip"
+              ],
+              "properties": {
+                "ip": {
+                  "id": "http://jsonschema.net/signalk/config/server/security/deny/ip",
+                  "type": "array",
+                  "minItems": 0,
+                  "uniqueItems": true,
+                  "additionalItems": true,
+                  "title": "IP Address",
+                  "description": "Deny from IP (eg 192.168.0.1) or network (eg  or 192.186.0.0/24)",
+                  "name": "ip",
+                  "format": "table",
+                  "items": {
+                    "id": "http://jsonschema.net/signalk/config/server/security/deny/ip/0",
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "IP address",
+                    "description": "",
+                    "name": "0",
+                    "default": ""
+                  }
+                }
+              }
+            },
+            "white": {
+              "id": "http://jsonschema.net/signalk/config/server/security/white",
+              "type": "object",
+              "additionalProperties": false,
+              "title": "White List",
+              "description": "Always allow from these addresses",
+              "name": "white",
+              "required": [
+                "ip"
+              ],
+              "properties": {
+                "ip": {
+                  "id": "http://jsonschema.net/signalk/config/server/security/white/ip",
+                  "type": "array",
+                  "minItems": 0,
+                  "uniqueItems": true,
+                  "additionalItems": true,
+                  "title": "IP Address",
+                  "description": "Allow from IP (eg 192.168.0.1) or network (eg  or 192.186.0.0/24)",
+                  "name": "ip",
+                  "format": "table",
+                  "items": {
+                    "id": "http://jsonschema.net/signalk/config/server/security/white/ip/0",
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "IP address",
+                    "description": "",
+                    "name": "0",
+                    "default": ""
+                  }
+                }
+              }
+            },
+            "config": {
+              "id": "http://jsonschema.net/signalk/config/server/security/config",
+              "type": "object",
+              "additionalProperties": false,
+              "title": "Config List",
+              "description": "Limit access to configuration",
+              "name": "config",
+              "required": [
+                "ip"
+              ],
+              "properties": {
+                "ip": {
+                  "id": "http://jsonschema.net/signalk/config/server/security/config/ip",
+                  "type": "array",
+                  "minItems": 0,
+                  "uniqueItems": true,
+                  "additionalItems": true,
+                  "title": "IP Address",
+                  "description": "Allow from IP (eg 192.168.0.1) or network (eg  or 192.186.0.0/24)",
+                  "name": "ip",
+                  "format": "table",
+                  "items": {
+                    "id": "http://jsonschema.net/signalk/config/server/security/config/ip/0",
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "IP address",
+                    "description": "",
+                    "name": "0",
+                    "default": ""
+                  }
+                }
+              }
+            }
+          }
+        },
 		"roles": {
 			"type": "object",
 			"title": "Roles",
@@ -388,6 +503,7 @@
 		},
 		"required": [
 			"users",
+			"net",
 			"roles"
 		]
 	}

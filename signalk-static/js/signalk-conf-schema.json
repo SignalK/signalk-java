@@ -13,6 +13,7 @@
       "additionalProperties": false,
       "title": "Config",
       "description": "Configuration",
+      "format": "categories",
       "name": "config",
       "properties": {
         "server": {
@@ -22,6 +23,8 @@
           "title": "Server",
           "description": "Configuration for the server",
           "name": "server",
+          "format": "categories",
+  		  "basicCategoryTitle": "Version",
           "properties": {
             "vessel": {
               "id": "http://jsonschema.net/signalk/config/server/vessel",
@@ -29,7 +32,7 @@
               "additionalProperties": false,
               "title": "Vessel",
               "description": "",
-              "format": "grid",
+             
               "name": "vessel",
               "properties": {
                 "uuid": {
@@ -78,6 +81,8 @@
                   "type": "object",
                   "name": "registrations",
                   "title": "Registrations",
+                  "format": "categories",
+              	  "basicCategoryTitle": "IMO",
                   "description": "The various registrations of the vessel.",
                   "example": "eg for a New Zealand Part B recreational vessel: 'NZ654'",
                   "properties": {
@@ -314,9 +319,10 @@
               "id": "http://jsonschema.net/signalk/config/server/files",
               "type": "object",
               "additionalProperties": false,
-              "title": "Configuration Files",
+              "title": "File Locations",
               "description": "",
               "name": "files",
+               "format": "categories",
               "properties": {
                 "static": {
                   "id": "http://jsonschema.net/signalk/config/server/files/static",
@@ -396,120 +402,7 @@
                 }
               }
             },
-            "security": {
-              "id": "http://jsonschema.net/signalk/config/server/security",
-              "type": "object",
-              "additionalProperties": false,
-              "title": "Security",
-              "description": "Control access and updates",
-              "name": "security",
-              "required": [
-                "deny",
-                "white",
-                "config"
-              ],
-              "properties": {
-                "deny": {
-                  "id": "http://jsonschema.net/signalk/config/server/security/deny",
-                  "type": "object",
-                  "additionalProperties": false,
-                  "title": "Deny List",
-                  "description": "",
-                  "name": "deny",
-                  "required": [
-                    "ip"
-                  ],
-                  "properties": {
-                    "ip": {
-                      "id": "http://jsonschema.net/signalk/config/server/security/deny/ip",
-                      "type": "array",
-                      "minItems": 0,
-                      "uniqueItems": true,
-                      "additionalItems": true,
-                      "title": "IP Address",
-                      "description": "IP address of denied clients, eg 192.168.0.1",
-                      "name": "ip",
-                      "format": "table",
-                      "items": {
-                        "id": "http://jsonschema.net/signalk/config/server/security/deny/ip/0",
-                        "type": "string",
-                        "minLength": 1,
-                        "title": "IP address",
-                        "description": "",
-                        "name": "0",
-                        "default": ""
-                      }
-                    }
-                  }
-                },
-                "white": {
-                  "id": "http://jsonschema.net/signalk/config/server/security/white",
-                  "type": "object",
-                  "additionalProperties": false,
-                  "title": "White List",
-                  "description": "",
-                  "name": "white",
-                  "required": [
-                    "ip"
-                  ],
-                  "properties": {
-                    "ip": {
-                      "id": "http://jsonschema.net/signalk/config/server/security/white/ip",
-                      "type": "array",
-                      "minItems": 0,
-                      "uniqueItems": true,
-                      "additionalItems": true,
-                      "title": "IP Address",
-                      "description": "IP address of trusted clients, eg 192.168.0.1",
-                      "name": "ip",
-                      "format": "table",
-                      "items": {
-                        "id": "http://jsonschema.net/signalk/config/server/security/white/ip/0",
-                        "type": "string",
-                        "minLength": 1,
-                        "title": "IP address",
-                        "description": "",
-                        "name": "0",
-                        "default": ""
-                      }
-                    }
-                  }
-                },
-                "config": {
-                  "id": "http://jsonschema.net/signalk/config/server/security/config",
-                  "type": "object",
-                  "additionalProperties": false,
-                  "title": "Config List",
-                  "description": "",
-                  "name": "config",
-                  "required": [
-                    "ip"
-                  ],
-                  "properties": {
-                    "ip": {
-                      "id": "http://jsonschema.net/signalk/config/server/security/config/ip",
-                      "type": "array",
-                      "minItems": 0,
-                      "uniqueItems": true,
-                      "additionalItems": true,
-                      "title": "IP Address",
-                      "description": "IP address of clients that can change configuration, eg 192.168.0.1",
-                      "name": "ip",
-                      "format": "table",
-                      "items": {
-                        "id": "http://jsonschema.net/signalk/config/server/security/config/ip/0",
-                        "type": "string",
-                        "minLength": 1,
-                        "title": "IP address",
-                        "description": "",
-                        "name": "0",
-                        "default": ""
-                      }
-                    }
-                  }
-                }
-              }
-            },
+            
             "client": {
               "id": "http://jsonschema.net/signalk/config/server/client",
               "type": "object",
@@ -517,6 +410,7 @@
               "title": "Client connections",
               "description": "Connections to other Signalk servers",
               "name": "client",
+              "format": "categories",
               "required": [
                 "ws",
                 "tcp",
@@ -789,7 +683,7 @@
               "title": "Server configuration",
               "description": "",
               "name": "server",
-              "format": "grid",
+              "format": "categories",
               "properties": {
                 "mqtt": {
                   "id": "http://jsonschema.net/signalk/config/server/server/mqtt",
@@ -862,7 +756,7 @@
                   "title": "Udp",
                   "description": "Serve signalk over Udp",
                   "name": "udp",
-                  "format": "grid",
+                  "format": "table",
                   "properties": {
                     "port": {
                       "id": "http://jsonschema.net/signalk/config/server/server/udp/port",
@@ -1048,7 +942,6 @@
             "version",
             "files",
             "xmpp",
-            "security",
             "client",
             "serial",
             "clock",
