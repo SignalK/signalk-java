@@ -46,12 +46,20 @@
 		</div>
 		<ul class="nav nav-tabs">
 		  <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
-		  <li><a data-toggle="tab" href="#server">Server</a></li>
+		  <li><a data-toggle="tab" href="#manage">Manage Apps</a></li>
+		  <li><a data-toggle="tab" href="#server">Manage Server</a></li>
+		  <li><a data-toggle="tab" href="#api">Signalk Api</a></li>
+		  
 		</ul>
 		<div class="tab-content">
 			
 			<div id="home" class="tab-pane fade in active">
-				
+				<div class="col-md-9">
+						<p></p>
+							<p>The blue buttons launch applications that must be separately installed to your signalk server.  
+								Use the <i>Manage Apps</i> tab to do this.</p>
+						<p></p>
+							</div>
 					<div class="row">
 						<div class="col-md-4">
 							<a class="btn btn-primary btn-lg" role="button" href="./freeboard-sk/">Freeboard SK</a>
@@ -88,53 +96,13 @@
 					<div class="row">
 						<p></p>
 					</div>
-					<div class="row">
-						<div class="col-md-4">
-							<a id="logsBtn" class="btn btn-default btn-lg" role="button" href="/config/upload.html">Upload Charts</a>
-						</div>
-						<div class="col-md-8">
-							<p>Upload charts</p>
-						</div>
-					</div>
 					
-					<div class="row">
-						<div class="col-md-4">
-							<a class="btn btn-default btn-lg" role="button" href="/signalk/v1/api/vessels/*">Signal K REST API</a>
-						</div>
-						<div class="col-md-8">
-							<p>The REST API lets you make calls with a web browser to get data from the Signal K server. By default it will open at <i>http://localhost:8080/signalk/v1/api/vessels/*</i></p>
-							<p>You can navigate through the tree by appending directories as you would for files, 
-								eg <a href="/signalk/v1/api/vessels/self/navigation" >http://..../signalk/v1/api/vessels/self/navigation</a> or <a href="/signalk/v1/api/vessels/self/environment" >http://.../signalk/v1/api/vessels/self/environment</a></p>
-							<p>The content mime type is application/json, your browser may not display it directly. 
-								On firefox just install <a href="https://addons.mozilla.org/en-us/firefox/addon/jsonovich/?src=search">https://addons.mozilla.org/en-us/firefox/addon/jsonovich/?src=search</a></p>
-						</div>
-					</div>
 				</div>
-			<div id="server" class="tab-pane fade in ">
-				
+			<div id="manage" class="tab-pane fade in ">
 					<div class="row">
-						<div id="addresses" class="col-md-4">
-						</div>
+						
 						<div class="col-md-8">
-							<h4>Server Installation</h4>
-							<div class="col-md-9">
-							<p>The three blue buttons launch applications that must be separately installed to your signalk server.  
-								Use the relevant <b>Install</b> or <b>Upgrade</b> buttons to do this.</p>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-4">
-							<label class="btn  btn-lg">Shutdown or Restart</label>			
-						</div>
-						<div class="col-md-8">
-							<div class="col-md-3">
-								<a id="shutdownBtn"  class="btn  btn-default" role="button" href="#">Shutdown</a>
-							</div>
-							<div class="col-md-3">
-								<a id="restartBtn" class="btn b btn-default" role="button" href="#">Restart</a>
-							</div>
-							<p>Safely stop and start the server. Only works on RPi.</p>
+							<h4>App Management</h4>
 						</div>
 					</div>
 					<div class="row">
@@ -193,6 +161,48 @@
 								<a class="btn b btn-default" role="button" href="/signalk/apps/upgrade/?project=mxtommy/Kip&npm=true">Upgrade</a>
 							</div>
 							<p>The Signal K Kip project <br/><a href="https://github.com/mxtommy/Kip">https://github.com/mxtommy/Kip</a></p>
+						</div>
+					</div>
+			</div>
+			
+			<div id="api" class="tab-pane fade in ">
+					<div class="row">
+						<div class="col-md-4">
+							<a class="btn btn-default btn-lg" role="button" href="/signalk/v1/api/vessels/*">Signal K REST API</a>
+						</div>
+						<div class="col-md-8">
+							<p>The REST API lets you make calls with a web browser to get data from the Signal K server. By default it will open at <i>http://localhost:8080/signalk/v1/api/vessels/*</i></p>
+							<p>You can navigate through the tree by appending directories as you would for files, 
+								eg <a href="/signalk/v1/api/vessels/self/navigation" >http://..../signalk/v1/api/vessels/self/navigation</a> or <a href="/signalk/v1/api/vessels/self/environment" >http://.../signalk/v1/api/vessels/self/environment</a></p>
+							<p>The content mime type is application/json, your browser may not display it directly. 
+								On firefox just install <a href="https://addons.mozilla.org/en-us/firefox/addon/jsonovich/?src=search">https://addons.mozilla.org/en-us/firefox/addon/jsonovich/?src=search</a></p>
+						</div>
+					</div>
+			</div>
+			<div id="server" class="tab-pane fade in ">
+				
+					
+					<div class="row">
+						<div id="addresses" class="col-md-4">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-8">
+							<div class="col-md-3">
+								<a id="shutdownBtn"  class="btn  btn-default btn-lg" role="button" href="#">Shutdown</a>
+							</div>
+							<div class="col-md-3">
+								<a id="restartBtn" class="btn b btn-default btn-lg" role="button" href="#">Restart</a>
+							</div>
+							<p>Safely stop and start the server. Only works on RPi.</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<a id="logsBtn" class="btn btn-default btn-lg" role="button" href="/config/upload.html">Upload Charts</a>
+						</div>
+						<div class="col-md-8">
+							<p>Upload charts</p>
 						</div>
 					</div>
 					<div class="row">

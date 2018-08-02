@@ -259,6 +259,15 @@
 								"public"
 							]
 						}
+					},
+					"hash": {
+						"type": "string",
+						"title": "Hash ",
+						"description": "Hashed password",
+						"options": {
+						    "hidden": true
+						  }
+						
 					}
 				},
 				"required": [
