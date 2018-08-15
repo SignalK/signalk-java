@@ -9,11 +9,8 @@ SIGNALK_HOME=`pwd`
 cd $SIGNALK_HOME
 mkdir -p signalk-static/logs
 
-#temporary until linux-arm.jar is in purejavacom.jar
-export LD_LIBRARY_PATH=$SIGNALK_HOME/jna
-
 EXT="-Djava.util.Arrays.useLegacyMergeSort=true"
-MEM="-Xmx32m -XX:PermSize=32m -XX:MaxPermSize=48m"
+MEM="-Xmx128m -XX:PermSize=128m -XX:MaxPermSize=48m"
 HAWTIO=-Dhawtio.authenticationEnabled=false
 LOG4J=-Dlog4j.configuration=file://$SIGNALK_HOME/conf/log4j2.json
 
