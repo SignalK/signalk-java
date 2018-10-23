@@ -24,6 +24,11 @@ pi@raspberrypi:~ $ sudo apt-get update
 pi@raspberrypi:~ $ sudo apt-get upgrade
 ```
 
+Install latest java 8
+---------------------
+
+Follow the instructions at https://gist.github.com/ribasco/fff7d30b31807eb02b32bcf35164f11f
+
 Install helpful things
 ----------------------
 ```
