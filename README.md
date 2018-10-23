@@ -23,19 +23,21 @@ NOTE: WINDOWS users: no spaces in dir/file names, you will cause yourself pain :
 
 Follow the instructions for each to suit your platform.
 
-Create a suitable directory to install signalk-java. eg C:\dev\
-```
-# Change to the dir
- cd dev/
-# clone signalk-java
-git clone https://github.com/SignalK/signalk-java.git
-# change to signalk-java dir
-cd signalk-java
-# execute maven
-mvn exec:java
+You need to be able to type 'java' on the command line and get java responding, same for maven and git.
 
+Create a suitable directory to install signalk-java. eg C:\dev\
+
+Thats all the prep, then open a command console:
+```
+C:\dev> git clone https://github.com/SignalK/signalk-java.git
+C:\dev\> cd signalk-java
+C:\dev\signalk-java> git checkout artemis
+C:\dev\signalk-java> mvn exec:java
 ```
 Maven will install all the required components and start the application.  
+
+You should now have a SignalK server running, on http://localhost:8080
+
 
 Install on RPi
 --------------
@@ -44,7 +46,7 @@ __The various *.sh scripts are untried with raspbian jessie and the artemis serv
 
 See also https://github.com/SignalK/specification/wiki/Raspberry-Pi-Installation-(Java-Server)
 
-This new version is easiest from a fresh install.
+This new version is easiest from a complete fresh RPi install.
 
 __Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.md)__
 
@@ -89,23 +91,6 @@ Try:
 
 Devices (aka GPS) attached on serial>USB adaptors will be automatically found and used. The input can be NMEA0183 compatibleor signalk, and expects 38400 baud by default. The configuration can be changed by editing the configuration
 
-
-Installation for Windows
-------------------------
-
-You will need Java 1.8+ installed, maven3 (https://maven.apache.org/install.html), and git (https://git-scm.com/downloads). 
-You need to be able to type 'java' on the command line and get java responding, same for maven and git.
-
-Thats all the prep, then open a command console:
-```
-C:\dev> git clone https://github.com/SignalK/signalk-java.git
-C:\dev\> cd signalk-java
-C:\dev\signalk-java> mvn exec:java
-```
-
-NOTE: Windows users - DONT put any of this in directories with spaces or anything but simple ascii names. Use something like eg C:\dev\signalk-server
-
-You should now have a SignalK server running, on http://localhost:8080. There is a menu page there that allows you to access the following:
 
 Development
 -----------
