@@ -9,6 +9,34 @@ Its also possible (and should be quite simple) on a windows PC, but you have to 
 
 Provided under an Apache 2 licence
 
+Install on PC
+--------------
+
+First do a standard installation fo Java and Influxdb for your platform:
+
+NOTE: WINDOWS users: no spaces in dir/file names, you will cause yourself pain :-(
+
+* Java SE 8 : https://java.com/en/download/
+* InfluxDb (1.6+): https://portal.influxdata.com/downloads#influxdb
+* Apache Maven 3+: https://maven.apache.org/download.cgi
+* Git: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+
+Follow the instructions for each to suit your platform.
+
+Create a suitable directory to install signalk-java. eg C:\dev\
+```
+# Change to the dir
+ cd dev/
+# clone signalk-java
+git clone https://github.com/SignalK/signalk-java.git
+# change to signalk-java dir
+cd signalk-java
+# execute maven
+mvn exec:java
+
+```
+Maven will install all the required components and start the application.  
+
 Install on RPi
 --------------
 
