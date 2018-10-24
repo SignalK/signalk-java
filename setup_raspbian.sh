@@ -141,15 +141,15 @@ cat << EOF
 
                !!!WARNING!!!
 
-You're about to set up this rasian server to run freeboard. This script will
+You're about to set up this raspbian server to run the Artemis signalk server. This script will
 modify your system to do just that. It's developed and tested to work on a
-vanilla 'Raspbian Jessie - Lite' image.
+vanilla 'Raspbian Stretch - Lite' image.
 
 You should have already:
 
-  1) Run raspi-congig to:
+  1) Run raspi-config to:
 
-    * Change the password for your rasian install
+    * Change the password for your rasbian install
 
     * Expand the filesystem to make entire SD card space available
 
@@ -237,11 +237,33 @@ ensure_package_installed "lsb-release"
 LSB_ID=$(lsb_release -is)
 LSB_CODENAME=$(lsb_release -cs)
 
-## check lsb_release for Raspbian jessie
-if [ "${LSB_ID}" != "Raspbian" -o "${LSB_CODENAME}" != "jessie" ]; then
+## check lsb_release for Raspbian stretch
+if [ "${LSB_ID}" != "Raspbian" -o "${LSB_CODENAME}" != "stretch" ]; then
     echo "distro ${LSB_ID} ${LSB_CODENAME} is not supported."
     exit 1
 fi
+
+sudo apt-get install -y curl git build-essential dialog
+
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+
+sudo apt-key add  webupd8-key.txt 
+sudo echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee /etc/apt/sources.list.d/webupd8team-java.list
+echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee -a /etc/apt/sources.list.d/webupd8team-java.list
+
+sudo apt update
+
+sudo apt install nodejs
+sudo apt-get install libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
+#sudo apt-get install libaio1
+sudo apt-get install oracle-java8-jdk
+sudo apt-get install oracle-java8-set-default
+sudo apt-get install influxdb
+sudo apt-get install maven
+sudo apt-get install dnsmasq hostapd
+
 
 ## check running user is 'pi'
 if [ "$(id -nu)" != "pi" ]; then
@@ -270,7 +292,7 @@ cd ${HOME}
 #    ensure_alternative "${prog}" "${JAVA_HOME}/bin/${prog}"
 #done
 
-#ensure_package_installed git
+
 
 #if [ ! -d freeboard-server ]; then
 #    if [ -z "${FREEBOARD_BRANCH}" ]; then
