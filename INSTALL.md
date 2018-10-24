@@ -1,7 +1,7 @@
 Complete fresh manual install
 =============================
 
-Download fresh raspbian lite
+Download fresh raspbian lite (stretch)
 
 Follow instructions on https://www.raspberrypi.org/documentation/installation/installing-images/linux.md to load image to 8Gb SD card
 
@@ -24,40 +24,60 @@ pi@raspberrypi:~ $ sudo apt-get update
 pi@raspberrypi:~ $ sudo apt-get upgrade
 ```
 
-Install latest java 8
----------------------
-
-Follow the instructions at https://gist.github.com/ribasco/fff7d30b31807eb02b32bcf35164f11f
-
 Install helpful things
 ----------------------
 ```
 pi@raspberrypi:~ $ sudo apt-get install -y curl git build-essential dialog
+pi@raspberrypi:~ $ sudo apt-get install libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
+```
+Clone the signalk-java project
+------------------------------
+```
+pi@raspberrypi:~ $ git clone https://github.com/SignalK/signalk-java.git
+pi@raspberrypi:~ $ cd signalk-java
+pi@raspberrypi:~/signalk-java $ git checkout artemis
 ```
 
 Install extra package sources
 --------------------------
 ```
-pi@raspberrypi:~ $ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-pi@raspberrypi:~ $ curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
-pi@raspberrypi:~ $ echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
-pi@raspberrypi:~ $ sudo apt update
+pi@raspberrypi:~/signalk-java $ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+pi@raspberrypi:~/signalk-java $ curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+pi@raspberrypi:~/signalk-java $ echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+
+pi@raspberrypi:~/signalk-java $ sudo apt-key add webupd8-key.txt 
+pi@raspberrypi:~/signalk-java $ sudo echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee /etc/apt/sources.list.d/webupd8team-java.list
+pi@raspberrypi:~/signalk-java $ echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee -a /etc/apt/sources.list.d/webupd8team-java.list
+
+pi@raspberrypi:~/signalk-java $ sudo apt update
 ```
 
 Install essential packages
 --------------------------
 ```
-pi@raspberrypi:~ $ sudo apt install nodejs
-pi@raspberrypi:~ $ sudo apt-get install libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
-pi@raspberrypi:~ $ sudo apt-get install libaio1
-pi@raspberrypi:~ $ sudo apt-get install oracle-java8-jdk
-pi@raspberrypi:~ $ sudo apt-get install influxdb
-pi@raspberrypi:~ $ sudo apt-get install maven
-pi@raspberrypi:~ $ sudo apt-get install dnsmasq hostapd
+pi@raspberrypi:~/signalk-java $ sudo apt-get install oracle-java8-jdk
+pi@raspberrypi:~/signalk-java $ sudo apt-get install influxdb
+pi@raspberrypi:~/signalk-java $ sudo apt-get install maven
+
 ```
-Configure services
+
+Start signalk-java
+--------------------
+Use Cntrl-C to exit.
+```
+pi@raspberrypi:~/signalk-java $ mvn exec:java
+	If it fails,
+  pi@raspberrypi:~/signalk-java $ rm -rf ~/.m2/repository/com/github/SignalK/artemis-server/
+	and try 'mvn exec:java' again
+```
+Adding apps can be done via the ui at http://[rpi_ip_address]:8080
+
+
+Configure wifi hotspot and other services (optional)
 ------------------
 ```
+pi@raspberrypi:~/signalk-java $ cd ~
+pi@raspberrypi:~ $ sudo apt-get install dnsmasq hostapd
 pi@raspberrypi:~ $ sudo systemctl stop dnsmasq
 pi@raspberrypi:~ $ sudo systemctl stop hostapd
 
@@ -120,15 +140,4 @@ pi@raspberrypi:~ $ sudo nano /etc/rc.local
 	Add this just above "exit 0" to install these rules on boot.
 		iptables-restore < /etc/iptables.ipv4.nat
 ```
-Install signalk-java
---------------------
-```
-pi@raspberrypi:~ $ git clone https://github.com/SignalK/signalk-java.git
-pi@raspberrypi:~ $ cd signalk-java
-pi@raspberrypi:~ $ git checkout artemis
-pi@raspberrypi:~ $ mvn exec:java
-	If it fails,
-  pi@raspberrypi:~ $ rm -rf ~/.m2/repository/com/github/SignalK/artemis-server/
-	and try 'mvn exec:java' again
-```
-Adding apps can be done via the ui at http://[rpi_ip_address]:8080
+
