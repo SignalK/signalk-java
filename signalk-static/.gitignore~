@@ -2,3 +2,14 @@
 /mapcache/*.zip
 /mapcache/*.kap
 /mapcache/*.KAP
+/mapcache/NZ*
+/mapcache/US*
+/mapcache/UK*
+/freeboard-sk/
+/instrumentpanel/
+/Kip/
+/sailgauge/
+/freeboard-sk/
+/mapcache/
+/download/
+/tuktuk-chart-plotter/
