@@ -72,6 +72,20 @@ pi@raspberrypi:~/signalk-java $ mvn exec:java
 ```
 Adding apps can be done via the ui at http://[rpi_ip_address]:8080
 
+Fix Influxdb CPU usage (optional but recommended)
+----------------------
+Influxdb can have very high CPU usage on the RPi but can be fixed quite easily.
+
+Edit /etc/influxdb/influxdb.conf
+```
+pi@raspberrypi:~ $ sudo nano /etc/influxdb/influxdb.conf
+```
+change `store-enabled ` to `false` 
+```
+[monitor]
+   store-enabled = false
+```
+Cntrl-X to save
 
 Configure wifi hotspot and other services (optional)
 ------------------
