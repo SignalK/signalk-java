@@ -256,7 +256,10 @@
 								"guests",
 								"friend",
 								"official",
-								"public"
+								"public",
+								"serial",
+								"n2k",
+								"ais"
 							]
 						}
 					},
@@ -495,6 +498,60 @@
 					"title": "Public",
 					"description": "Public allowed keys",
 					"name": "public",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				},
+				"serial": {
+					"type": "object",
+					"title": "Serial",
+					"description": "Serial devices allowed keys",
+					"name": "serial",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				},
+				"n2k": {
+					"type": "object",
+					"title": "NMEA2000",
+					"description": "NMEA2000 allowed keys",
+					"name": "n2k",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				},
+				"ais": {
+					"type": "object",
+					"title": "AIS",
+					"description": "AIS allowed keys",
+					"name": "ais",
 					"properties": {
 						"allowed": {
 							"title": "Allowed",
