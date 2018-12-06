@@ -1,5 +1,7 @@
 [Unit]
 Description=Signalk Java Server
+Requires=influd.service
+After=influxd.service
 
 [Service]
 Type=simple

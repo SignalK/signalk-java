@@ -9,11 +9,10 @@ SIGNALK_HOME=`pwd`
 cd $SIGNALK_HOME
 mkdir -p signalk-static/logs
 
-#temporary until linux-arm.jar is in purejavacom.jar
-export LD_LIBRARY_PATH=$SIGNALK_HOME/jna
-
+# jolokia
+JOLOKIA="-javaagent:./hawtio/jolokia-jvm-1.6.0-agent.jar=config=./conf/jolokia.conf"
 EXT="-Djava.util.Arrays.useLegacyMergeSort=true"
-MEM="-Xmx32m -XX:PermSize=32m -XX:MaxPermSize=48m"
+MEM="-Xmx128m -XX:+HeapDumpOnOutOfMemoryError -Dio.netty.leakDetection.level=ADVANCED -XX:+UseParallelGC -XX:+AggressiveOpts"
 HAWTIO=-Dhawtio.authenticationEnabled=false
 LOG4J=-Dlog4j.configuration=file://$SIGNALK_HOME/conf/log4j2.json
 
@@ -24,4 +23,4 @@ mv signalk-static/logs/start.log signalk-static/logs/start.log.back
 #mvn $EXT $LOG4J exec:java 
 #>>logs/start.log 2>&1 &
 echo "Starting offline: mvn -o -Dexec.args='$EXT' '$LOG4J' '$HAWTIO' exec:java 2>&1" >signalk-static/logs/start.log 2>&1 
-mvn -o -Dexec.args="'$EXT' '$LOG4J' '$HAWTIO'" exec:java >>signalk-static/logs/start.log 2>&1
+mvn -o -Dexec.args="'$EXT' '$LOG4J' '$HAWTIO' '$JOLOKIA'" exec:java >>signalk-static/logs/start.log 2>&1

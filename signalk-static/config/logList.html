@@ -11,8 +11,8 @@
 <link rel="stylesheet" href="../css/bootstrap.css">
 <link rel="stylesheet" href="../css/bootstrap-theme.css">
 <link rel="stylesheet" data-aload="../styles/fonts.css">
-<script src="../js/jquery.min.js"></script>
-<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 <style>
 body {
 	padding-top: 5px;
@@ -50,28 +50,49 @@ body {
 
 
 </div>
-<script>
-	jQuery(document)
+<script type="text/javascript" >
+	$(document)
 			.ready(
 					function() {
+						var logDir = getParameterByName('logDir');
+						console.log(logDir);
+						if(logDir==null)logDir="";
 						$.ajax({
-							url : '/signalk/v1/listLogs',
+							url : '/signalk/v1/logger/listLogs?logDir='+logDir,
 							dataType: 'json',
 							mimeType: 'application/json',
 							success : function (logData) {
 								console.log(JSON.stringify(logData));
 								$.each(logData, function(r, obj) {
+									if(obj.endsWith(".log") || obj.endsWith(".gz") ){
 									
-									$('#log_holder').append('<li class="list-group-item" >'
+										$('#log_holder').append('<li class="list-group-item" >'
 										 
-										  +'<a href="/signalk/v1/getLogs?logFile='+obj+'">'+obj+'</a>&nbsp;'
+										  +'<a href="/signalk/v1/logger/getLogs?logDir='+logDir+'&amp;logFile='+obj+'">'+obj+'</a>&nbsp;'
 										  
 										  +'</li>');
+									}else{
+										$('#log_holder').append('<li class="list-group-item" >'
+												 
+												  +'<a href="/config/logList.html?logDir='+obj+'">'+obj+'</a>&nbsp;'
+												  
+												  +'</li>');
+									}
 								});
 		
 						}});
 						
 					});
+	
+	function getParameterByName(name, url) {
+	    if (!url) url = window.location.href;
+	    name = name.replace(/[\[\]]/g, "\\$&");
+	    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+	        results = regex.exec(url);
+	    if (!results) return null;
+	    if (!results[2]) return '';
+	    return decodeURIComponent(results[2].replace(/\+/g, " "));
+	}
 </script>
 </body>
 </html>

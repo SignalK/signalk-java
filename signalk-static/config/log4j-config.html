@@ -8,21 +8,29 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1.0, user-scalable=no">
-<link rel="stylesheet" href="../css/bootstrap.css">
-<link rel="stylesheet" href="../css/bootstrap-theme.css">
-<link rel="stylesheet" data-aload="../styles/fonts.css">
-<script src="../js/jquery.min.js"></script>
-<script src="../js/bootstrap.min.js"></script>
-<script src="../js/jsoneditor.js"></script>
+<link rel="stylesheet" href="../css/bootstrap2-combined.min.css">
+<link rel="stylesheet" href="../css/font-awesome4.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jsoneditor.js"></script>
 <style>
+
 body {
+	font-weight: 500;
 	padding-top: 5px;
 	padding-bottom: 5px; //
 	background-color: #eee;
 	width: 100%;
 	height: 100%;
 }
-
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 500;
+ }
+.well {
+    min-height: 5px;
+    padding: 5px;
+        padding-bottom: 5px;
+    margin-bottom: 10px;
+}
 .btn-primary a {
 	color: aliceblue;
 }
@@ -51,8 +59,8 @@ body {
 
 
 </div>
-<script>
-	jQuery(document)
+<script type="text/javascript" >
+	$(document)
 			.ready(
 					function() {
 						$.ajax({
@@ -64,7 +72,8 @@ body {
 							    //var schema = JSON.parse(data);
 								// Set default options
 								//console.log("load theme");
-								JSONEditor.defaults.options.theme = 'bootstrap3';
+								JSONEditor.defaults.iconlib = "fontawesome4";
+								JSONEditor.defaults.theme = 'bootstrap2';
 								//console.log("start editor");
 								// Initialize the editor
 								var editor = new JSONEditor(document.getElementById("editor_holder"),{
@@ -73,12 +82,12 @@ body {
 									disable_collapse: true,
 									disable_edit_json: true,
 									disable_properties: true,
-									disable_array_reorder: true
+									disable_array_reorder: false
 									});
 		
 								// Get the current config 
 								$.ajax({
-									url : '/signalk/v1/logger',
+									url : '/signalk/v1/logger/config',
 									dataType: 'json',
 									mimeType: 'application/json',
 									success : function (data) {
@@ -90,7 +99,7 @@ body {
 										editor.on("change",  function() {
 											var cfg = JSON.stringify(editor.getValue());
 										  console.log(cfg);
-										  $.ajax("/signalk/v1/logger/", {
+										  $.ajax("/signalk/v1/logger/config", {
 											    data : JSON.stringify(editor.getValue(),null, 4),
 											    contentType : 'application/json',
 											    type : 'POST'

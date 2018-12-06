@@ -10,6 +10,7 @@
 	content="width=device-width, initial-scale=1.0, user-scalable=no">
 <link rel="stylesheet" href="../css/bootstrap2-combined.min.css">
 <link rel="stylesheet" href="../css/font-awesome4.css">
+<link rel="stylesheet" data-aload="styles/fonts.css">
 <script src="../js/jquery.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
 <script src="../js/jsoneditor.js"></script>
@@ -25,7 +26,9 @@ body {
 h1, h2, h3, h4, h5, h6 {
     font-weight: 500;
  }
-
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    padding: 4px;
+    }
 .btn-primary a {
 	color: aliceblue;
 }
@@ -41,15 +44,15 @@ h1, h2, h3, h4, h5, h6 {
 	border-bottom: 1px solid #EEE;
 }
 </style>
-<title>Freeboard K - Configuration</title>
+<title>Freeboard K - Security</title>
 </head>
 
 <div class="container">
 	<div class="page-header">
-		<h1>Signal K - Configuration</h1>
+		<h1>Signal K - Security</h1>
 	</div>
 	<div class="row">
-		<div id="editor_holder" class="col-md-10"></div>
+		<div id="editor_holder" class="col-md-12"></div>
 	</div>
 
 
@@ -59,7 +62,7 @@ h1, h2, h3, h4, h5, h6 {
 			.ready(
 					function() {
 						$.ajax({
-							url : '../js/signalk-conf-schema.json',
+							url : '../js/security-conf-schema.json',
 							dataType: 'json',
 							mimeType: 'application/json',
 							success : function (schemaData) {
@@ -77,12 +80,12 @@ h1, h2, h3, h4, h5, h6 {
 									disable_collapse: true,
 									disable_edit_json: true,
 									disable_properties: true,
-									disable_array_reorder: true
+									disable_array_reorder: false
 									});
 		
 								// Get the current config 
 								$.ajax({
-									url : '/signalk/v1/api/config/',
+									url : '/signalk/v1/security/config/',
 									dataType: 'json',
 									mimeType: 'application/json',
 									success : function (data) {
@@ -94,7 +97,7 @@ h1, h2, h3, h4, h5, h6 {
 										editor.on("change",  function() {
 											var cfg = JSON.stringify(editor.getValue());
 										  console.log(cfg);
-										$.ajax("/signalk/v1/api/", {
+										$.ajax("/signalk/v1/security/config/", {
 											    data : JSON.stringify(editor.getValue()),
 											    contentType : 'application/json',
 											    type : 'POST'

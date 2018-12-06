@@ -1,0 +1,615 @@
+{
+	"$id": "http://example.com/example.json",
+	"type": "object",
+	"title": "Security Config",
+	"definitions": {
+		"name": {
+			"type": "string",
+			"enum":[
+				"all",
+				"none",
+				"aircraft",
+				"aton",
+				"config",
+				"sar",
+				"sources",
+				"resources",
+				"resources.charts",
+				"resources.notes",
+				"resources.regions",
+				"resources.routes",
+				"resources.waypoints",
+				"vessels",
+				"vessels.self",
+				"vessels.self.communication",
+				"vessels.self.communication.callsignHf",
+				"vessels.self.communication.callsignVhf",
+				"vessels.self.communication.crewNames",
+				"vessels.self.communication.email",
+				"vessels.self.communication.emailHf",
+				"vessels.self.communication.phoneNumber",
+				"vessels.self.communication.satPhoneNumber",
+				"vessels.self.communication.skipperName",
+				"vessels.self.design",
+				"vessels.self.design.airHeight",
+				"vessels.self.design.aisShipType",
+				"vessels.self.design.beam",
+				"vessels.self.design.displacement",
+				"vessels.self.design.draft",
+				"vessels.self.design.length",
+				"vessels.self.electrical",
+				"vessels.self.electrical.ac",
+				"vessels.self.electrical.alternators",
+				"vessels.self.electrical.batteries",
+				"vessels.self.electrical.chargers",
+				"vessels.self.electrical.inverters",
+				"vessels.self.electrical.solar",
+				"vessels.self.environment",
+				"vessels.self.environment.current",
+				"vessels.self.environment.depth",
+				"vessels.self.environment.heave",
+				"vessels.self.environment.inside",
+				"vessels.self.environment.mode",
+				"vessels.self.environment.outside",
+				"vessels.self.environment.tide",
+				"vessels.self.environment.time",
+				"vessels.self.environment.water",
+				"vessels.self.environment.wind",
+				"vessels.self.environment.wind.angleApparent",
+				"vessels.self.environment.wind.angleTrueGround",
+				"vessels.self.environment.wind.angleTrueWater",
+				"vessels.self.environment.wind.directionChangeAlarm",
+				"vessels.self.environment.wind.directionMagnetic",
+				"vessels.self.environment.wind.directionTrue",
+				"vessels.self.environment.wind.speedApparent",
+				"vessels.self.environment.wind.speedOverGround",
+				"vessels.self.environment.wind.speedTrue",
+				"vessels.self.navigation",
+				"vessels.self.navigation.anchor",
+				"vessels.self.navigation.attitude",
+				"vessels.self.navigation.closestApproach",
+				"vessels.self.navigation.courseGreatCircle",
+				"vessels.self.navigation.courseOverGroundMagnetic",
+				"vessels.self.navigation.courseOverGroundTrue",
+				"vessels.self.navigation.courseRhumbline",
+				"vessels.self.navigation.datetime",
+				"vessels.self.navigation.destination",
+				"vessels.self.navigation.gnss",
+				"vessels.self.navigation.headingMagnetic",
+				"vessels.self.navigation.headingTrue",
+				"vessels.self.navigation.leewayAngle",
+				"vessels.self.navigation.lights",
+				"vessels.self.navigation.log",
+				"vessels.self.navigation.maneuver",
+				"vessels.self.navigation.position",
+				"vessels.self.navigation.racing",
+				"vessels.self.navigation.rateOfTurn",
+				"vessels.self.navigation.speedOverGround",
+				"vessels.self.navigation.speedThroughWater",
+				"vessels.self.navigation.speedThroughWaterLongitudinal",
+				"vessels.self.navigation.speedThroughWaterTransverse",
+				"vessels.self.navigation.state",
+				"vessels.self.navigation.trip",
+				"vessels.self.performance",
+				"vessels.self.performance.beatAngle",
+				"vessels.self.performance.beatAngleTargetSpeed",
+				"vessels.self.performance.beatAngleVelocityMadeGood",
+				"vessels.self.performance.gybeAngle",
+				"vessels.self.performance.gybeAngleTargetSpeed",
+				"vessels.self.performance.gybeAngleVelocityMadeGood",
+				"vessels.self.performance.leeway",
+				"vessels.self.performance.polarSpeed",
+				"vessels.self.performance.polarSpeedRatio",
+				"vessels.self.performance.tackMagnetic",
+				"vessels.self.performance.tackTrue",
+				"vessels.self.performance.targetAngle",
+				"vessels.self.performance.targetSpeed",
+				"vessels.self.performance.velocityMadeGood",
+				"vessels.self.propulsion",
+				"vessels.self.sails",
+				"vessels.self.sails.area",
+				"vessels.self.sails.inventory",
+				"vessels.self.sensors",
+				"vessels.self.steering",
+				"vessels.self.steering.autopilot",
+				"vessels.self.steering.autopilot.gain",
+				"vessels.self.steering.autopilot.mode",
+				"vessels.self.steering.autopilot.state",
+				"vessels.self.steering.autopilot.target",
+				"vessels.self.steering.rudderAngle",
+				"vessels.self.tanks",
+				"vessels.self.tanks.ballast",
+				"vessels.self.tanks.blackWater",
+				"vessels.self.tanks.freshWater",
+				"vessels.self.tanks.fuel",
+				"vessels.self.tanks.gas",
+				"vessels.self.tanks.liveWell",
+				"vessels.self.tanks.lubrication",
+				"vessels.self.tanks.wasteWater"
+				]
+		},
+		"allowed": {
+			"type": "array",
+			"minItems": 0,
+			"uniqueItems": true,
+			"additionalItems": true,
+			"name": "allowed",
+			"format": "table",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"title": "Path",
+						"description": "An allowed key",
+						"$ref": "#/definitions/name"
+					},
+					"read": {
+						"type": "boolean",
+						"title": "Can Read",
+						"format": "checkbox",
+						"default": true
+					},
+					"write": {
+						"type": "boolean",
+						"title": "Can Write",
+						"format": "checkbox",
+						"default": false
+					}
+				}
+			}
+		},
+		"denied": {
+			"type": "array",
+			"minItems": 0,
+			"uniqueItems": true,
+			"additionalItems": true,
+			"name": "denied",
+			"format": "table",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"title": "Key",
+						"description": "A denied key",
+						"$ref": "#/definitions/name"
+					},
+					"read": {
+						"type": "boolean",
+						"title": "Block Read",
+						"format": "checkbox",
+						"default": true
+					},
+					"write": {
+						"type": "boolean",
+						"title": "Block Write",
+						"format": "checkbox",
+						"default": true
+					}
+				}
+			}
+		}
+	},
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"properties": {
+		"users": {
+			"type": "array",
+			"minItems": 0,
+			"uniqueItems": true,
+			"additionalItems": true,
+			"title": "Users",
+			"description": "Users and their roles",
+			"name": "users",
+			"format": "table",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"title": "Login",
+						"description": "The users login name",
+						"default": "",
+						"minLength": 1,
+						"examples": [
+							"joe"
+						]
+					},
+					"password": {
+						"type": "string",
+						"title": "Password ",
+						"description": "The users password",
+						"default": "",
+						"minLength": 8,
+						"examples": [
+							"dddcccbbduh"
+						]
+					},
+					"lastPasswordChange": {
+						"type": "string",
+						"title": "Last Changed ",
+						"description": "The date the password was last reset",
+						"default": "",
+						"examples": [
+							"1969-12-31T23:59:59.999Z"
+						]
+					},
+					"email": {
+						"type": "string",
+						"title": "Email ",
+						"description": "The users email ",
+						"default": "",
+						"examples": [
+							"jb@example.com"
+						]
+					},
+					"roles": {
+						"type": "array",
+						"title": "Roles ",
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"description": "An explanation about the purpose of this instance.",
+							"default": "",
+							"enum": [
+								"admin",
+								"skipper",
+								"crew",
+								"guests",
+								"friend",
+								"official",
+								"public",
+								"ais",
+								"serial",
+								"n2k",
+								"tcp_internal",
+								"tcp_external"
+							]
+						}
+					},
+					"hash": {
+						"type": "string",
+						"title": "Hash ",
+						"description": "Hashed password",
+						"options": {
+						    "hidden": true
+						  }
+						
+					}
+				},
+				"required": [
+					"name",
+					"password",
+					"lastPasswordChange",
+					"roles"
+				]
+			}
+		},
+		"net": {
+          "id": "http://jsonschema.net/signalk/config/server/security",
+          "type": "object",
+          "additionalProperties": false,
+          "title": "Network Access",
+          "description": "Control access by network or IP",
+          "format": "categories",
+          "name": "net",
+          "required": [
+            "deny",
+            "white",
+            "config"
+          ],
+          "properties": {
+            "deny": {
+              "id": "http://jsonschema.net/signalk/config/server/security/deny",
+              "type": "object",
+              "additionalProperties": false,
+              "title": "Black List",
+              "description": "Deny these source addresses",
+              "name": "deny",
+              "required": [
+                "ip"
+              ],
+              "properties": {
+                "ip": {
+                  "id": "http://jsonschema.net/signalk/config/server/security/deny/ip",
+                  "type": "array",
+                  "minItems": 0,
+                  "uniqueItems": true,
+                  "additionalItems": true,
+                  "title": "IP Address",
+                  "description": "Deny from IP (eg 192.168.0.1) or network (eg  or 192.186.0.0/24)",
+                  "name": "ip",
+                  "format": "table",
+                  "items": {
+                    "id": "http://jsonschema.net/signalk/config/server/security/deny/ip/0",
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "IP address",
+                    "description": "",
+                    "name": "0",
+                    "default": ""
+                  }
+                }
+              }
+            },
+            "white": {
+              "id": "http://jsonschema.net/signalk/config/server/security/white",
+              "type": "object",
+              "additionalProperties": false,
+              "title": "White List",
+              "description": "Always allow from these addresses",
+              "name": "white",
+              "required": [
+                "ip"
+              ],
+              "properties": {
+                "ip": {
+                  "id": "http://jsonschema.net/signalk/config/server/security/white/ip",
+                  "type": "array",
+                  "minItems": 0,
+                  "uniqueItems": true,
+                  "additionalItems": true,
+                  "title": "IP Address",
+                  "description": "Allow from IP (eg 192.168.0.1) or network (eg  or 192.186.0.0/24)",
+                  "name": "ip",
+                  "format": "table",
+                  "items": {
+                    "id": "http://jsonschema.net/signalk/config/server/security/white/ip/0",
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "IP address",
+                    "description": "",
+                    "name": "0",
+                    "default": ""
+                  }
+                }
+              }
+            },
+            "config": {
+              "id": "http://jsonschema.net/signalk/config/server/security/config",
+              "type": "object",
+              "additionalProperties": false,
+              "title": "Config List",
+              "description": "Limit access to configuration",
+              "name": "config",
+              "required": [
+                "ip"
+              ],
+              "properties": {
+                "ip": {
+                  "id": "http://jsonschema.net/signalk/config/server/security/config/ip",
+                  "type": "array",
+                  "minItems": 0,
+                  "uniqueItems": true,
+                  "additionalItems": true,
+                  "title": "IP Address",
+                  "description": "Allow from IP (eg 192.168.0.1) or network (eg  or 192.186.0.0/24)",
+                  "name": "ip",
+                  "format": "table",
+                  "items": {
+                    "id": "http://jsonschema.net/signalk/config/server/security/config/ip/0",
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "IP address",
+                    "description": "",
+                    "name": "0",
+                    "default": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+		"roles": {
+			"type": "object",
+			"title": "Roles",
+			"description": "Roles and their permissions",
+			"format": "categories",
+			"properties": {
+				"skipper": {
+					"type": "object",
+					"title": "Skipper",
+					"description": "Skippers allowed keys",
+					"name": "skipper",
+					
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				},
+				"crew": {
+					"type": "object",
+					"title": "Crew",
+					"description": "Crews allowed keys",
+					"name": "crew",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				},
+				"guests": {
+					"type": "object",
+					"title": "Guests",
+					"description": "Guests allowed keys",
+					"name": "guests",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				},
+				"friend": {
+					"type": "object",
+					"title": "Friends",
+					"description": "Friends allowed keys",
+					"name": "friend",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				},
+				"official": {
+					"type": "object",
+					"title": "Official",
+					"description": "Official allowed keys",
+					"name": "official",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				},
+				"public": {
+					"type": "object",
+					"title": "Public",
+					"description": "Public allowed keys",
+					"name": "public",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				},
+				"serial": {
+					"type": "object",
+					"title": "Serial",
+					"description": "Serial allowed keys",
+					"name": "serial",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				},
+				"n2k": {
+					"type": "object",
+					"title": "NMEA2000",
+					"description": "NMEA2000 allowed keys",
+					"name": "n2k",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				},
+				"ais": {
+					"type": "object",
+					"title": "AIS",
+					"description": "AIS allowed keys",
+					"name": "ais",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				},
+				"tcp_internal": {
+					"type": "object",
+					"title": "Internal network",
+					"description": "Internal network allowed keys",
+					"name": "tcp_internal",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				}
+				,
+				"tcp_external": {
+					"type": "object",
+					"title": "Internet",
+					"description": "Internet allowed keys",
+					"name": "tcp_external",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				}
+			}
+		},
+		"required": [
+			"users",
+			"net",
+			"roles"
+		]
+	}
+}

@@ -43,8 +43,8 @@
 			<dependencies>
 				<dependency> 
 					<groupId>com.github.SignalK</groupId>
-					<artifactId>signalk-server-java</artifactId>
-					<version>JIT-Deploy-37</version>
+					<artifactId>artemis-server</artifactId>
+					<version>master-SNAPSHOT</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -61,7 +61,8 @@
 					<artifactId>exec-maven-plugin</artifactId>
 					<version>1.6.0</version>
 					<configuration>
-						<mainClass>nz.co.fortytwo.signalk.server.SignalKServer</mainClass>
+<!-- 						<mainClass>nz.co.fortytwo.signalk.server.SignalKServer</mainClass> -->
+							<mainClass>nz.co.fortytwo.signalk.artemis.server.ArtemisServer</mainClass>
 						<includePluginDependencies>false</includePluginDependencies>
 					</configuration>
 				</plugin>
