@@ -1,5 +1,6 @@
-Signal K java
+Signal K java 
 =================================================
+
 
 A Signal K server setup for easy deployment onto an RPi, or any Debian based Linux PC. 
 
@@ -11,6 +12,8 @@ Provided under an Apache 2 licence
 
 Install on PC
 --------------
+
+NOTE: this now installs the new Artemis server by default.
 
 First do a standard installation fo Java and Influxdb for your platform:
 
@@ -37,6 +40,7 @@ C:\dev\signalk-java> mvn exec:java
 Maven will install all the required components and start the application.  
 
 You should now have a SignalK server running, on http://localhost:8080
+See ![](./SECURITY.md)
 
 
 Install on RPi
@@ -53,6 +57,8 @@ __Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.
 Now open a modern web browser (eg not IE) to `http://[ip_address_of_the_pi]:8080`
 You should get a pretty start page! 
 
+Login or you will only see 'public' data! See ![](./SECURITY.md)
+
 Go to the 'server' tab and install the 4 apps (Freeboard-sk, Instrument Panel, Sailgauge. Kip)
 
 Try the apps. (Sailguage and Kip are broken at present, expect a fix for Kip shortly.)
@@ -64,6 +70,7 @@ Upload your charts using the 'Upload Charts' button. The format is the zip file 
 
 Using the server for your own client
 ------------------------------------
+
 
 Normally the server only sends output in signalk delta format to subscribed clients, so clients MUST subscribe or you see only the heartbeat message every 1000ms.
 You can subscribe by sending the following json. It supports * and ? wildcards :
