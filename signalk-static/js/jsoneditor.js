@@ -6,7 +6,7 @@
  * This repo is no longer maintained (see also https://github.com/jdorn/json-editor/issues/800)
  * Development is continued at https://github.com/json-editor/json-editor
  * For details please visit https://github.com/json-editor/json-editor/issues/5
- * @version 1.1.0-beta.2
+ * @version {{ VERSION }}
  * @author Jeremy Dorn
  * @see https://github.com/jdorn/json-editor/
  * @see https://github.com/json-editor/json-editor
@@ -14,7 +14,17 @@
  * @example see README.md and docs/ for requirements, examples and usage info
  */
 
-(function() {
+;(function (global, factory) {
+	"use strict";
+	var JSONEditor = factory(global);
+	if (typeof module === "object" && module != null && module.exports) {
+		module.exports = JSONEditor;
+	} else if (typeof define === "function" && define.amd) {
+		define(function () { return JSONEditor; });
+	} else {
+		global.JSONEditor = JSONEditor;
+	}
+})(typeof window !== "undefined" ? window : this, function (global, undefined) {
 
 /*jshint loopfunc: true */
 /* Simple JavaScript Inheritance
@@ -577,15 +587,27 @@ JSONEditor.prototype = {
         merge_refs(this._getExternalRefs(schema[i]));
       }
     }
-    
+
     return refs;
   },
-  _loadExternalRefs: function(schema, callback) {
+  _getFileBase: function() {
+    var fileBase = this.options.ajaxBase;
+    if (typeof fileBase === 'undefined') {
+      fileBase = this._getFileBaseFromFileLocation(document.location.toString());
+    }
+    return fileBase;
+  },
+  _getFileBaseFromFileLocation: function(fileLocationString) {
+    var pathItems = fileLocationString.split("/");
+    pathItems.pop();
+    return pathItems.join("/")+"/";
+  },
+  _loadExternalRefs: function(schema, callback, fileBase) {
+    fileBase = fileBase || this._getFileBase();
     var self = this;
     var refs = this._getExternalRefs(schema);
-    
     var done = 0, waiting = 0, callback_fired = false;
-    
+
     $each(refs,function(url) {
       if(self.refs[url]) return;
       if(!self.options.ajax) throw "Must set ajax option to true to load external ref "+url;
@@ -593,13 +615,13 @@ JSONEditor.prototype = {
       waiting++;
 
       var fetchUrl=url;
-      if( self.options.ajaxBase && self.options.ajaxBase!=url.substr(0,self.options.ajaxBase.length) && "http"!=url.substr(0,4)) fetchUrl=self.options.ajaxBase+url;
+      if( fileBase!=url.substr(0,fileBase.length) && "http"!=url.substr(0,4) && "/"!=url.substr(0,1)) fetchUrl=fileBase+url;
 
-      var r = new XMLHttpRequest(); 
+      var r = new XMLHttpRequest();
       r.open("GET", fetchUrl, true);
       if(self.options.ajaxCredentials) r.withCredentials=self.options.ajaxCredentials;
       r.onreadystatechange = function () {
-        if (r.readyState != 4) return; 
+        if (r.readyState != 4) return;
         // Request succeeded
         if(r.status === 200) {
           var response;
@@ -619,7 +641,7 @@ JSONEditor.prototype = {
               callback_fired = true;
               callback();
             }
-          });
+          }, self._getFileBaseFromFileLocation(fetchUrl));
         }
         // Request failed
         else {
@@ -969,7 +991,18 @@ JSONEditor.Validator = Class.extend({
       }
       // Simple type
       else {
-        if(!this._checkType(schema.type, value)) {
+        if(['date', 'time', 'datetime-local'].indexOf(schema.format) != -1 && schema.type == 'integer') {
+          // Hack to get validator to validate as string even if value is integer
+          // As validation of 'date', 'time', 'datetime-local' is done in separate validator
+          if(!this._checkType('string', ""+value)) {
+            errors.push({
+              path: path,
+              property: 'type',
+              message: this.translate('error_type', [schema.format])
+            });
+          }
+        }
+        else if(!this._checkType(schema.type, value)) {
           errors.push({
             path: path,
             property: 'type',
@@ -1267,20 +1300,10 @@ JSONEditor.Validator = Class.extend({
 
       // `properties`
       var validated_properties = {};
-      if(schema.properties) {
-        if(typeof schema.required !== "undefined" && Array.isArray(schema.required)) {
-          for(i=0; i<schema.required.length; i++) {
-            var property = schema.required[i];
-            validated_properties[property] = true;
-            errors = errors.concat(this._validateSchema(schema.properties[property],value[property],path+'.'+property));
-          }
-        } else {
-          for(i in schema.properties) {
-            if(!schema.properties.hasOwnProperty(i)) continue;
-            validated_properties[i] = true;
-            errors = errors.concat(this._validateSchema(schema.properties[i],value[i],path+'.'+i));
-          }
-        }
+      for(i in schema.properties) {
+        if(!schema.properties.hasOwnProperty(i)) continue;
+        validated_properties[i] = true;
+        errors = errors.concat(this._validateSchema(schema.properties[i],value[i],path+'.'+i));
       }
 
       // `patternProperties`
@@ -1360,6 +1383,84 @@ JSONEditor.Validator = Class.extend({
       }
     }
 
+    // date, time and datetime-local validation
+    if(['date', 'time', 'datetime-local'].indexOf(schema.format) != -1) {
+
+      var validator = {
+          'date': /^(\d{4}\D\d{2}\D\d{2})?$/,
+          'time': /^(\d{2}:\d{2}(?::\d{2})?)?$/,
+          'datetime-local': /^(\d{4}\D\d{2}\D\d{2} \d{2}:\d{2}(?::\d{2})?)?$/
+      };
+      var format = {
+          'date': '"YYYY-MM-DD"',
+          'time': '"HH:MM"',
+          'datetime-local': '"YYYY-MM-DD HH:MM"'
+      };
+
+      var ed = this.jsoneditor.getEditor(path);
+      var dateFormat = ed.flatpickr ? ed.flatpickr.config.dateFormat : format[ed.format];
+
+      if (schema.type == 'integer') {
+        // The value is a timestamp
+        if (value * 1 < 1) {
+          // If value is less than 1, then it's an invalid epoch date before 00:00:00 UTC Thursday, 1 January 1970
+          errors.push({
+            path: path,
+            property: 'format',
+            message: this.translate('error_invalid_epoch')
+          });
+        }
+        else if (value != Math.abs(parseInt(value))) {
+          // not much to check for, so we assume value is ok if it's a positive number
+          errors.push({
+            path: path,
+            property: 'format',
+            message: this.translate('error_' + ed.format.replace(/-/g, "_"), [dateFormat])
+          });
+        }
+      }
+      else if (!ed.flatpickr) {
+        // Standard string input, without flatpickr
+        if(!validator[ed.format].test(value)) {
+          errors.push({
+            path: path,
+            property: 'format',
+            message: this.translate('error_' + ed.format.replace(/-/g, "_"), [format[ed.format]])
+          });
+        }
+      }
+      else {
+        // Flatpickr validation
+        if (value !== '') {
+
+          var compareValue;
+          if(ed.flatpickr.config.mode != 'single') {
+            var seperator = ed.flatpickr.config.mode == 'range' ? ed.flatpickr.l10n.rangeSeparator : ', ';
+            var selectedDates = ed.flatpickr.selectedDates.map(function(val) {
+                return ed.flatpickr.formatDate(val, ed.flatpickr.config.dateFormat);
+            });
+            compareValue = selectedDates.join(seperator);
+          }
+
+          try {
+            if (compareValue) {
+              // Not the best validation method, but range and multiple mode are special
+              // Optimal solution would be if it is possible to change the return format from string/integer to array
+              if (compareValue != value) throw ed.flatpickr.config.mode + ' mismatch';
+            }
+            else if (ed.flatpickr.formatDate(ed.flatpickr.parseDate(value, ed.flatpickr.config.dateFormat), ed.flatpickr.config.dateFormat) != value) throw 'mismatch';
+          }
+          catch(err) {
+            var errorDateFormat = ed.flatpickr.config.errorDateFormat !== undefined ? ed.flatpickr.config.errorDateFormat : ed.flatpickr.config.dateFormat;
+            errors.push({
+              path: path,
+              property: 'format',
+              message: this.translate('error_' + ed.format.replace(/-/g, "_"), [errorDateFormat])
+            });
+          }
+        }
+      }
+    }
     // Custom type validation (global)
     $each(JSONEditor.defaults.custom_validators,function(i,validator) {
       errors = errors.concat(validator.call(self,schema,value,path));
@@ -2154,7 +2255,14 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
 
     if(this.schema.readOnly || this.schema.readonly || this.schema.template) {
       this.always_disabled = true;
-      this.input.disabled = true;
+      this.input.setAttribute('readonly', 'true');
+    }
+
+    if (this.schema.options && this.schema.options.inputAttributes && this.schema.options.inputAttributes.length > 0) {
+      var input = this.input;
+      this.schema.options.inputAttributes.forEach(function (inputAttribute) {
+        input.setAttribute(inputAttribute.name, inputAttribute.value);
+      });
     }
 
     this.input
@@ -2221,6 +2329,21 @@ JSONEditor.defaults.editors.string = JSONEditor.AbstractEditor.extend({
     if(this.format) this.input.setAttribute('data-schemaformat',this.format);
 
     this.control = this.theme.getFormControl(this.label, this.input, this.description, this.infoButton);
+
+    // output element to display the range value when it changes or have default.
+    if(this.format === 'range') {
+      var output = document.createElement('output');
+      output.setAttribute('class', 'range-output');
+      this.control.appendChild(output);
+      output.value = this.schema.default;
+      this.input.addEventListener('change', function () {
+        output.value = self.input.value;
+      });
+      this.input.addEventListener('input', function () {
+        output.value = self.input.value;
+      });
+    }
+
     this.container.appendChild(this.control);
 
     // Any special formatting that needs to happen after the input is added to the dom
@@ -3683,7 +3806,9 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
     if(this.jsoneditor.options.remove_empty_properties || this.options.remove_empty_properties) {
       for (var i in result) {
         if (result.hasOwnProperty(i)) {
-          if (typeof result[i] === 'undefined' || result[i] === '' || Object.keys(result[i]).length == 0 && result[i].constructor == Object) delete result[i];
+          if (typeof result[i] === 'undefined' || result[i] === '' || result[i] === Object(result[i]) && Object.keys(result[i]).length == 0 && result[i].constructor == Object) {
+            delete result[i];
+          }
         }
       }
     }
@@ -3872,6 +3997,14 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
 });
 
 JSONEditor.defaults.editors.array = JSONEditor.AbstractEditor.extend({
+  askConfirmation: function() {
+    if (this.jsoneditor.options.prompt_before_delete === true) {
+      if (confirm("Are you sure you want to remove this node?") === false) {
+        return false;
+      }
+    }
+    return true;
+  },
   getDefault: function() {
     return this.schema["default"] || [];
   },
@@ -3947,7 +4080,8 @@ JSONEditor.defaults.editors.array = JSONEditor.AbstractEditor.extend({
     this.hide_delete_last_row_buttons = this.hide_delete_buttons || this.options.disable_array_delete_last_row || this.jsoneditor.options.disable_array_delete_last_row;
     this.hide_move_buttons = this.options.disable_array_reorder || this.jsoneditor.options.disable_array_reorder;
     this.hide_add_button = this.options.disable_array_add || this.jsoneditor.options.disable_array_add;
-	this.show_copy_button = this.options.enable_array_copy || this.jsoneditor.options.enable_array_copy;
+    this.show_copy_button = this.options.enable_array_copy || this.jsoneditor.options.enable_array_copy;
+    this.array_controls_top = this.options.array_controls_top || this.jsoneditor.options.array_controls_top;
   },
   build: function() {
     var self = this;
@@ -3990,12 +4124,19 @@ JSONEditor.defaults.editors.array = JSONEditor.AbstractEditor.extend({
         this.row_holder = document.createElement('div');
         this.panel.appendChild(this.row_holder);
         this.controls = this.theme.getButtonHolder();
-        this.panel.appendChild(this.controls);
+        if (this.array_controls_top) {
+          this.title.appendChild(this.controls);
+        }
+        else {
+          this.panel.appendChild(this.controls);
+        }
       }
     }
     else {
         this.panel = this.theme.getIndentedPanel();
         this.container.appendChild(this.panel);
+        this.title_controls = this.theme.getHeaderButtonHolder();
+        this.panel.appendChild(this.title_controls);
         this.controls = this.theme.getButtonHolder();
         this.panel.appendChild(this.controls);
         this.row_holder = document.createElement('div');
@@ -4367,34 +4508,30 @@ JSONEditor.defaults.editors.array = JSONEditor.AbstractEditor.extend({
         e.preventDefault();
         e.stopPropagation();
 
-        if (self.jsoneditor.options.prompt_before_delete === true) {
-          if (confirm("Confirm to remove.") === false) {
-            return false;
-          }
+        if (!self.askConfirmation()) {
+          return false;
         }
 
         var i = this.getAttribute('data-i')*1;
-
         var value = self.getValue();
-
         var newval = [];
         var new_active_tab = null;
-        $each(value,function(j,row) {
-          if(j===i) {
-            // If the one we're deleting is the active tab
-            if(self.rows[j].tab === self.active_tab) {
-              // Make the next tab active if there is one
-              // Note: the next tab is going to be the current tab after deletion
-              if(self.rows[j+1]) new_active_tab = self.rows[j].tab;
-              // Otherwise, make the previous tab active if there is one
-              else if(j) new_active_tab = self.rows[j-1].tab;
-            }
 
-            return; // If this is the one we're deleting
+        $each(value,function(j,row) {
+          if(j !== i) {
+            newval.push(row);
           }
-          newval.push(row);
         });
+
+        self.empty(true);
         self.setValue(newval);
+
+        if (self.rows[i]) {
+          new_active_tab = self.rows[i].tab;
+        } else if (self.rows[i-1]) {
+          new_active_tab = self.rows[i-1].tab;
+        }
+
         if(new_active_tab) {
           self.active_tab = new_active_tab;
           self.refreshTabs();
@@ -4422,7 +4559,6 @@ JSONEditor.defaults.editors.array = JSONEditor.AbstractEditor.extend({
             $each(value,function(j,row) {
               if(j===i) {
                 value.push(row);
-                return;
               }
             });
 
@@ -4563,23 +4699,26 @@ JSONEditor.defaults.editors.array = JSONEditor.AbstractEditor.extend({
       e.preventDefault();
       e.stopPropagation();
 
-      if (self.jsoneditor.options.prompt_before_delete === true) {
-        if (confirm("Confirm to remove.") === false) {
-          return false;
-        }
+      if (!self.askConfirmation()) {
+        return false;
       }
 
       var rows = self.getValue();
-
       var new_active_tab = null;
-      if(self.rows.length > 1 && self.rows[self.rows.length-1].tab === self.active_tab) new_active_tab = self.rows[self.rows.length-2].tab;
 
       rows.pop();
+      self.empty(true);
       self.setValue(rows);
+
+      if (self.rows[self.rows.length-1]) {
+        new_active_tab = self.rows[self.rows.length-1].tab;
+      }
+
       if(new_active_tab) {
         self.active_tab = new_active_tab;
         self.refreshTabs();
       }
+
       self.onChange(true);
     });
     self.controls.appendChild(this.delete_last_row_button);
@@ -4589,12 +4728,11 @@ JSONEditor.defaults.editors.array = JSONEditor.AbstractEditor.extend({
       e.preventDefault();
       e.stopPropagation();
 
-      if (self.jsoneditor.options.prompt_before_delete === true) {
-        if (confirm("Confirm to remove.") === false) {
-          return false;
-        }
+      if (!self.askConfirmation()) {
+        return false;
       }
 
+      self.empty(true);
       self.setValue([]);
       self.onChange(true);
     });
@@ -4983,6 +5121,11 @@ JSONEditor.defaults.editors.table = JSONEditor.defaults.editors.array.extend({
       self.rows[i].delete_button.addEventListener('click',function(e) {
         e.preventDefault();
         e.stopPropagation();
+
+        if (!self.askConfirmation()) {
+          return false;
+        }
+
         var i = this.getAttribute('data-i')*1;
 
         var value = self.getValue();
@@ -5097,6 +5240,10 @@ JSONEditor.defaults.editors.table = JSONEditor.defaults.editors.array.extend({
       e.preventDefault();
       e.stopPropagation();
 
+      if (!self.askConfirmation()) {
+        return false;
+      }
+
       var rows = self.getValue();
       rows.pop();
       self.setValue(rows);
@@ -5108,6 +5255,10 @@ JSONEditor.defaults.editors.table = JSONEditor.defaults.editors.array.extend({
     this.remove_all_rows_button.addEventListener('click',function(e) {
       e.preventDefault();
       e.stopPropagation();
+
+      if (!self.askConfirmation()) {
+        return false;
+      }
 
       self.setValue([]);
       self.onChange(true);
@@ -5557,6 +5708,9 @@ JSONEditor.defaults.editors.select = JSONEditor.AbstractEditor.extend({
       return;
     }
 
+    if(initial) this.is_dirty = false;
+    else if(this.jsoneditor.options.show_errors === "change") this.is_dirty = true;
+
     this.input.value = this.enum_options[this.enum_values.indexOf(sanitized)];
     if(this.select2) {
       if(this.select2v4)
@@ -5737,15 +5891,17 @@ JSONEditor.defaults.editors.select = JSONEditor.AbstractEditor.extend({
 
     var new_val;
     // Invalid option, use first option instead
-    if(this.enum_options.indexOf(val) === -1) {
+    if(this.enum_values.indexOf(val) === -1) {
       new_val = this.enum_values[0];
     }
     else {
-      new_val = this.enum_values[this.enum_options.indexOf(val)];
+      new_val = this.enum_values[this.enum_values.indexOf(val)];
     }
 
     // If valid hasn't changed
     if(new_val === this.value) return;
+
+    this.is_dirty = true;
 
     // Store new value and propogate change event
     this.value = new_val;
@@ -5927,6 +6083,28 @@ JSONEditor.defaults.editors.select = JSONEditor.AbstractEditor.extend({
     }
 
     this._super();
+  },
+  showValidationErrors: function (errors) {
+    var self = this;
+
+    if (this.jsoneditor.options.show_errors === "always") {}
+    else if(!this.is_dirty && this.previous_error_setting===this.jsoneditor.options.show_errors) return;
+
+    this.previous_error_setting = this.jsoneditor.options.show_errors;
+
+    var messages = [];
+    $each(errors, function (i, error) {
+      if (error.path === self.path) {
+        messages.push(error.message);
+      }
+    });
+
+    if (messages.length) {
+      this.theme.addInputError(this.input, messages.join('. ') + '.');
+    }
+    else {
+      this.theme.removeInputError(this.input);
+    }
   }
 });
 
@@ -6533,7 +6711,32 @@ JSONEditor.defaults.editors.base64 = JSONEditor.AbstractEditor.extend({
   getNumColumns: function() {
     return 4;
   },
-  build: function() {    
+  setFileReaderListener: function (fr_multiple) {
+    var self = this;
+    fr_multiple.addEventListener("load", function(event) {
+      if (self.count == self.current_item_index) {
+        // Overwrite existing file by default, leave other properties unchanged
+        self.value[self.count][self.schema.title] = event.target.result;
+      } else {
+        var temp_object = {};
+        // Create empty object
+        for (var key in self.parent.schema.properties) {
+          temp_object[key] = "";
+        }
+        // Set object media file
+        temp_object[self.schema.title] = event.target.result;
+        self.value.splice(self.count, 0, temp_object); // insert new file object
+      }
+
+      // Increment using the listener and not the 'for' loop as the listener will be processed asynchronously
+      self.count += 1;
+      // When all files have been processed, update the value of the editor
+      if (self.count == (self.total+self.current_item_index)) {
+        self.arrayEditor.setValue(self.value);
+      }
+    });
+  },
+  build: function() {
     var self = this;
     this.title = this.header = this.label = this.theme.getFormInputLabel(this.getTitle());
     if(this.options.infoText) this.infoButton = this.theme.getInfoButton(this.options.infoText);
@@ -6541,27 +6744,57 @@ JSONEditor.defaults.editors.base64 = JSONEditor.AbstractEditor.extend({
     // Input that holds the base64 string
     this.input = this.theme.getFormInputField('hidden');
     this.container.appendChild(this.input);
-    
+
     // Don't show uploader if this is readonly
     if(!this.schema.readOnly && !this.schema.readonly) {
       if(!window.FileReader) throw "FileReader required for base64 editor";
-      
+
       // File uploader
       this.uploader = this.theme.getFormInputField('file');
-      
+
+      // Set attribute of file input field to 'multiple' if:
+      // 'multiple' key has been set to 'true' in the schema
+      // and the parent object is of type 'object'
+      // and the parent of the parent type has been set to 'array'
+      if (self.schema.options.multiple && self.schema.options.multiple == true && self.parent && self.parent.schema.type == 'object' && self.parent.parent && self.parent.parent.schema.type == 'array') {
+        this.uploader.setAttribute('multiple', '');
+      }
+
       this.uploader.addEventListener('change',function(e) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         if(this.files && this.files.length) {
-          var fr = new FileReader();
-          fr.onload = function(evt) {
-            self.value = evt.target.result;
-            self.refreshPreview();
-            self.onChange(true);
-            fr = null;
-          };
-          fr.readAsDataURL(this.files[0]);
+
+          // Check the amount of files uploaded.
+          // If 1, use the regular upload, otherwise use the multiple upload method
+          if (this.files.length>1 && self.schema.options.multiple && self.schema.options.multiple == true && self.parent && self.parent.schema.type == 'object' && self.parent.parent && self.parent.parent.schema.type == 'array') {
+
+            // Load editor of parent.parent to get the array
+            self.arrayEditor = self.jsoneditor.getEditor(self.parent.parent.path);
+            // Check the current value of this editor
+            self.value = self.arrayEditor.getValue();
+            // Set variables for amount of files, index of current array item and
+            // count value containing current status of processed files
+            self.total = this.files.length;
+            self.current_item_index = parseInt(self.parent.key);
+            self.count = self.current_item_index;
+
+            for (var i = 0; i < self.total; i++) {
+              var fr_multiple = new FileReader();
+              self.setFileReaderListener(fr_multiple);
+              fr_multiple.readAsDataURL(this.files[i]);
+            }
+          } else {
+            var fr = new FileReader();
+            fr.onload = function(evt) {
+              self.value = evt.target.result;
+              self.refreshPreview();
+              self.onChange(true);
+              fr = null;
+            };
+            fr.readAsDataURL(this.files[0]);
+          }
         }
       });
     }
@@ -6575,14 +6808,14 @@ JSONEditor.defaults.editors.base64 = JSONEditor.AbstractEditor.extend({
   refreshPreview: function() {
     if(this.last_preview === this.value) return;
     this.last_preview = this.value;
-    
+
     this.preview.innerHTML = '';
-    
+
     if(!this.value) return;
-    
+
     var mime = this.value.match(/^data:([^;,]+)[;,]/);
     if(mime) mime = mime[1];
-    
+
     if(!mime) {
       this.preview.innerHTML = '<em>Invalid data URI</em>';
     }
@@ -6672,6 +6905,22 @@ JSONEditor.defaults.editors.upload = JSONEditor.AbstractEditor.extend({
 
     this.control = this.theme.getFormControl(this.label, this.uploader||this.input, this.preview);
     this.container.appendChild(this.control);
+
+    window.requestAnimationFrame(function() {
+      if (self.value) {
+        var img = document.createElement('img');
+        img.style.maxWidth = '100%';
+        img.style.maxHeight = '100px';
+        img.onload = function (event) {
+          self.preview.appendChild(img);
+        };
+        img.onerror = function(error) {
+          console.error('upload error', error);
+        };
+        img.src = self.container.querySelector('a').href;
+      }
+    });
+
   },
   refreshPreview: function() {
     if(this.last_preview === this.preview_value) return;
@@ -6953,6 +7202,375 @@ JSONEditor.defaults.editors.arraySelectize = JSONEditor.AbstractEditor.extend({
         this.error_holder.style.display = 'none';
       }
     }
+  }
+});
+
+JSONEditor.defaults.editors.starrating = JSONEditor.defaults.editors.string.extend({
+  build: function () {
+    var self = this;
+
+    if(!this.options.compact) this.header = this.label = this.theme.getFormInputLabel(this.getTitle());
+    if(this.schema.description) this.description = this.theme.getFormInputDescription(this.schema.description);
+    if(this.options.infoText) this.infoButton = this.theme.getInfoButton(this.options.infoText);
+    if(this.options.compact) this.container.className += ' compact';
+
+    this.ratingContainer = document.createElement('div');
+    this.ratingContainer.classList.add('starrating');
+
+    this.enum_values = this.schema.enum;
+    this.radioGroup =[];
+
+    var radioInputEventhandler = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      self.setValue(this.value);
+      self.onChange(true);
+    };
+
+    for(var i = this.enum_values.length-1; i>-1; i--) {
+
+      var id = this.key + '-' + i;
+
+      // form radio elements
+      var radioInput = this.theme.getFormInputField('radio');
+      radioInput.name = this.formname + '[starrating]';
+      radioInput.value = this.enum_values[i];
+      radioInput.id = id;
+      radioInput.addEventListener('change', radioInputEventhandler, false);
+      this.radioGroup.push(radioInput);
+
+      // form-label for radio elements
+      var radioLabel = document.createElement('label');
+      radioLabel.htmlFor = id;
+      radioLabel.title = this.enum_values[i];
+      if(this.options.displayValue) {
+        radioLabel.classList.add('starrating-display-enabled');
+      }
+
+      this.ratingContainer.appendChild(radioInput);
+      this.ratingContainer.appendChild(radioLabel);
+
+    }
+
+    if(this.options.displayValue) {
+      this.displayRating = document.createElement('div');
+      this.displayRating.classList.add('starrating-display');
+      this.displayRating.innerText = this.enum_values[0];
+      this.ratingContainer.appendChild(this.displayRating);
+    }
+
+    if(this.schema.readOnly || this.schema.readonly) {
+      this.always_disabled = true;
+      for (var j = 0; i<this.radioGroup.length; j++) {
+        this.radioGroup[j].disabled = true;
+      }
+      this.ratingContainer.classList.add('readonly');
+    }
+
+    var ratingsContainerWrapper = this.theme.getContainer();
+    ratingsContainerWrapper.appendChild(this.ratingContainer);
+
+    this.input = ratingsContainerWrapper;
+    
+    this.control = this.theme.getFormControl(this.label, ratingsContainerWrapper, this.description, this.infoButton);
+    this.container.appendChild(this.control);
+  },
+  enable: function() {
+    if(!this.always_disabled) {
+      for (var i = 0; i<this.radioGroup.length; i++) {
+        this.radioGroup[i].disabled = false;
+      }
+      this.ratingContainer.classList.remove('readonly');
+      this._super();
+    }
+  },
+  disable: function(always_disabled) {
+    if(always_disabled) this.always_disabled = true;
+    for (var i = 0; i<this.radioGroup.length; i++) {
+      this.radioGroup[i].disabled = true;
+    }
+    this.ratingContainer.classList.add('readonly');
+    this._super();
+  },
+  destroy: function() {
+    if(this.ratingContainer.parentNode && this.ratingContainer.parentNode.parentNode) this.ratingContainer.parentNode.parentNode.removeChild(this.ratingContainer.parentNode);
+    if(this.label && this.label.parentNode) this.label.parentNode.removeChild(this.label);
+    if(this.description && this.description.parentNode) this.description.parentNode.removeChild(this.description);
+    this._super();
+  },
+  getNumColumns: function() {
+    return 2;
+  },
+  setValue: function (val) {
+    for(var i = 0; i < this.radioGroup.length; i++) {
+
+      if(this.radioGroup[i].value == val) {
+        this.radioGroup[i].checked = true;
+        this.value = val;
+        if(this.options.displayValue) {
+          this.displayRating.innerHTML = this.value;
+        }
+        this.onChange();
+        break;
+      }
+    }
+  }
+});
+
+/*
+
+Edtended handling of date, time and datetime-local type fields.
+
+Works with both string and integer data types. (default only support string type)
+Adds support for setting "placeholder" through options.
+Has optional support for using flatpickr datepicker.
+All flatpickr options is supported with a few minor differences.
+- "enableTime" and "noCalendar" are set automatically, based on the data type.
+- Extra config option "errorDateFormat". If this is set, it will replace the format displayed in error messages.
+- It is not possible to use "inline" and "wrap" options together.
+- When using the "wrap" option, "toggle" and "clear" buttons are automatically added to markup. 2 extra boolean options ("showToggleButton" and "showClearButton") are available to control which buttons to display. Note: not all frameworks supports this. (Works in: Bootstrap and Foundation)
+- When using the "inline" option, an extra boolean option ("inlineHideInput") is available to hide the original input field.
+- If "mode" is set to either "multiple" or "range", only string data type is supported. Also the result from these is returned as a string not an array.
+
+ToDo:
+- Add support for "required" attribute. (Maybe this should be done on a general scale, as support for other input attributes are also missing, such as "placeholder")
+
+- Test if validation works with "required" fields. (Not sure if I have to put this into custom validator, or if it's handled elsewhere. UPDATE required attribute is currently not supported at ALL!)
+
+ - Improve Handling of flatpicker "multiple" and "range" modes. (Currently the values are just added as string values, but the optimal scenario would be to save those as array if possible)
+
+*/
+JSONEditor.defaults.editors.datetime = JSONEditor.defaults.editors.string.extend({
+  build: function () {
+    this._super();
+    if(!this.input) return;
+
+    // Add required and placeholder text if available
+    if (this.options.placeholder !== undefined) this.input.setAttribute('placeholder', this.options.placeholder);
+
+    if(window.flatpickr && typeof this.options.flatpickr == 'object') {
+
+      // Make sure that flatpickr settings matches the input type
+      this.options.flatpickr.enableTime = this.schema.format == 'date' ? false : true;
+      this.options.flatpickr.noCalendar = this.schema.format == 'time' ? true : false;
+
+      // Curently only string can contain range or multiple values
+      if (this.schema.type == 'integer') this.options.flatpickr.mode = 'single';
+
+      // Attribute for flatpicker
+      this.input.setAttribute('data-input','');
+
+      var input = this.input;
+
+      if (this.options.flatpickr.wrap === true) {
+
+        // Create buttons for input group
+        var buttons = [];
+        if (this.options.flatpickr.showToggleButton !== false) {
+          var toggleButton = this.getButton('',this.schema.format == 'time' ? 'time' :'calendar', this.translate('flatpickr_toggle_button'));
+          // Attribute for flatpicker
+          toggleButton.setAttribute('data-toggle','');
+          buttons.push(toggleButton);
+        }
+        if (this.options.flatpickr.showClearButton !== false) {
+          var clearButton = this.getButton('','clear', this.translate('flatpickr_clear_button'));
+          // Attribute for flatpicker
+          clearButton.setAttribute('data-clear','');
+          buttons.push(clearButton);
+        }
+
+        // Save position of input field
+        var parentNode = this.input.parentNode, nextSibling = this.input.nextSibling;
+
+        var buttonContainer = this.theme.getInputGroup(this.input, buttons);
+        if (buttonContainer !== undefined) {
+          // Make sure "inline" option is turned off
+          this.options.flatpickr.inline = false;
+
+          // Insert container at same position as input field
+          parentNode.insertBefore(buttonContainer, nextSibling);
+
+          input = buttonContainer;
+        }
+        else {
+          this.options.flatpickr.wrap = false;
+        }
+
+      }
+
+      this.flatpickr = window.flatpickr(input, this.options.flatpickr);
+
+      if (this.options.flatpickr.inline === true && this.options.flatpickr.inlineHideInput === true) {
+          this.input.setAttribute('type','hidden');
+      }
+    }
+  },
+  getValue: function() {
+    if (!this.dependenciesFulfilled) {
+      return undefined;
+    }
+    if (this.schema.type == 'string') {
+      return this.value;
+    }
+    if (this.value === '' || this.value === undefined) {
+      return undefined;
+    }
+
+    var value =  this.schema.format == 'time' ? '1970-01-01 ' + this.value : this.value;
+    return parseInt(new Date(value).getTime() / 1000);
+  },
+  setValue: function(value, initial, from_template) {
+    if (this.schema.type == 'string') {
+      this._super();
+    }
+    else {
+      var dateValue, dateObj = new Date(value * 1000),
+          year = dateObj.getFullYear(),
+          month = this.zeroPad(dateObj.getMonth() + 1),
+          day = this.zeroPad(dateObj.getDate()),
+          hour = this.zeroPad(dateObj.getHours()),
+          min = this.zeroPad(dateObj.getMinutes()),
+          sec = this.zeroPad(dateObj.getSeconds()),
+          date = [year, month, day].join('-'),
+          time = [hour, min, sec].join(':');
+
+      if (this.schema.format == 'date') dateValue = date;
+      else if (this.schema.format == 'time') dateValue = time;
+      else dateValue = date + ' ' + time;
+
+      this.value = dateValue;
+    }
+  },
+  destroy: function() {
+    if (this.flatpickr) this.flatpickr.destroy();
+    this.flatpickr = null;
+    this._super();
+  },
+  // helper function
+  zeroPad: function(value) {
+    return ('0' + value).slice(-2);
+  }
+});
+
+JSONEditor.defaults.editors.signature = JSONEditor.defaults.editors.string.extend({
+
+  // This editor is using the signature pad editor from https://github.com/szimek/signature_pad
+  // Credits for the pad itself go to https://github.com/szimek
+
+  build: function() {
+    var self = this, i;
+
+    if(!this.options.compact) this.header = this.label = this.theme.getFormInputLabel(this.getTitle());
+    if(this.schema.description) this.description = this.theme.getFormInputDescription(this.schema.description);
+    var formname = this.formname.replace(/\W/g, '');
+
+    if (typeof SignaturePad == 'function') {
+      // Dynamically add the required CSS the first time this editor is used
+      var styleId = 'json-editor-style-signature';
+      var styles = document.getElementById(styleId);
+      this.input = this.theme.getFormInputField('hidden');
+      this.container.appendChild(this.input);
+
+      // Required to keep height
+      var signatureContainer = document.createElement('div');
+      signatureContainer.className = 'signature-container';
+
+      // Create canvas for signature pad
+      var canvas = document.createElement('canvas');
+      canvas.setAttribute('name', formname);
+      canvas.className = 'signature';
+      signatureContainer.appendChild(canvas);
+
+
+      self.signaturePad = new window.SignaturePad(canvas, {
+        onEnd: function() {
+
+          // check if the signature is not empty before setting a value
+          if (!self.signaturePad.isEmpty()) {
+            self.input.value = self.signaturePad.toDataURL();
+          } else {
+            self.input.value = '';
+          }
+
+          self.is_dirty = true;
+          self.refreshValue();
+          self.watch_listener();
+          self.jsoneditor.notifyWatchers(self.path);
+          if(self.parent) self.parent.onChildEditorChange(self);
+          else self.jsoneditor.onChange();
+
+        }
+      });
+
+      // create button containers and add clear signature button
+      var buttons = document.createElement('div');
+      var clearButton = document.createElement('button');
+      clearButton.className='tiny button';
+      clearButton.innerHTML='Clear signature';
+      buttons.appendChild(clearButton);
+      signatureContainer.appendChild(buttons);
+
+      if(this.options.compact) this.container.setAttribute('class',this.container.getAttribute('class')+' compact');
+
+      if(this.schema.readOnly || this.schema.readonly) {
+        this.always_disabled = true;
+        $each(this.inputs,function(i,input) {
+          canvas.setAttribute("readOnly", "readOnly");
+          input.disabled = true;
+        });
+      }
+      // add listener to the clear button. when clicked, trigger a canvas change after emptying the canvas
+      clearButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        self.signaturePad.clear();
+        // trigger stroke end to let signaturePad update the dataURL
+        self.signaturePad.strokeEnd();
+      });
+
+      this.control = this.theme.getFormControl(this.label, signatureContainer, this.description);
+      this.container.appendChild(this.control);
+      this.refreshValue();
+
+      // signature canvas will stretch to signatureContainer width
+      canvas.width = signatureContainer.offsetWidth;
+      if (self.options && self.options.canvas_height) {
+        canvas.height = self.options.canvas_height;
+      } else {
+        canvas.height = "300"; // Set to default height of 300px;
+      }
+    } else {
+      var message = document.createElement('p');
+      message.innerHTML='Signature pad is not available, please include SignaturePad from https://github.com/szimek/signature_pad';
+      this.container.appendChild(message);
+    }
+
+  },
+  setValue: function(val) {
+    var self = this, i;
+    if (typeof SignaturePad == 'function') {
+      var formname = this.formname.replace(/\W/g, '');
+      var sanitized = this.sanitize(val);
+      if(this.value === sanitized) {
+        return;
+      }
+      self.value = sanitized;
+      self.input.value = self.value;
+      self.signaturePad.clear();
+      // only set contents if value != ''
+      if (val && val != '') {
+        self.signaturePad.fromDataURL(val);
+      }
+      self.watch_listener();
+      self.jsoneditor.notifyWatchers(self.path);
+      return false;
+    }
+  },
+  destroy: function() {
+    var self = this, i;
+    var formname = this.formname.replace(/\W/g, '');
+    self.signaturePad.off();
+    delete self.signaturePad;
   }
 });
 
@@ -7390,6 +8008,9 @@ JSONEditor.AbstractTheme = Class.extend({
   },
   getFirstTab: function(holder){
     return holder.firstChild.firstChild;
+  },
+  getInputGroup: function(input, buttons) {
+    return undefined;
   }
 });
 
@@ -7534,8 +8155,9 @@ JSONEditor.defaults.themes.bootstrap2 = JSONEditor.AbstractTheme.extend({
   getTable: function() {
     var el = document.createElement('table');
     el.className = 'table table-bordered';
-    //el.style.width = 'auto';
-    //el.style.maxWidth = 'none';
+    //FIX: comment next two lines
+    el.style.width = 'auto';
+    el.style.maxWidth = 'none';
     return el;
   },
   addInputError: function(input,text) {
@@ -7649,6 +8271,20 @@ JSONEditor.defaults.themes.bootstrap2 = JSONEditor.AbstractTheme.extend({
 
     progressBar.className = 'progress progress-striped active';
     progressBar.firstChild.style.width = '100%';
+  },
+  getInputGroup: function(input, buttons) {
+    if (!input) return;
+
+    var inputGroupContainer = document.createElement('div');
+    inputGroupContainer.className = 'input-append';
+    inputGroupContainer.appendChild(input);
+
+    for(var i=0;i<buttons.length;i++) {
+      buttons[i].classList.add('btn');
+      inputGroupContainer.appendChild(buttons[i]);
+    }
+
+    return inputGroupContainer;
   }
 });
 
@@ -7779,9 +8415,10 @@ JSONEditor.defaults.themes.bootstrap3 = JSONEditor.AbstractTheme.extend({
   },
   getTable: function() {
     var el = document.createElement('table');
+    //FIX:comment next 2 lines
     el.className = 'table table-bordered';
-    //el.style.width = 'auto';
-    //el.style.maxWidth = 'none';
+    el.style.width = 'auto';
+    el.style.maxWidth = 'none';
     return el;
   },
 
@@ -7814,38 +8451,64 @@ JSONEditor.defaults.themes.bootstrap3 = JSONEditor.AbstractTheme.extend({
   getTabHolder: function(propertyName) {
     var pName = (typeof propertyName === 'undefined')? "" : propertyName;
     var el = document.createElement('div');
-    el.innerHTML = "<div class='list-group pull-left' id='" + pName + "'></div><div class='col-sm-10 pull-left' id='" + pName + "'></div>";
+    el.innerHTML = "<ul class='col-md-2 nav nav-pills nav-stacked' id='" + pName + "' role='tablist'></ul>" +
+      "<div class='col-md-10 tab-content well well-small'  id='" + pName + "'></div>";
     return el;
   },
   getTopTabHolder: function(propertyName) {
     var pName = (typeof propertyName === 'undefined')? "" : propertyName;
     var el = document.createElement('div');
-    el.innerHTML = "<ul class='nav nav-tabs' style='padding-left: 10px; margin-left: 10px;' id='" + pName + "'></ul><div class='tab-content' style='overflow:visible;' id='" + pName + "'></div>";
+    el.innerHTML = "<ul class='nav nav-tabs' id='" + pName + "' role='tablist'></ul>" +
+      "<div class='tab-content well well-small'  id='" + pName + "'></div>";
     return el;
   },
   getTab: function(text, tabId) {
-    var el = document.createElement('a');
-    el.className = 'list-group-item';
-    el.setAttribute('href','#'+tabId);
-    el.appendChild(text);
-    return el;
-  },
-  getTopTab: function(text, tabId) {
-    var el = document.createElement('li');
+    var li = document.createElement('li');
+    li.setAttribute('role', 'presentation');
     var a = document.createElement('a');
     a.setAttribute('href','#'+tabId);
     a.appendChild(text);
-    el.appendChild(a);
+    a.setAttribute('aria-controls', tabId);
+    a.setAttribute('role', 'tab');
+    a.setAttribute('data-toggle', 'tab');
+    li.appendChild(a);
+    return li;
+  },
+  getTopTab: function(text, tabId) {
+    var li = document.createElement('li');
+    li.setAttribute('role', 'presentation');
+    var a = document.createElement('a');
+    a.setAttribute('href','#'+tabId);
+    a.appendChild(text);
+    a.setAttribute('aria-controls', tabId);
+    a.setAttribute('role', 'tab');
+    a.setAttribute('data-toggle', 'tab');
+    li.appendChild(a);
+    return li;
+  },
+  getTabContent: function() {
+    var el = document.createElement('div');
+    el.className = 'tab-pane';
+    el.setAttribute('role', 'tabpanel');
+    return el;
+  },
+  getTopTabContent: function() {
+    var el = document.createElement('div');
+    el.className = 'tab-pane';
+    el.setAttribute('role', 'tabpanel');
     return el;
   },
   markTabActive: function(row) {
     row.tab.className = row.tab.className.replace(/\s?active/g,'');
     row.tab.className += ' active';
-    row.container.style.display = '';
+    row.container.className = row.container.className.replace(/\s?active/g,'');
+    row.container.className += ' active';
+    // row.container.style.display = '';
   },
   markTabInactive: function(row) {
     row.tab.className = row.tab.className.replace(/\s?active/g,'');
-    row.container.style.display = 'none';
+    row.container.className = row.container.className.replace(/\s?active/g,'');
+    // row.container.style.display = 'none';
   },
   getProgressBar: function() {
     var min = 0, max = 100, start = 0;
@@ -7881,6 +8544,23 @@ JSONEditor.defaults.themes.bootstrap3 = JSONEditor.AbstractTheme.extend({
     bar.removeAttribute('aria-valuenow');
     bar.style.width = '100%';
     bar.innerHTML = '';
+  },
+  getInputGroup: function(input, buttons) {
+    if (!input) return;
+
+    var inputGroupContainer = document.createElement('div');
+    inputGroupContainer.className = 'input-group';
+    inputGroupContainer.appendChild(input);
+
+    var inputGroup = document.createElement('div');
+    inputGroup.className = 'input-group-btn';
+    inputGroupContainer.appendChild(inputGroup);
+
+    for(var i=0;i<buttons.length;i++) {
+      inputGroup.appendChild(buttons[i]);
+    }
+
+    return inputGroupContainer;
   }
 });
 
@@ -7972,8 +8652,9 @@ JSONEditor.defaults.themes.bootstrap4 = JSONEditor.AbstractTheme.extend({
   getTable: function() {
     var el = document.createElement("table");
     el.className = "table-bordered table-sm";
-    //el.style.width = "auto";
-    //el.style.maxWidth = "none";
+    //FIX: comment next two lines
+    el.style.width = "auto";
+    el.style.maxWidth = "none";
     return el;
   },
 
@@ -8001,10 +8682,12 @@ JSONEditor.defaults.themes.bootstrap4 = JSONEditor.AbstractTheme.extend({
   getTabHolder: function(propertyName) {
     var el = document.createElement("div");
     var pName = (typeof propertyName === 'undefined')? "" : propertyName;
-    el.innerHTML =
-      "<ul class='nav flex-column nav-pills col-md-2' style='padding: 0px;' id='" + pName + "'></ul><div class='tab-content col-md-10' style='padding:5px;' id='" + pName + "'></div>";
-el.className = "row";
+    el.innerHTML = "<div class='col-md-2' id='" + pName + "'><ul class='nav flex-column nav-pills'></ul></div><div class='tab-content col-md-10' id='" + pName + "'></div>";
+    el.className = "row";
     return el;
+  },  
+  addTab: function(holder, tab) {
+    holder.children[0].children[0].appendChild(tab);
   },
   getTopTabHolder: function(propertyName) {
     var pName = (typeof propertyName === 'undefined')? "" : propertyName;
@@ -8080,6 +8763,23 @@ el.className = "row";
     bar.removeAttribute("aria-valuenow");
     bar.style.width = "100%";
     bar.innerHTML = "";
+  },
+  getInputGroup: function(input, buttons) {
+    if (!input) return;
+
+    var inputGroupContainer = document.createElement('div');
+    inputGroupContainer.className = 'input-group';
+    inputGroupContainer.appendChild(input);
+
+    var inputGroup = document.createElement('div');
+    inputGroup.className = 'input-group-btn';
+    inputGroupContainer.appendChild(inputGroup);
+
+    for(var i=0;i<buttons.length;i++) {
+      inputGroup.appendChild(buttons[i]);
+    }
+
+    return inputGroupContainer;
   }
 });
 
@@ -8197,6 +8897,25 @@ JSONEditor.defaults.themes.foundation = JSONEditor.AbstractTheme.extend({
   updateProgressBarUnknown: function(progressBar) {
     if (!progressBar) return;
     progressBar.firstChild.style.width = '100%';
+  },
+  getInputGroup: function(input, buttons) {
+    if (!input) return undefined;
+
+    var inputGroupContainer = document.createElement('div');
+    inputGroupContainer.className = 'input-group';
+    input.classList.add('input-group-field');
+    inputGroupContainer.appendChild(input);
+
+    for(var i=0;i<buttons.length;i++) {
+      var inputGroup = document.createElement('div');
+      inputGroup.className = 'input-group-button';
+      inputGroup.style.verticalAlign = 'top';
+      buttons[i].classList.remove('small');   
+      inputGroup.appendChild(buttons[i]);
+      inputGroupContainer.appendChild(inputGroup);
+    }
+
+    return inputGroupContainer;
   }
 });
 
@@ -8845,439 +9564,456 @@ JSONEditor.defaults.themes.barebones = JSONEditor.AbstractTheme.extend({
     }
 });
 
-JSONEditor.defaults.themes.materialize = JSONEditor.AbstractTheme.extend({
+JSONEditor.defaults.themes.materialize = JSONEditor.AbstractTheme.extend(
+  {
 
     /**
-     * Applies grid size to specified element.
-     * 
-     * @param {HTMLElement} el The DOM element to have specified size applied.
-     * @param {int} size The grid column size.
-     * @see http://materializecss.com/grid.html
-     */
-    setGridColumnSize: function(el, size) {
-        el.className = 'col s' + size;
+   * Applies grid size to specified element.
+   *
+   * @param {HTMLElement} el The DOM element to have specified size applied.
+   * @param {int} size The grid column size.
+   * @see http://materializecss.com/grid.html
+   */
+  setGridColumnSize: function(el, size) {
+      el.className = 'col s' + size;
     },
 
     /**
-     * Gets a wrapped button element for a header.
-     * 
-     * @returns {HTMLElement} The wrapped button element.
-     */
-    getHeaderButtonHolder: function() {
-        return this.getButtonHolder();
+   * Gets a wrapped button element for a header.
+   *
+   * @returns {HTMLElement} The wrapped button element.
+   */
+  getHeaderButtonHolder: function() {
+      return this.getButtonHolder();
     },
 
     /**
-     * Gets a wrapped button element.
-     * 
-     * @returns {HTMLElement} The wrapped button element.
-     */
-    getButtonHolder: function() {
-        return document.createElement('span');
+   * Gets a wrapped button element.
+   *
+   * @returns {HTMLElement} The wrapped button element.
+   */
+  getButtonHolder: function() {
+      return document.createElement('span');
     },
 
     /**
-     * Gets a single button element.
-     * 
-     * @param {string} text The button text.
-     * @param {HTMLElement} icon The icon object.
-     * @param {string} title The button title.
-     * @returns {HTMLElement} The button object.
-     * @see http://materializecss.com/buttons.html
-     */
-    getButton: function(text, icon, title) {
+   * Gets a single button element.
+   *
+   * @param {string} text The button text.
+   * @param {HTMLElement} icon The icon object.
+   * @param {string} title The button title.
+   * @returns {HTMLElement} The button object.
+   * @see http://materializecss.com/buttons.html
+   */
+  getButton: function(text, icon, title) {
 
-        // Prepare icon.
-        if (text) {
-            icon.className += ' left';
-            icon.style.marginRight = '5px';
+      // Prepare icon.
+      if (text) {
+        icon.className += ' left';
+        icon.style.marginRight = '5px';
+      }
+
+      // Create and return button.
+      var el = this._super(text, icon, title);
+      el.className = 'waves-effect waves-light btn';
+      el.style.fontSize = '0.75rem';
+      el.style.height = '24px';
+      el.style.lineHeight = '24px';
+      el.style.marginLeft = '5px';
+      el.style.padding = '0 0.5rem';
+      return el;
+
+    },
+
+    /**
+   * Gets a form control object consisiting of several sub objects.
+   *
+   * @param {HTMLElement} label The label element.
+   * @param {HTMLElement} input The input element.
+   * @param {string} description The element description.
+   * @param {string} infoText The element information text.
+   * @returns {HTMLElement} The assembled DOM element.
+   * @see http://materializecss.com/forms.html
+   */
+  getFormControl: function(label, input, description, infoText) {
+
+      var ctrl,
+      type = input.type;
+
+      // Checkboxes get wrapped in p elements.
+      if (type && type === 'checkbox') {
+
+        ctrl = document.createElement('p');
+        if (label) {
+          var span = document.createElement('span');
+          span.innerHTML = label.innerHTML;
+          label.innerHTML = '';
+          label.setAttribute('for', input.id);
+          ctrl.appendChild(label);
+          label.appendChild(input);
+          label.appendChild(span);
         }
-
-        // Create and return button.
-        var el = this._super(text, icon, title);
-        el.className = 'waves-effect waves-light btn';
-        el.style.fontSize = '0.75rem';
-        el.style.height = '24px';
-        el.style.lineHeight = '24px';
-        el.style.marginLeft = '5px';
-        el.style.padding = '0 0.5rem';
-        return el;
-
-    },
-
-    /**
-     * Gets a form control object consisiting of several sub objects.
-     * 
-     * @param {HTMLElement} label The label element.
-     * @param {HTMLElement} input The input element.
-     * @param {string} description The element description.
-     * @param {string} infoText The element information text.
-     * @returns {HTMLElement} The assembled DOM element.
-     * @see http://materializecss.com/forms.html
-     */
-    getFormControl: function(label, input, description, infoText) {
-
-        var ctrl,
-            type = input.type;
-
-        // Checkboxes get wrapped in p elements.
-        if (type && type === 'checkbox') {
-
-            ctrl = document.createElement('p');
-            ctrl.appendChild(input);
-            if (label) {
-                label.setAttribute('for', input.id);
-                ctrl.appendChild(label);
-            }
-            return ctrl;
-
-        }
-
-        // Anything else gets wrapped in divs.
-        ctrl = this._super(label, input, description, infoText);
-
-        // Not .input-field for select wrappers.
-        if (!type || !type.startsWith('select'))
-            ctrl.className = 'input-field';
-
-        // Color needs special attention.
-        if (type && type === 'color') {
-            input.style.height = '3rem';
-            input.style.width = '100%';
-            input.style.margin = '5px 0 20px 0';
-            input.style.padding = '3px';
-
-            if (label) {
-                label.style.transform = 'translateY(-14px) scale(0.8)';
-                label.style['-webkit-transform'] = 'translateY(-14px) scale(0.8)';
-                label.style['-webkit-transform-origin'] = '0 0';
-                label.style['transform-origin'] = '0 0';
-            }
+        else {
+          ctrl.appendChild(input);
         }
 
         return ctrl;
 
-    },
+      }
 
-    getDescription: function(text) {
-        var el = document.createElement('div');
-        el.className = 'grey-text';
-        el.style.marginTop = '-15px';
-        el.innerHTML = text;
-        return el;
-    },
+      // Anything else gets wrapped in divs.
+      ctrl = this._super(label, input, description, infoText);
 
-    /**
-     * Gets a header element.
-     * 
-     * @param {string|HTMLElement} text The header text or element.
-     * @returns {HTMLElement} The header element.
-     */
-    getHeader: function(text) {
+      // Not .input-field for select wrappers.
+      if (!type || !type.startsWith('select'))
+        ctrl.className = 'input-field';
 
-        var el = document.createElement('h5');
+      // Color needs special attention.
+      if (type && type === 'color') {
+        input.style.height = '3rem';
+        input.style.width = '100%';
+        input.style.margin = '5px 0 20px 0';
+        input.style.padding = '3px';
 
-        if (typeof text === 'string') {
-          el.textContent = text;
-        } else {
-          el.appendChild(text);
+        if (label) {
+          label.style.transform = 'translateY(-14px) scale(0.8)';
+          label.style['-webkit-transform'] = 'translateY(-14px) scale(0.8)';
+          label.style['-webkit-transform-origin'] = '0 0';
+          label.style['transform-origin'] = '0 0';
         }
-    
-        return el;
+      }
+
+      return ctrl;
 
     },
 
-    getChildEditorHolder: function() {
-
-        var el = document.createElement('div');
-        el.marginBottom = '10px';
-        return el;
-
+  getDescription: function(text) {
+      var el = document.createElement('div');
+      el.className = 'grey-text';
+      el.style.marginTop = '-15px';
+      el.innerHTML = text;
+      return el;
     },
 
-    getIndentedPanel: function() {
-        var el = document.createElement("div");
-        el.className = "card-panel";
-        return el;
-    },
+    /**
+   * Gets a header element.
+   *
+   * @param {string|HTMLElement} text The header text or element.
+   * @returns {HTMLElement} The header element.
+   */
+  getHeader: function(text) {
 
-    getTable: function() {
+      var el = document.createElement('h5');
 
-        var el = document.createElement('table');
-        el.className = 'striped bordered';
-        el.style.marginBottom = '10px';
-        return el;
-
-    },
-
-    getTableRow: function() {
-        return document.createElement('tr');
-    },
-
-    getTableHead: function() {
-        return document.createElement('thead');
-    },
-
-    getTableBody: function() {
-        return document.createElement('tbody');
-    },
-
-    getTableHeaderCell: function(text) {
-
-        var el = document.createElement('th');
+      if (typeof text === 'string') {
         el.textContent = text;
-        return el;
+      } else {
+        el.appendChild(text);
+      }
+
+      return el;
 
     },
 
-    getTableCell: function() {
+  getChildEditorHolder: function() {
 
-        var el = document.createElement('td');
-        return el;
-
-    },
-
-    /**
-     * Gets the tab holder element.
-     * 
-     * @returns {HTMLElement} The tab holder component.
-     * @see https://github.com/Dogfalo/materialize/issues/2542#issuecomment-233458602
-     */
-    getTabHolder: function() {
-
-        var html = [
-            '<div class="col s2">',
-            '   <ul class="tabs" style="height: auto; margin-top: 0.82rem; -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column; display: -webkit-flex; display: flex;">',
-            '   </ul>',
-            '</div>',
-            '<div class="col s10">',
-            '<div>'
-        ].join("\n");
-
-        var el = document.createElement('div');
-        el.className = 'row card-panel';
-        el.innerHTML = html;
-        return el;
+      var el = document.createElement('div');
+      el.marginBottom = '10px';
+      return el;
 
     },
 
-    /**
-     * Add specified tab to specified holder element.
-     * 
-     * @param {HTMLElement} holder The tab holder element.
-     * @param {HTMLElement} tab The tab to add.
-     */
-    addTab: function(holder, tab) {
-        holder.children[0].children[0].appendChild(tab);
+  getIndentedPanel: function() {
+      var el = document.createElement("div");
+      el.className = "card-panel";
+      return el;
     },
 
-    /**
-     * Gets a single tab element.
-     * 
-     * @param {HTMLElement} span The tab's content.
-     * @returns {HTMLElement} The tab element.
-     * @see https://github.com/Dogfalo/materialize/issues/2542#issuecomment-233458602
-     */
-    getTab: function(span) {
+  getTable: function() {
 
-        var el = document.createElement('li');
-        el.className = 'tab';
-        this.applyStyles(el, {
-            width: '100%',
-            textAlign: 'left',
-            lineHeight: '24px',
-            height: '24px',
-            fontSize: '14px',
-            cursor: 'pointer'
-        });
-        el.appendChild(span);
-        return el;
+      var el = document.createElement('table');
+      el.className = 'striped bordered';
+      el.style.marginBottom = '10px';
+      return el;
+
     },
 
-    /**
-     * Marks specified tab as active.
-     * 
-     * @returns {HTMLElement} The tab element.
-     * @see https://github.com/Dogfalo/materialize/issues/2542#issuecomment-233458602
-     */
-    markTabActive: function(tab) {
+  getTableRow: function() {
+      return document.createElement('tr');
+    },
 
-        this.applyStyles(tab, {
-            width: '100%',
-            textAlign: 'left',
-            lineHeight: '24px',
-            height: '24px',
-            fontSize: '14px',
-            cursor: 'pointer',
-            color: 'rgba(238,110,115,1)',
-            transition: 'border-color .5s ease',
-            borderRight: '3px solid #424242'
-        });
+  getTableHead: function() {
+      return document.createElement('thead');
+    },
+
+  getTableBody: function() {
+      return document.createElement('tbody');
+    },
+
+  getTableHeaderCell: function(text) {
+
+      var el = document.createElement('th');
+      el.textContent = text;
+      return el;
+
+    },
+
+  getTableCell: function() {
+
+      var el = document.createElement('td');
+      return el;
 
     },
 
     /**
-     * Marks specified tab as inactive.
-     * 
-     * @returns {HTMLElement} The tab element.
-     * @see https://github.com/Dogfalo/materialize/issues/2542#issuecomment-233458602
-     */
-    markTabInactive: function(tab) {
+   * Gets the tab holder element.
+   *
+   * @returns {HTMLElement} The tab holder component.
+   * @see https://github.com/Dogfalo/materialize/issues/2542#issuecomment-233458602
+   */
+  getTabHolder: function() {
 
-        this.applyStyles(tab, {
-            width: '100%',
-            textAlign: 'left',
-            lineHeight: '24px',
-            height: '24px',
-            fontSize: '14px',
-            cursor: 'pointer',
-            color: 'rgba(238,110,115,0.7)'
-        });
+      var html =[
+        '<div class="col s2">',
+        '   <ul class="tabs" style="height: auto; margin-top: 0.82rem; -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column; display: -webkit-flex; display: flex;">',
+        '   </ul>',
+        '</div>',
+        '<div class="col s10">',
+        '<div>'
+      ].join("\n");
 
-    },
-
-    /**
-     * Returns the element that holds the tab contents.
-     * 
-     * @param {HTMLElement} tabHolder The full tab holder element.
-     * @returns {HTMLElement} The content element inside specified tab holder.
-     */
-    getTabContentHolder: function(tabHolder) {
-        return tabHolder.children[1];
-    },
-
-    /**
-     * Creates and returns a tab content element.
-     * 
-     * @returns {HTMLElement} The new tab content element.
-     */
-    getTabContent: function() {
-        return document.createElement('div');
-    },
-
-    /**
-     * Adds an error message to the specified input element.
-     * 
-     * @param {HTMLElement} input The input element that caused the error.
-     * @param {string} text The error message.
-     */
-    addInputError: function(input, text) {
-
-        // Get the parent element. Should most likely be a <div class="input-field" ... />.
-        var parent = input.parentNode,
-            el;
-
-        if (!parent) return;
-
-        // Remove any previous error.
-        this.removeInputError(input);
-
-        // Append an error message div.
-        el = document.createElement('div');
-        el.className = 'error-text red-text';
-        el.textContent = text;
-        parent.appendChild(el);
+      var el = document.createElement('div');
+      el.className = 'row card-panel';
+      el.innerHTML = html;
+      return el;
 
     },
 
     /**
-     * Removes any error message from the specified input element.
-     * 
-     * @param {HTMLElement} input The input element that previously caused the error.
-     */
-    removeInputError: function(input) {
-
-        // Get the parent element. Should most likely be a <div class="input-field" ... />.
-        var parent = input.parentElement,
-            els;
-
-        if (!parent) return;
-
-        // Remove all elements having class .error-text.
-        els = parent.getElementsByClassName('error-text');
-        for (var i = 0; i < els.length; i++)
-            parent.removeChild(els[i]);
-
-    },
-
-    addTableRowError: function(row) {
-    },
-
-    removeTableRowError: function(row) {
+   * Add specified tab to specified holder element.
+   *
+   * @param {HTMLElement} holder The tab holder element.
+   * @param {HTMLElement} tab The tab to add.
+   */
+  addTab: function(holder, tab) {
+      holder.children[0].children[0].appendChild(tab);
     },
 
     /**
-     * Gets a select DOM element.
-     * 
-     * @param {object} options The option values.
-     * @return {HTMLElement} The DOM element.
-     * @see http://materializecss.com/forms.html#select
-     */
-    getSelectInput: function(options) {
+   * Gets a single tab element.
+   *
+   * @param {HTMLElement} span The tab's content.
+   * @returns {HTMLElement} The tab element.
+   * @see https://github.com/Dogfalo/materialize/issues/2542#issuecomment-233458602
+   */
+  getTab: function(span) {
 
-        var select = this._super(options);
-        select.className = 'browser-default';
-        return select;
-
+      var el = document.createElement('li');
+      el.className = 'tab';
+      this.applyStyles(el,
+        {
+        width: '100%',
+        textAlign: 'left',
+        lineHeight: '24px',
+        height: '24px',
+        fontSize: '14px',
+        cursor: 'pointer'
+        }
+      );
+      el.appendChild(span);
+      return el;
     },
 
     /**
-     * Gets a textarea DOM element.
-     * 
-     * @returns {HTMLElement} The DOM element.
-     * @see http://materializecss.com/forms.html#textarea
-     */
-    getTextareaInput: function() {
-        var el = document.createElement('textarea');
-        el.style.marginBottom = '5px';
-        el.style.fontSize = '1rem';
-        el.style.fontFamily = 'monospace';
-        return el;
-    },
+   * Marks specified tab as active.
+   *
+   * @returns {HTMLElement} The tab element.
+   * @see https://github.com/Dogfalo/materialize/issues/2542#issuecomment-233458602
+   */
+  markTabActive: function(tab) {
 
-    getCheckbox: function() {
-
-        var el = this.getFormInputField('checkbox');
-        el.id = this.createUuid();
-        return el;
+      this.applyStyles(tab,
+        {
+        width: '100%',
+        textAlign: 'left',
+        lineHeight: '24px',
+        height: '24px',
+        fontSize: '14px',
+        cursor: 'pointer',
+        color: 'rgba(238,110,115,1)',
+        transition: 'border-color .5s ease',
+        borderRight: '3px solid #424242'
+        }
+      );
 
     },
 
     /**
-     * Gets the modal element for displaying Edit JSON and Properties dialogs.
-     * 
-     * @returns {HTMLElement} The modal DOM element.
-     * @see http://materializecss.com/cards.html
-     */
-    getModal: function() {
+   * Marks specified tab as inactive.
+   *
+   * @returns {HTMLElement} The tab element.
+   * @see https://github.com/Dogfalo/materialize/issues/2542#issuecomment-233458602
+   */
+  markTabInactive: function(tab) {
 
-        var el = document.createElement('div');
-        el.className = 'card-panel z-depth-3';
-        el.style.padding = '5px';
-        el.style.position = 'absolute';
-        el.style.zIndex = '10';
-        el.style.display = 'none';
-        return el;
+      this.applyStyles(tab,
+        {
+        width: '100%',
+        textAlign: 'left',
+        lineHeight: '24px',
+        height: '24px',
+        fontSize: '14px',
+        cursor: 'pointer',
+        color: 'rgba(238,110,115,0.7)'
+        }
+      );
 
     },
 
     /**
-     * Creates and returns a RFC4122 version 4 compliant unique id.
-     * 
-     * @returns {string} A GUID.
-     * @see https://stackoverflow.com/a/2117523
-     */
-    createUuid: function() {
+   * Returns the element that holds the tab contents.
+   *
+   * @param {HTMLElement} tabHolder The full tab holder element.
+   * @returns {HTMLElement} The content element inside specified tab holder.
+   */
+  getTabContentHolder: function(tabHolder) {
+      return tabHolder.children[1];
+    },
 
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
+    /**
+   * Creates and returns a tab content element.
+   *
+   * @returns {HTMLElement} The new tab content element.
+   */
+  getTabContent: function() {
+      return document.createElement('div');
+    },
+
+    /**
+   * Adds an error message to the specified input element.
+   *
+   * @param {HTMLElement} input The input element that caused the error.
+   * @param {string} text The error message.
+   */
+  addInputError: function(input, text) {
+
+      // Get the parent element. Should most likely be a <div class="input-field" ... />.
+      var parent = input.parentNode,
+      el;
+
+      if (!parent) return;
+
+      // Remove any previous error.
+      this.removeInputError(input);
+
+      // Append an error message div.
+      el = document.createElement('div');
+      el.className = 'error-text red-text';
+      el.textContent = text;
+      parent.appendChild(el);
+
+    },
+
+    /**
+   * Removes any error message from the specified input element.
+   *
+   * @param {HTMLElement} input The input element that previously caused the error.
+   */
+  removeInputError: function(input) {
+
+      // Get the parent element. Should most likely be a <div class="input-field" ... />.
+      var parent = input.parentElement,
+      els;
+
+      if (!parent) return;
+
+      // Remove all elements having class .error-text.
+      els = parent.getElementsByClassName('error-text');
+      for (var i = 0; i < els.length; i++)
+        parent.removeChild(els[i]);
+
+    },
+
+  addTableRowError: function(row) {
+    },
+
+  removeTableRowError: function(row) {
+    },
+
+    /**
+   * Gets a select DOM element.
+   *
+   * @param {object} options The option values.
+   * @return {HTMLElement} The DOM element.
+   * @see http://materializecss.com/forms.html#select
+   */
+  getSelectInput: function(options) {
+
+      var select = this._super(options);
+      select.className = 'browser-default';
+      return select;
+
+    },
+
+    /**
+   * Gets a textarea DOM element.
+   *
+   * @returns {HTMLElement} The DOM element.
+   * @see http://materializecss.com/forms.html#textarea
+   */
+  getTextareaInput: function() {
+      var el = document.createElement('textarea');
+      el.style.marginBottom = '5px';
+      el.style.fontSize = '1rem';
+      el.style.fontFamily = 'monospace';
+      return el;
+    },
+
+  getCheckbox: function() {
+
+      var el = this.getFormInputField('checkbox');
+      el.id = this.createUuid();
+      return el;
+
+    },
+
+    /**
+   * Gets the modal element for displaying Edit JSON and Properties dialogs.
+   *
+   * @returns {HTMLElement} The modal DOM element.
+   * @see http://materializecss.com/cards.html
+   */
+  getModal: function() {
+
+      var el = document.createElement('div');
+      el.className = 'card-panel z-depth-3';
+      el.style.padding = '5px';
+      el.style.position = 'absolute';
+      el.style.zIndex = '10';
+      el.style.display = 'none';
+      return el;
+
+    },
+
+    /**
+   * Creates and returns a RFC4122 version 4 compliant unique id.
+   *
+   * @returns {string} A GUID.
+   * @see https://stackoverflow.com/a/2117523
+   */
+  createUuid: function() {
+
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c)
+        {
+          var r = Math.random() * 16 | 0, v = c == 'x'? r: (r & 0x3 | 0x8);
+          return v.toString(16);
+        }
+      );
 
     }
 
-});
-
+  }
+);
 JSONEditor.AbstractIconLib = Class.extend({
   mapping: {
     collapse: '',
@@ -9316,7 +10052,10 @@ JSONEditor.defaults.iconlibs.bootstrap2 = JSONEditor.AbstractIconLib.extend({
     cancel: 'ban-circle',
     save: 'ok',
     moveup: 'arrow-up',
-    movedown: 'arrow-down'
+    movedown: 'arrow-down',
+    clear: 'remove-circle',
+    time: 'time',
+    calendar: 'calendar'
   },
   icon_prefix: 'icon-'
 });
@@ -9331,7 +10070,10 @@ JSONEditor.defaults.iconlibs.bootstrap3 = JSONEditor.AbstractIconLib.extend({
     cancel: 'floppy-remove',
     save: 'floppy-saved',
     moveup: 'arrow-up',
-    movedown: 'arrow-down'
+    movedown: 'arrow-down',
+    clear: 'remove-circle',
+    time: 'time',
+    calendar: 'calendar'
   },
   icon_prefix: 'glyphicon glyphicon-'
 });
@@ -9346,7 +10088,10 @@ JSONEditor.defaults.iconlibs.fontawesome3 = JSONEditor.AbstractIconLib.extend({
     cancel: 'ban-circle',
     save: 'save',
     moveup: 'arrow-up',
-    movedown: 'arrow-down'
+    movedown: 'arrow-down',
+    clear: 'remove-circle',
+    time: 'time',
+    calendar: 'calendar'
   },
   icon_prefix: 'icon-'
 });
@@ -9362,7 +10107,10 @@ JSONEditor.defaults.iconlibs.fontawesome4 = JSONEditor.AbstractIconLib.extend({
     save: 'save',
     moveup: 'arrow-up',
     movedown: 'arrow-down',
-    copy: 'files-o'
+    copy: 'files-o',
+    clear: 'times-circle-o',
+    time: 'clock-o',
+    calendar: 'calendar'
   },
   icon_prefix: 'fa fa-'
 });
@@ -9377,7 +10125,10 @@ JSONEditor.defaults.iconlibs.foundation2 = JSONEditor.AbstractIconLib.extend({
     cancel: 'error',
     save: 'checkmark',
     moveup: 'up-arrow',
-    movedown: 'down-arrow'
+    movedown: 'down-arrow',
+    clear: 'remove',
+    time: 'clock',
+    calendar: 'calendar'
   },
   icon_prefix: 'foundicon-'
 });
@@ -9392,7 +10143,10 @@ JSONEditor.defaults.iconlibs.foundation3 = JSONEditor.AbstractIconLib.extend({
     cancel: 'x-circle',
     save: 'save',
     moveup: 'arrow-up',
-    movedown: 'arrow-down'
+    movedown: 'arrow-down',
+    clear: 'x-circle',
+    time: 'clock',
+    calendar: 'calendar'
   },
   icon_prefix: 'fi-'
 });
@@ -9407,7 +10161,10 @@ JSONEditor.defaults.iconlibs.jqueryui = JSONEditor.AbstractIconLib.extend({
     cancel: 'closethick',
     save: 'disk',
     moveup: 'arrowthick-1-n',
-    movedown: 'arrowthick-1-s'
+    movedown: 'arrowthick-1-s',
+    clear: 'circle-close',
+    time: 'time',
+    calendar: 'calendar'
   },
   icon_prefix: 'ui-icon ui-icon-'
 });
@@ -9415,16 +10172,19 @@ JSONEditor.defaults.iconlibs.jqueryui = JSONEditor.AbstractIconLib.extend({
 JSONEditor.defaults.iconlibs.materialicons = JSONEditor.AbstractIconLib.extend({
 
     mapping: {
-        collapse: 'arrow_drop_up',
-        expand: 'arrow_drop_down',
-        "delete": 'delete',
-        edit: 'edit',
-        add: 'add',
-        cancel: 'cancel',
-        save: 'save',
-        moveup: 'arrow_upward',
-        movedown: 'arrow_downward',
-        copy: 'content_copy'
+      collapse: 'arrow_drop_up',
+      expand: 'arrow_drop_down',
+      "delete": 'delete',
+      edit: 'edit',
+      add: 'add',
+      cancel: 'cancel',
+      save: 'save',
+      moveup: 'arrow_upward',
+      movedown: 'arrow_downward',
+      copy: 'content_copy',
+      clear: 'highlight_off',
+      time: 'access_time',
+      calendar: 'calendar_today'
     },
 
     icon_class: 'material-icons',
@@ -9755,6 +10515,26 @@ JSONEditor.defaults.languages.en = {
    */
   error_dependency: "Must have property {{0}}",
   /**
+   * When a date is in incorrect format
+   * @variables This key takes one variable: The valid format
+   */
+  error_date: 'Date must be in the format {{0}}',
+  /**
+   * When a time is in incorrect format
+   * @variables This key takes one variable: The valid format
+   */
+  error_time: 'Time must be in the format {{0}}',
+  /**
+   * When a datetime-local is in incorrect format
+   * @variables This key takes one variable: The valid format
+   */
+  error_datetime_local: 'Datetime must be in the format {{0}}',
+  /**
+   * When a integer date is less than 1 January 1970
+   */
+  error_invalid_epoch: 'Date must be greater than 1 January 1970',
+
+  /**
    * Text on Delete All buttons
    */
   button_delete_all: "All",
@@ -9801,7 +10581,15 @@ JSONEditor.defaults.languages.en = {
   /**
     * Title on Expand buttons
     */
-  button_expand: "Expand"
+  button_expand: "Expand",
+  /**
+    * Title on Flatpickr toggle buttons
+    */
+  flatpickr_toggle_button: "Toggle",
+  /**
+    * Title on Flatpickr clear buttons
+    */
+  flatpickr_clear_button: "Clear"
 };
 
 // Miscellaneous Plugin Settings
@@ -9841,6 +10629,10 @@ JSONEditor.defaults.resolvers.unshift(function(schema) {
 JSONEditor.defaults.resolvers.unshift(function(schema) {
   // If the schema is a simple type
   if(typeof schema.type === "string") return schema.type;
+});
+// Use specialized editor for signatures
+JSONEditor.defaults.resolvers.unshift(function(schema) {
+  if(schema.type === "string" && schema.format === "signature") return "signature";
 });
 // Use a specialized editor for ratings
 JSONEditor.defaults.resolvers.unshift(function(schema) {
@@ -9915,6 +10707,16 @@ JSONEditor.defaults.resolvers.unshift(function(schema) {
   // If this schema uses `oneOf` or `anyOf`
   if(schema.oneOf || schema.anyOf) return "multiple";
 });
+// Specialized editor for date, time and datetime-local formats
+JSONEditor.defaults.resolvers.unshift(function(schema) {
+  if (['string', 'integer'].indexOf(schema.type) !== -1 && ['date', 'time', 'datetime-local'].indexOf(schema.format) !== -1) {
+    return "datetime";
+  }
+});
+// Use a specialized editor for starratings
+JSONEditor.defaults.resolvers.unshift(function(schema) {
+  if (schema.type === "string" && schema.format === "starrating") return "starrating";
+});
 
 /**
  * This is a small wrapper for using JSON Editor like a typical jQuery plugin.
@@ -9981,7 +10783,7 @@ JSONEditor.defaults.resolvers.unshift(function(schema) {
   }
 })();
 
-  window.JSONEditor = JSONEditor;
-})();
+	return JSONEditor;
+});
 
 //# sourceMappingURL=jsoneditor.js.map

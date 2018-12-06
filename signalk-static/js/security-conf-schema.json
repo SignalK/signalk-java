@@ -220,7 +220,7 @@
 						"default": "",
 						"minLength": 8,
 						"examples": [
-							"ddd"
+							"dddcccbbduh"
 						]
 					},
 					"lastPasswordChange": {
@@ -257,9 +257,11 @@
 								"friend",
 								"official",
 								"public",
+								"ais",
 								"serial",
 								"n2k",
-								"ais"
+								"tcp_internal",
+								"tcp_external"
 							]
 						}
 					},
@@ -514,7 +516,7 @@
 				"serial": {
 					"type": "object",
 					"title": "Serial",
-					"description": "Serial devices allowed keys",
+					"description": "Serial allowed keys",
 					"name": "serial",
 					"properties": {
 						"allowed": {
@@ -552,6 +554,43 @@
 					"title": "AIS",
 					"description": "AIS allowed keys",
 					"name": "ais",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				},
+				"tcp_internal": {
+					"type": "object",
+					"title": "Internal network",
+					"description": "Internal network allowed keys",
+					"name": "tcp_internal",
+					"properties": {
+						"allowed": {
+							"title": "Allowed",
+							"description": "Allowed keys",
+							"$ref": "#/definitions/allowed"
+						},
+						"denied": {
+							"title": "Denied",
+							"description": "Denied keys",
+							"$ref": "#/definitions/denied"
+						}
+					}
+				}
+				,
+				"tcp_external": {
+					"type": "object",
+					"title": "Internet",
+					"description": "Internet allowed keys",
+					"name": "tcp_external",
 					"properties": {
 						"allowed": {
 							"title": "Allowed",

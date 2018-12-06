@@ -756,8 +756,9 @@
                   "title": "Udp",
                   "description": "Serve signalk over Udp",
                   "name": "udp",
-                  "format": "table",
+                  "format": "grid",
                   "properties": {
+                  	
                     "port": {
                       "id": "http://jsonschema.net/signalk/config/server/server/udp/port",
                       "type": "integer",
@@ -770,6 +771,14 @@
                       "description": "",
                       "name": "port",
                       "default": 5554
+                    },
+                    "start": {
+                      "id": "http://jsonschema.net/signalk/config/server/server/udp/start",
+                      "type": "boolean",
+                      "title": "Start",
+                      "description": "Start UDP service on next server restart",
+                      "name": "start",
+                      "default": true
                     },
                     "nmea": {
                       "id": "http://jsonschema.net/signalk/config/server/server/udp/nmea",
@@ -848,8 +857,10 @@
                   "additionalProperties": false,
                   "title": "Tcp",
                   "description": "Serve signalk over Tcp",
+                  "format": "grid",
                   "name": "tcp",
                   "properties": {
+	                
                     "port": {
                       "id": "http://jsonschema.net/signalk/config/server/server/tcp/port",
                       "type": "integer",
@@ -862,6 +873,14 @@
                       "description": "",
                       "name": "port",
                       "default": 5555
+                    },
+                    "start": {
+                      "id": "http://jsonschema.net/signalk/config/server/server/tcp/start",
+                      "type": "boolean",
+                      "title": "Start",
+                      "description": "Start TCP service on next server restart",
+                      "name": "start",
+                      "default": true
                     },
                     "nmea": {
                       "id": "http://jsonschema.net/signalk/config/server/server/tcp/nmea",
@@ -896,6 +915,24 @@
                   "description": "Server hostname",
                   "name": "hostname",
                   "default": "10.0.0.64"
+                },
+                "queues": {
+                  "id": "http://jsonschema.net/signalk/config/server/server/queues",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "title": "Queues",
+                  "description": "Messaging queues",
+                  "name": "queues",
+                  "properties": {
+                    "persistent": {
+                      "id": "http://jsonschema.net/signalk/config/server/server/queues/persistent",
+                      "type": "boolean",
+                      "title": "Persist Queues",
+                      "description": "Make messaging queues persistent. Inflight messages will survive reboot",
+                      "name": "persistent",
+                      "default": false
+                    }
+                  }
                 },
                 "nmea": {
                   "id": "http://jsonschema.net/signalk/config/server/server/nmea",
@@ -1057,184 +1094,10 @@
             }
           }
         },
-        "navigation": {
-          "id": "http://jsonschema.net/signalk/config/navigation",
-          "type": "object",
-          "additionalProperties": false,
-          "title": "Navigation UI Settings",
-          "description": "Navigation measurement units.",
-          "name": "navigation",
-          "format": "grid",
-          "properties": {
-            "meta": {
-              "id": "http://jsonschema.net/signalk/config/navigation/meta",
-              "type": "object",
-              "additionalProperties": false,
-              "title": "Configure Speed/Distance Units",
-              "name": "meta",
-              "format": "grid",
-              "properties": {
-                "sogDisplayUnit": {
-                  "id": "http://jsonschema.net/signalk/config/navigation/meta/sogDisplayUnit",
-                  "type": "string",
-                  "additionalProperties": false,
-                  "title": "Speed Over Ground/ Distance Display Unit",
-                  "description": "Units to be used for display of speed over ground and distance measurements",
-                  "name": "sogDisplayUnit",
-                  "default": "Kt : n.m.",
-                  "enum": [
-                    "m/s : m",
-                    "km/hr : km",
-                    "mi/hr : mi",
-                    "Kt : n.m."
-                  ]
-                },
-                "stwDisplayUnit": {
-                  "id": "http://jsonschema.net/signalk/config/navigation/meta/stwDisplayUnit",
-                  "type": "string",
-                  "additionalProperties": false,
-                  "title": "Speed Through Water Display Unit",
-                  "description": "Units to be used for display of speed through water",
-                  "name": "stwDisplayUnit",
-                  "default": "Kt",
-                  "enum": [
-                    "m/s",
-                    "km/hr",
-                    "mi/hr",
-                    "Kt "
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "environment": {
-          "id": "http://jsonschema.net/signalk/config/environment",
-          "type": "object",
-          "additionalProperties": false,
-          "title": "Environment",
-          "description": "Instrument configuration, offsets, units, alarms.",
-          "name": "environment",
-          "format": "table",
-          "properties": {
-            "depth": {
-              "id": "http://jsonschema.net/signalk/config/environment/depth",
-              "type": "object",
-              "additionalProperties": false,
-              "title": "Depth Measurements",
-              "description": "Depth measurement properties, units and alarms",
-              "name": "depth",
-              "format": "grid",
-              "properties": {
-                "surfaceToTransducer": {
-                  "id": "http://jsonschema.net/signalk/config/environment/depth/surfaceToTransducer",
-                  "type": "number",
-                  "additionalProperties": false,
-                  "title": "Transducer Offset",
-                  "description": "Distance from surface to depth transducer",
-                  "name": "surfaceToTransducer",
-                  "default": 1.5,
-                  "minimum": 0
-                },
-                "meta": {
-                  "id": "http://jsonschema.net/signalk/config/environment/depth/meta",
-                  "type": "object",
-                  "additionalProperties": false,
-                  "title": "Depth Units/Alarms",
-                  "format": "grid",
-                  "name": "meta",
-                  "properties": {
-                    "displayUnit": {
-                      "id": "http://jsonschema.net/signalk/config/environment/depth/displayUnit",
-                      "type": "string",
-                      "additionalProperties": false,
-                      "title": "Depth Display Unit",
-                      "description": "Units to be usded for depth display and transducer offset",
-                      "name": "displayUnit",
-                      "default": "ft",
-                      "enum": [
-                        "m",
-                        "f",
-                        "ft"
-                      ]
-                    },
-                    "alarmMethod": {
-                      "id": "http://jsonschema.net/signalk/config/environment/depth/meta/alarmMethod",
-                      "type": "string",
-                      "additionalProperties": false,
-                      "title": "Depth Alarm Method",
-                      "description": "The method used to signal an Depth alarm",
-                      "name": "alarmMethod",
-                      "default": "visual",
-                      "enum": [
-                        "visual",
-                        "sound"
-                      ]
-                    },
-                    "warnMethod": {
-                      "id": "http://jsonschema.net/signalk/config/environment/depth/meta/warnMethod",
-                      "type": "string",
-                      "additionalProperties": false,
-                      "title": "Depth Warning Method",
-                      "description": "The method used to signal an Depth warning",
-                      "name": "warnMethod",
-                      "default": "visual",
-                      "enum": [
-                        "visual",
-                        "sound"
-                      ]
-                    },
-                    "zones": {
-                      "id": "http://jsonschema.net/signalk/config/environment/depth/meta/zones",
-                      "type": "array",
-                      "minItems": 2,
-                      "maxItems": 2,
-                      "uniqueItems": true,
-                      "additionalItems": false,
-                      "title": "Depth Zones",
-                      "format": "grid",
-                      "description": "Ranges for the depth alarms.",
-                      "name": "zones",
-                      "items": {
-                        "id": "http://jsonschema.net/signalk/config/environment/depth/meta/zones/0",
-                        "type": "object",
-                        "title": "Zone",
-                        "format": "grid",
-                        "default": "",
-                        "headerTemplate": "{{ self.state }}  zone",
-                        "properties": {
-                          "lower": {
-                            "type": "number",
-                            "description": "The lower bound of the zone."
-                          },
-                          "upper": {
-                            "type": "number",
-                            "description": "The upper bound of the zone."
-                          },
-                          "state": {
-                            "type": "string",
-                            "options": {
-                              "hidden": true
-                            }
-                          },
-                          "message": {
-                            "type": "string",
-                            "description": "Depth reading between the lower and upper bounds will trigger an alarm. or warning"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
 		"required": [
+			"server",
 			"hawtio",
-			"jolokia",
-			"environment",
-			"navigation"
+			"jolokia"
 			]
       }
     }
