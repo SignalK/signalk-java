@@ -1,0 +1,27 @@
+@startuml
+
+title Outgoing Message Processing \n
+fork
+  :Subscription scheduler fires;
+fork again
+  :incoming message fires reply;
+endfork
+partition OUTGOING.REPLY.[temp] {
+
+ :security filter by key; 
+note left
+    Interceptor
+end note 
+if (require delta) then
+ :transform to delta;
+ else
+  :transform to full;
+ endif
+    }
+  
+partition "Supported Protocols" {
+    :Convert to message;
+}
+stop
+
+@enduml

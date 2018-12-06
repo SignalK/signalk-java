@@ -1,0 +1,75 @@
+@startuml
+
+title Incoming Message Processing \n
+
+start
+
+:Incoming packet;
+
+note left
+    Could be in any protocol
+end note
+partition "Supported Protocols" {
+    :Convert to message;
+}
+partition INCOMING.RAW.queue {
+    :Drop garbage messages;
+note left
+    Interceptors
+end note    
+    :Decorate message with source, user, roles, etc;
+    :Classify message type;
+  
+    if (N2K) then (yes)
+ note left
+    Diverts
+end note  
+      :N2KTransformer;
+    elseif (NMEA0183) then (yes)
+      :NMEATransformer;
+    elseif (signalk full) then (yes)
+      :FullMsgTransformer;
+    elseif (signalk UPDATE) then (yes)
+      :DeltaMsgTransformer;
+    elseif (signalk PUT) then (yes)
+      :PutMsgTransformer;
+    elseif (signalk GET) then (yes)
+      :GetMsgTransformer;
+      : retrieve from TDB;
+      : to OUTGOING q;
+      stop
+    elseif (signalk SUBSCRIBE) then (yes)
+      :SubscribeMsgTransformer;
+      :create subscription;
+      :schedule;
+      stop
+    else ()
+      stop
+    endif
+    }
+partition INTERNAL.KV.topic {
+    :security filter by key; 
+note left
+    Interceptor
+end note 
+  repeat
+  fork
+	:Save to TDB;
+	stop
+  fork again
+	:calculate true wind;
+  fork again
+	:calculate anchor radius;
+  fork again
+	:check alarms;
+	:create notifications;
+  fork again
+	:signalk subscriptions;
+	: to OUTGOING.subscriber q;
+	stop
+  end fork
+  repeat while (was data output?)
+    }
+
+
+@enduml
