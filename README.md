@@ -26,7 +26,7 @@ NOTE: WINDOWS users: no spaces in dir/file names, you will cause yourself pain :
 
 Follow the instructions for each to suit your platform.
 
-You need to be able to type 'java' on the command line and get java responding, same for maven and git.
+You need to be able to type `java` on the command line and get java responding, same for maven (`mvn`) and git (`git`).
 
 Create a suitable directory to install signalk-java. eg C:\dev\
 
@@ -40,7 +40,7 @@ C:\dev\signalk-java> mvn exec:java
 Maven will install all the required components and start the application.  
 
 You should now have a SignalK server running, on http://localhost:8080
-See ![](./SECURITY.md)
+See [Security](./SECURITY.md)
 
 
 Install on RPi
@@ -57,7 +57,7 @@ __Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.
 Now open a modern web browser (eg not IE) to `http://[ip_address_of_the_pi]:8080`
 You should get a pretty start page! 
 
-Login or you will only see 'public' data! See ![](./SECURITY.md)
+Login or you will only see 'public' data! See [Security](./SECURITY.md)
 
 Go to the 'server' tab and install the 4 apps (Freeboard-sk, Instrument Panel, Sailgauge. Kip)
 
