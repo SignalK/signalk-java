@@ -1,4 +1,4 @@
-Securing your Java Server
+Securing your Artemis Server
 ============================
 
 Overview
@@ -7,7 +7,14 @@ Overview
 This version enables very fine grained security down to the individual key level but it is not production ready yet. 
 There are complex aspects of signalk security still developing, which will be incorporated in due course.
 
-_This default install doesnt use https, you need that for any sort of security_.
+_This default install uses https with self-signed certificates._ 
+
+Browsers will complain the connection is untrusted, 
+you can safely continue for non-critical installations. You can also disable https in the configuration.
+
+NOTE: the tcp/udp signalk streams are NOT encrypted (yet).
+ 
+_If security is important, you need to get a real signed certificate (see https://letsencrypt.org)_
 
 By default the security is set up as follows:
 
@@ -31,7 +38,7 @@ Obviously a secure installation needs to secure those N2K, AIS, SERIAL and TCP s
 Manage Users and Roles
 ----------------------
 
-* Start you server and point your browser at http://[your server]:8080
+* Start you server and point your browser at https://[your server]:8080
 * Use the LOGIN button to login, use the `admin` user
 * Select the 'Manage Server' tab
 * Select 'Users'

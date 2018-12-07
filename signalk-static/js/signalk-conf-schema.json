@@ -934,6 +934,40 @@
                     }
                   }
                 },
+                "ssl": {
+                  "id": "http://jsonschema.net/signalk/config/server/server/ssl",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "title": "SSL/TLS",
+                  "description": "Manage ssl/tls",
+                  "name": "ssl",
+                  "properties": {
+                    "enable": {
+                      "id": "http://jsonschema.net/signalk/config/server/server/ssl/enable",
+                      "type": "boolean",
+                      "title": "Enable",
+                      "description": "Use https and secure websockets",
+                      "name": "enable",
+                      "default": true
+                    },
+                    "privateKey": {
+                      "id": "http://jsonschema.net/signalk/config/server/server/ssl/privateKey",
+                      "type": "string",
+                      "title": "Private Key File",
+                      "description": "File holding private key, pem format, relative to install dir, eg ./conf/...",
+                      "name": "privateKey",
+                      "default": "./conf/test-private.pem"
+                    },
+                    "certificate": {
+                      "id": "http://jsonschema.net/signalk/config/server/server/ssl/certificate",
+                      "type": "string",
+                      "title": "Certificate File",
+                      "description": "Certificate file, (pem format) pem format, relative to install dir, eg ./conf/...",
+                      "name": "certificate",
+                      "default": "./conf/test-cert.pem"
+                    }
+                  }
+                },
                 "nmea": {
                   "id": "http://jsonschema.net/signalk/config/server/server/nmea",
                   "type": "object",
@@ -970,7 +1004,19 @@
                     }
                   }
                 }
-              }
+              },
+              "required": [
+              "mqtt",
+              "stomp",
+              "udp",
+              "websocket",
+              "rest",
+              "tcp",
+              "queues",
+              "nmea",
+              "ssl",
+              "zeroconf"              
+              ]
             }
           },
           "required": [

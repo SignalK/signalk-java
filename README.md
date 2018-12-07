@@ -39,7 +39,7 @@ C:\dev\signalk-java> mvn exec:java
 ```
 Maven will install all the required components and start the application.  
 
-You should now have a SignalK server running, on http://localhost:8080
+You should now have a SignalK server running, on https://localhost:8080
 See [Security](./SECURITY.md)
 
 
@@ -54,7 +54,7 @@ This new version is easiest from a complete fresh RPi install.
 
 __Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.md)__
 
-Now open a modern web browser (eg not IE) to `http://[ip_address_of_the_pi]:8080`
+Now open a modern web browser (eg not IE) to `https://[ip_address_of_the_pi]:8080`
 You should get a pretty start page! 
 
 Login or you will only see 'public' data! See [Security](./SECURITY.md)
@@ -109,4 +109,4 @@ You will need to clone the artemis-server project and build it with maven. The d
 mvn -Dsignalk.build=dev install
 ```
 
-See http://www.42.co.nz/freeboard and http://http://signalk.github.io/ for more.
+See https://www.42.co.nz/freeboard and https://signalk.github.io/ for more.
