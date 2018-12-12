@@ -256,7 +256,8 @@
               },
               "required": [
                 "start",
-                "file"
+                "file",
+                "delay"
               ]
             },
             "xmpp": {
@@ -1001,7 +1002,12 @@
                       "name": "certificate",
                       "default": "./conf/test-cert.pem"
                     }
-                  }
+                  },
+                  "required": [
+                    "enable",
+                    "privateKey",
+                    "certificate"
+                  ]
                 },
                 "nmea": {
                   "id": "http://jsonschema.net/signalk/config/server/server/nmea",
