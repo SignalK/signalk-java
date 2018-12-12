@@ -240,10 +240,19 @@
                   "type": "string",
                   "minLength": 1,
                   "title": "File",
-                  "description": "Demo file, relative to the src/test/resources/samples/ dir",
+                  "description": "Demo file, relative to the install dir",
                   "name": "file",
-                  "default": "PacCupStartNMEA.txt"
-                }
+                  "default": "./src/test/resources/samples/ plaka.nmea"
+                },
+                 "delay": {
+                  "id": "http://jsonschema.net/signalk/config/server/serial/baud",
+                  "type": "integer",
+                  "title": "Delay ms",
+                  "description": "Delay in millisec between sending massages. Bigger is slower. 0 is as fast as possible",
+                  "name": "delay",
+                  "default": 250,
+                  "minimum": 0
+                 }
               },
               "required": [
                 "start",
@@ -824,7 +833,20 @@
                       "title": "Port",
                       "description": "",
                       "name": "port",
-                      "default": 3000
+                      "default": 8080
+                    },
+                    "portSsl": {
+                      "id": "http://jsonschema.net/signalk/config/server/server/websocket/portSsl",
+                      "type": "integer",
+                      "multipleOf": 1,
+                      "maximum": 65535,
+                      "minimum": 1024,
+                      "exclusiveMaximum": false,
+                      "exclusiveMinimum": false,
+                      "title": "SSL Port",
+                      "description": "",
+                      "name": "portSsl",
+                      "default": 8443
                     }
                   }
                 },
@@ -848,6 +870,19 @@
                       "description": "",
                       "name": "port",
                       "default": 8080
+                    },
+                    "portSsl": {
+                      "id": "http://jsonschema.net/signalk/config/server/server/websocket/portSsl",
+                      "type": "integer",
+                      "multipleOf": 1,
+                      "maximum": 65535,
+                      "minimum": 1024,
+                      "exclusiveMaximum": false,
+                      "exclusiveMinimum": false,
+                      "title": "SSL Port",
+                      "description": "",
+                      "name": "portSsl",
+                      "default": 8443
                     }
                   }
                 },
