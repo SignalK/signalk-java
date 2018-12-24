@@ -34,7 +34,6 @@ Thats all the prep, then open a command console:
 ```
 C:\dev> git clone https://github.com/SignalK/signalk-java.git
 C:\dev\> cd signalk-java
-C:\dev\signalk-java> git checkout artemis
 C:\dev\signalk-java> mvn exec:java
 ```
 Maven will install all the required components and start the application.  

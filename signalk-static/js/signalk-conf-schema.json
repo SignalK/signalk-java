@@ -248,7 +248,7 @@
                   "id": "http://jsonschema.net/signalk/config/server/serial/baud",
                   "type": "integer",
                   "title": "Delay ms",
-                  "description": "Delay in millisec between sending massages. Bigger is slower. 0 is as fast as possible",
+                  "description": "Delay in millisec between sending messages. Bigger is slower. 0 is as fast as possible",
                   "name": "delay",
                   "default": 250,
                   "minimum": 0
