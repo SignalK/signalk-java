@@ -1,8 +1,8 @@
-Signal K Java Artemis (Installer and Management Web-app)
-========================================================
+Signal K Java Artemis Server
+============================
+__Installer and Management Web-app__
 
-A Signal K Artemis server installation for easy deployment onto an RPi, or any Debian based Linux PC. This project builds and install 
-the java Artemis server (https://github.com/SignalK/artemis-server)and its associated web management application.
+A Signal K Artemis server installation for easy deployment onto an RPi, or any Debian based Linux PC. This project builds and install the java Artemis server (https://github.com/SignalK/artemis-server) and its associated web management application.
 
 Other linux types should be simple, just use the appropriate package manager instead of apt.
 
