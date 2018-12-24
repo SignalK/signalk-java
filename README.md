@@ -1,8 +1,8 @@
-Signal K java 
-=================================================
+Signal K Java Artemis (Installer and Management Web-app)
+========================================================
 
-
-A Signal K server setup for easy deployment onto an RPi, or any Debian based Linux PC. 
+A Signal K Artemis server installation for easy deployment onto an RPi, or any Debian based Linux PC. This project builds and install 
+the java Artemis server (https://github.com/SignalK/artemis-server)and its associated web management application.
 
 Other linux types should be simple, just use the appropriate package manager instead of apt.
 
@@ -12,8 +12,6 @@ Provided under an Apache 2 licence
 
 Install on PC
 --------------
-
-NOTE: this now installs the new Artemis server by default.
 
 First do a standard installation fo Java and Influxdb for your platform:
 
@@ -31,16 +29,17 @@ You need to be able to type `java` on the command line and get java responding, 
 Create a suitable directory to install signalk-java. eg C:\dev\
 
 Thats all the prep, then open a command console:
+
 ```
 C:\dev> git clone https://github.com/SignalK/signalk-java.git
 C:\dev\> cd signalk-java
 C:\dev\signalk-java> mvn exec:java
 ```
-Maven will install all the required components and start the application.  
+Maven will install all the required components and start the server.  
 
-You should now have a SignalK server running, on https://localhost:8080
+You should now have a SignalK server running on https://localhost:8080
+
 See [Security](./SECURITY.md)
-
 
 Install on RPi
 --------------
@@ -49,11 +48,11 @@ __The various *.sh scripts are untried with raspbian jessie and the artemis serv
 
 See also https://github.com/SignalK/specification/wiki/Raspberry-Pi-Installation-(Java-Server)
 
-This new version is easiest from a complete fresh RPi install.
+This version is easiest from a complete fresh RPi install.
 
 __Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.md)__
 
-Now open a modern web browser (eg not IE) to `https://[ip_address_of_the_pi]:8080`
+Now open a modern web browser (eg not IE or Edge) to `https://[ip_address_of_the_pi]:8080`
 You should get a pretty start page! 
 
 Login or you will only see 'public' data! See [Security](./SECURITY.md)

@@ -35,7 +35,6 @@ Clone the signalk-java project
 ```
 pi@raspberrypi:~ $ git clone https://github.com/SignalK/signalk-java.git
 pi@raspberrypi:~ $ cd signalk-java
-pi@raspberrypi:~/signalk-java $ git checkout artemis
 ```
 
 Install extra package sources
