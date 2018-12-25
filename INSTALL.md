@@ -69,7 +69,7 @@ pi@raspberrypi:~/signalk-java $ mvn exec:java
   pi@raspberrypi:~/signalk-java $ rm -rf ~/.m2/repository/com/github/SignalK/artemis-server/
 	and try 'mvn exec:java' again
 ```
-Adding apps can be done via the ui at http://[rpi_ip_address]:8080
+Adding apps can be done via the ui at https://[rpi_ip_address]:8443
 
 Fix Influxdb CPU usage (optional but recommended)
 ----------------------

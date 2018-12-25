@@ -37,7 +37,7 @@ C:\dev\signalk-java> mvn exec:java
 ```
 Maven will install all the required components and start the server.  
 
-You should now have a SignalK server running on https://localhost:8080
+You should now have a SignalK server running on https://localhost:8443
 
 See [Security](./SECURITY.md)
 
@@ -52,7 +52,7 @@ This version is easiest from a complete fresh RPi install.
 
 __Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.md)__
 
-Now open a modern web browser (eg not IE or Edge) to `https://[ip_address_of_the_pi]:8080`
+Now open a modern web browser (eg not IE or Edge) to `https://[ip_address_of_the_pi]:8443`
 You should get a pretty start page! 
 
 Login or you will only see 'public' data! See [Security](./SECURITY.md)
