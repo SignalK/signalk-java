@@ -39,6 +39,11 @@ Maven will install all the required components and start the server.
 
 You should now have a SignalK server running on https://localhost:8443
 
+_This default install uses https with self-signed certificates._ 
+
+Browsers will complain the connection is untrusted, 
+you can safely continue for non-critical installations. You can also disable https in the configuration.
+
 See [Security](./SECURITY.md)
 
 Install on RPi
