@@ -60,7 +60,7 @@ Install java jdk11  (this assumes a 32bit OS (eg Rasbian, you may want the 64bit
 -------------------------
 ```
 pi@raspberrypi:~/signalk-java $ wget -O /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb https://github.com/bell-sw/Liberica/releases/download/11.0.2/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
-pi@raspberrypi:~/signalk-java $ sudo sudo dpkg -i /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
+pi@raspberrypi:~/signalk-java $ sudo apt-get install  /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
 
 ```
 
