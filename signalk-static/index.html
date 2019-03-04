@@ -295,7 +295,11 @@ body {
 						<a id="restartBtn" class="btn b btn-default btn-lg" role="button"
 							href="#">Restart</a>
 					</div>
-					<p>Safely stop and start the server. Only works on RPi.</p>
+					<div class="col-md-3">
+						<a id="timeBtn" class="btn b btn-default btn-lg" role="button"
+							href="#">Set RPi time</a>
+					</div>
+					<p>Safely stop and start the server, or set Rpi time from the browser time.</p>
 				</div>
 			</div>
 			<div class="row">
@@ -365,6 +369,26 @@ body {
 														null, 2) + '</pre>');
 							}
 						});
+						$("#timeBtn")
+						.on(
+								'click',
+								function() {
+									$
+											.ajax({
+												url : "/signalk/control/setTime",
+												dataType : "text",
+												type : 'POST',
+												data : new Date().toUTCString(),
+												success : function(data) {
+													alert(data);
+												},
+												error : function(data) {
+													alert("Error:"
+															+ JSON
+																	.stringify(data.responseText));
+												}
+											});
+								});
 						$("#restartBtn")
 								.on(
 										'click',
