@@ -27,7 +27,7 @@ pi@raspberrypi:~ $ sudo apt-get upgrade
 Install helpful things
 ----------------------
 ```
-pi@raspberrypi:~ $ sudo apt-get install -y curl git build-essential dialog
+pi@raspberrypi:~ $ sudo apt-get install -y curl git build-essential dialog wget
 pi@raspberrypi:~ $ sudo apt-get install libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
 ```
 Clone the signalk-java project
@@ -43,10 +43,7 @@ Install extra package sources
 pi@raspberrypi:~/signalk-java $ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 pi@raspberrypi:~/signalk-java $ curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
 pi@raspberrypi:~/signalk-java $ echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
-
-pi@raspberrypi:~/signalk-java $ sudo apt-key add webupd8-key.txt 
-pi@raspberrypi:~/signalk-java $ sudo echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee /etc/apt/sources.list.d/webupd8team-java.list
-pi@raspberrypi:~/signalk-java $ echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee -a /etc/apt/sources.list.d/webupd8team-java.list
+```
 
 pi@raspberrypi:~/signalk-java $ sudo apt update
 ```
@@ -54,9 +51,16 @@ pi@raspberrypi:~/signalk-java $ sudo apt update
 Install essential packages
 --------------------------
 ```
-pi@raspberrypi:~/signalk-java $ sudo apt-get install oracle-java8-jdk
 pi@raspberrypi:~/signalk-java $ sudo apt-get install influxdb
 pi@raspberrypi:~/signalk-java $ sudo apt-get install maven
+
+```
+
+Install java jdk11  (this assumes a 32bit OS (eg Rasbian, you may want the 64bit image if you have a 64bit os)
+-------------------------
+```
+pi@raspberrypi:~/signalk-java $ wget -O /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb https://github.com/bell-sw/Liberica/releases/download/11.0.2/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
+pi@raspberrypi:~/signalk-java $ sudo sudo dpkg -i /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
 
 ```
 
@@ -64,6 +68,7 @@ Start signalk-java
 --------------------
 Use Cntrl-C to exit.
 ```
+pi@raspberrypi:~/signalk-java $ export JAVA_HOME=/usr/lib/jvm/jdk-11-bellsoft-arm32-vfp-hflt
 pi@raspberrypi:~/signalk-java $ mvn exec:java
 	If it fails,
   pi@raspberrypi:~/signalk-java $ rm -rf ~/.m2/repository/com/github/SignalK/artemis-server/

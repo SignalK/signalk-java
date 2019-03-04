@@ -2,6 +2,8 @@
 #
 # start script for freeboard on a Raspberry Pi
 #
+#Set JAVA_HOME for bellsoft jdk11
+export JAVA_HOME=/usr/lib/jvm/jdk-11-bellsoft-arm32-vfp-hflt
 #SIGNALK_HOME=/home/pi/signalk-server
 SIGNALK_HOME=`pwd`
 
@@ -23,4 +25,4 @@ mv signalk-static/logs/start.log signalk-static/logs/start.log.back
 #mvn $EXT $LOG4J exec:java 
 #>>logs/start.log 2>&1 &
 echo "Starting offline: mvn -o -Dexec.args='$EXT' '$LOG4J' '$HAWTIO' exec:java 2>&1" >signalk-static/logs/start.log 2>&1 
-mvn -o -Dexec.args="'$EXT' '$LOG4J' '$HAWTIO' '$JOLOKIA'" exec:java >>signalk-static/logs/start.log 2>&1
+mvn -o -Dexec.args="'$EXT' '$LOG4J' '$HAWTIO' '$JOLOKIA'" exec:exec >>signalk-static/logs/start.log 2>&1

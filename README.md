@@ -17,7 +17,7 @@ First do a standard installation fo Java and Influxdb for your platform:
 
 NOTE: WINDOWS users: no spaces in dir/file names, you will cause yourself pain :-(
 
-* Java SE 8 : https://java.com/en/download/
+* Java SE 11 : for x86: https://java.com/en/download/, or for Rpi: https://www.bell-sw.com/pages/java-11.0.2
 * InfluxDb (1.6+): https://portal.influxdata.com/downloads#influxdb
 * Apache Maven 3+: https://maven.apache.org/download.cgi
 * Git: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
@@ -25,6 +25,14 @@ NOTE: WINDOWS users: no spaces in dir/file names, you will cause yourself pain :
 Follow the instructions for each to suit your platform.
 
 You need to be able to type `java` on the command line and get java responding, same for maven (`mvn`) and git (`git`).
+Check you are using java 11: `java -version`, should return something like:
+```
+openjdk version "11.0.2-BellSoft" 2018-10-16
+OpenJDK Runtime Environment (build 11.0.2-BellSoft+7)
+OpenJDK 64-Bit Server VM (build 11.0.2-BellSoft+7, mixed mode)
+
+```
+The `11.x.x` is important, you may get a variety of replacements for `Bellsoft`
 
 Create a suitable directory to install signalk-java. eg C:\dev\
 
@@ -33,7 +41,7 @@ Thats all the prep, then open a command console:
 ```
 C:\dev> git clone https://github.com/SignalK/signalk-java.git
 C:\dev\> cd signalk-java
-C:\dev\signalk-java> mvn exec:java
+C:\dev\signalk-java> mvn exec:exec
 ```
 Maven will install all the required components and start the server.  
 
@@ -49,7 +57,7 @@ See [Security](./SECURITY.md)
 Install on RPi
 --------------
 
-__The various *.sh scripts are untried with raspbian jessie and the artemis server. Mods welcome.__
+__The various *.sh scripts need updating with raspbian jessie, jdk11, and the artemis server. Mods welcome.__
 
 See also https://github.com/SignalK/specification/wiki/Raspberry-Pi-Installation-(Java-Server)
 
@@ -110,6 +118,11 @@ You will need to clone the artemis-server project and build it with maven. The d
 
 ```
 mvn -Dsignalk.build=dev install
+```
+
+Running under JDK11 with the Graal js compiler requires java options, already set by `mvn exec:exec`:
+```
+-Xmx256M -XX:+HeapDumpOnOutOfMemoryError -Dio.netty.leakDetection.level=ADVANCED -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCI --module-path=./target/compiler/graal-sdk.jar:./target/compiler/truffle-api.jar --upgrade-module-path=./target/compiler/compiler.jar
 ```
 
 See https://www.42.co.nz/freeboard and https://signalk.github.io/ for more.
