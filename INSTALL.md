@@ -30,38 +30,39 @@ Install helpful things
 pi@raspberrypi:~ $ sudo apt-get install -y curl git build-essential dialog wget
 pi@raspberrypi:~ $ sudo apt-get install libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
 ```
-Clone the signalk-java project
-------------------------------
-```
-pi@raspberrypi:~ $ git clone https://github.com/SignalK/signalk-java.git
-pi@raspberrypi:~ $ cd signalk-java
-```
 
 Install extra package sources
 --------------------------
 ```
-pi@raspberrypi:~/signalk-java $ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-pi@raspberrypi:~/signalk-java $ curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
-pi@raspberrypi:~/signalk-java $ echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+pi@raspberrypi:~ $ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+pi@raspberrypi:~ $ curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+pi@raspberrypi:~ $ echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
 ```
 
-pi@raspberrypi:~/signalk-java $ sudo apt update
+pi@raspberrypi:~ $ sudo apt update
 ```
 
 Install essential packages
 --------------------------
 ```
-pi@raspberrypi:~/signalk-java $ sudo apt-get install influxdb
-pi@raspberrypi:~/signalk-java $ sudo apt-get install maven
+pi@raspberrypi:~ $ sudo apt-get install influxdb
+pi@raspberrypi:~ $ sudo apt-get install maven
 
 ```
 
 Install java jdk11  (this assumes a 32bit OS (eg Rasbian, you may want the 64bit image if you have a 64bit os)
 -------------------------
 ```
-pi@raspberrypi:~/signalk-java $ wget -O /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb https://github.com/bell-sw/Liberica/releases/download/11.0.2/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
-pi@raspberrypi:~/signalk-java $ sudo apt-get install  /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
+pi@raspberrypi:~ $ wget -O /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb https://github.com/bell-sw/Liberica/releases/download/11.0.2/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
+pi@raspberrypi:~ $ sudo apt-get install  /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
 
+```
+Clone the signalk-java project
+------------------------------
+```
+pi@raspberrypi:~ $ git clone https://github.com/SignalK/signalk-java.git
+pi@raspberrypi:~ $ cd signalk-java
+pi@raspberrypi:~ $ git checkout jdk11
 ```
 
 Start signalk-java
@@ -69,10 +70,10 @@ Start signalk-java
 Use Cntrl-C to exit.
 ```
 pi@raspberrypi:~/signalk-java $ export JAVA_HOME=/usr/lib/jvm/jdk-11-bellsoft-arm32-vfp-hflt
-pi@raspberrypi:~/signalk-java $ mvn exec:java
+pi@raspberrypi:~/signalk-java $ mvn exec:exec
 	If it fails,
   pi@raspberrypi:~/signalk-java $ rm -rf ~/.m2/repository/com/github/SignalK/artemis-server/
-	and try 'mvn exec:java' again
+	and try 'mvn exec:exec' again
 ```
 Adding apps can be done via the ui at https://[rpi_ip_address]:8443
 
