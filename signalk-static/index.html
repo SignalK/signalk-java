@@ -216,9 +216,9 @@ body {
 											  "<div class=\"row\">"+
 												"<div class=\"col-md-4\">"+
 													"<a class=\"btn btn-primary btn-lg\" role=\"button\""+
-														"href=\""+item.href+"\">"+item.name+" v"+item.version+"</a>"+
+														"href=\""+item.location+"\">"+item.name+" v"+item.version+"</a>"+
 												"</div>"+
-												"<div class=\"col-md-8\">"+
+												"<div class=\"col-md-7\">"+
 													"<p>"+item.description+
 															"<br/><a href=\""+item.repository+"\">"+item.repository+"</a>"+
 													"</p>"+
@@ -236,18 +236,39 @@ body {
 								console.log(data);
 								var jsonData = JSON.parse(data);
 								jsonData.forEach(function(item) {
+									if(item.installed){
 									  $("#manage").append(
 											  "<div class=\"row\">"+
 												"<div class=\"col-md-4\">"+
 													"<a class=\"btn btn-primary btn-lg\" role=\"button\""+
 														"href=\"/signalk/v1/apps/install?appName="+item.name+"&appVersion="+item.version+"\">"+item.name+" v"+item.version+"</a>"+
 												"</div>"+
-												"<div class=\"col-md-8\">"+
+												"<div class=\"col-md-2\">"+
+												"<a class=\"btn btn-danger btn-lg\" role=\"button\""+
+													"href=\"/signalk/v1/apps/remove?appName="+item.name+"\">Remove</a>"+
+											    "</div>"+
+												"<div class=\"col-md-6\">"+
 													"<p>"+item.description+
 													"</p>"+
 												"</div>"+
 											"</div>"
 									  );
+									}else{
+										$("#manage").append(
+												  "<div class=\"row\">"+
+													"<div class=\"col-md-4\">"+
+														"<a class=\"btn btn-primary btn-lg\" role=\"button\""+
+															"href=\"/signalk/v1/apps/install?appName="+item.name+"&appVersion="+item.version+"\">"+item.name+" v"+item.version+"</a>"+
+													"</div>"+
+													"<div class=\"col-md-2\">"+
+												    "</div>"+
+													"<div class=\"col-md-6\">"+
+														"<p>"+item.description+
+														"</p>"+
+													"</div>"+
+												"</div>"
+										  );
+									}
 									});
 							}
 						});
