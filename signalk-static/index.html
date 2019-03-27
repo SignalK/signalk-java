@@ -119,7 +119,7 @@ body {
 
 
 			<div class="row">
-				<div id="addresses" class="col-md-4"></div>
+				<div id="addresses" class="col-md-6"></div>
 			</div>
 			<div class="row">
 				<div class="col-md-8">
@@ -136,6 +136,19 @@ body {
 							href="#">Set RPi time</a>
 					</div>
 					<p>Safely stop and start the server, or set Rpi time from the browser time.</p>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-8">
+					<div class="col-md-4">
+						<a id="clearDbFutureBtn" class="btn btn-default btn-lg" role="button"
+							href="#">Clear Db Future</a>
+					</div>
+					<div class="col-md-4">
+						<a id="clearDbVesselsBtn" class="btn btn-default btn-lg" role="button"
+							href="#">Clear Db Vessels</a>
+					</div>
+					<p>Cleans the Db, deleting dates in the future, or all vessel history.</p>
 				</div>
 			</div>
 			<div class="row">
@@ -288,8 +301,7 @@ body {
 												},
 												error : function(data) {
 													alert("Error:"
-															+ JSON
-																	.stringify(data.responseText));
+															+ JSON.stringify(data.responseText));
 												}
 											});
 								});
@@ -306,8 +318,7 @@ body {
 														},
 														error : function(data) {
 															alert("Error:"
-																	+ JSON
-																			.stringify(data.responseText));
+																	+ JSON.stringify(data.responseText));
 														}
 													});
 										});
@@ -324,11 +335,44 @@ body {
 														},
 														error : function(data) {
 															alert("Error:"
-																	+ JSON
-																			.stringify(data.responseText));
+																	+ JSON.stringify(data.responseText));
 														}
 													});
 										});
+						$("#clearDbFutureBtn")
+						.on(
+								'click',
+								function() {
+									$
+											.ajax({
+												url : "/signalk/control/clearDbFuture",
+												dataType : "text",
+												success : function(data) {
+													alert(data);
+												},
+												error : function(data) {
+													alert("Error:"
+															+ JSON.stringify(data.responseText));
+												}
+											});
+								});
+						$("#clearDbVesselsBtn")
+						.on(
+								'click',
+								function() {
+									$
+											.ajax({
+												url : "/signalk/control/clearDbVessels",
+												dataType : "text",
+												success : function(data) {
+													alert(data);
+												},
+												error : function(data) {
+													alert("Error:"
+															+ JSON.stringify(data.responseText));
+												}
+											});
+								});
 						
 
 					});
