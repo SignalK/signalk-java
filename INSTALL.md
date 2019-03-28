@@ -1,11 +1,14 @@
 Complete fresh manual install
 =============================
 
+See https://www.raspberrypi.org/documentation/installation/noobs.md
+
 Download fresh raspbian lite (stretch)
 
-Follow instructions on https://www.raspberrypi.org/documentation/installation/installing-images/linux.md to load image to 8Gb SD card
+Follow instructions on https://www.raspberrypi.org/documentation/installation/installing-images/ to load image to 8Gb SD card
+Fit the SD card into the Raspberry Pi and boot it.
 
-Log in to console (using ssh)
+Log in to console (fit a screen and keyboard or remotely using ssh)
 
 pi@raspberrypi:~ $ raspi-config
 
@@ -37,7 +40,6 @@ Install extra package sources
 pi@raspberrypi:~ $ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 pi@raspberrypi:~ $ curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
 pi@raspberrypi:~ $ echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
-```
 
 pi@raspberrypi:~ $ sudo apt update
 ```
@@ -46,6 +48,9 @@ Install essential packages
 --------------------------
 ```
 pi@raspberrypi:~ $ sudo apt-get install influxdb
+pi@raspberrypi:~ $ sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
+pi@raspberrypi:~ $ sudo service influxdb start
+
 pi@raspberrypi:~ $ sudo apt-get install maven
 
 ```
@@ -77,20 +82,6 @@ pi@raspberrypi:~/signalk-java $ mvn exec:exec
 ```
 Adding apps can be done via the ui at https://[rpi_ip_address]:8443
 
-Fix Influxdb CPU usage (optional but recommended)
-----------------------
-Influxdb can have very high CPU usage on the RPi but can be fixed quite easily.
-
-Edit /etc/influxdb/influxdb.conf
-```
-pi@raspberrypi:~ $ sudo nano /etc/influxdb/influxdb.conf
-```
-change `store-enabled ` to `false` 
-```
-[monitor]
-   store-enabled = false
-```
-Cntrl-X to save
 
 Configure wifi hotspot and other services (optional)
 ------------------

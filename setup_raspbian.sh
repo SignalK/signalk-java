@@ -143,7 +143,7 @@ cat << EOF
 
 You're about to set up this raspbian server to run the Artemis signalk server. This script will
 modify your system to do just that. It's developed and tested to work on a
-vanilla 'Raspbian Stretch - Lite' image.
+vanilla 'Raspbian Jessie - Lite' image.
 
 You should have already:
 
@@ -237,8 +237,8 @@ ensure_package_installed "lsb-release"
 LSB_ID=$(lsb_release -is)
 LSB_CODENAME=$(lsb_release -cs)
 
-## check lsb_release for Raspbian stretch
-if [ "${LSB_ID}" != "Raspbian" -o "${LSB_CODENAME}" != "stretch" ]; then
+## check lsb_release for Raspbian jessie
+if [ "${LSB_ID}" != "Raspbian" -o "${LSB_CODENAME}" != "jessie" ]; then
     echo "distro ${LSB_ID} ${LSB_CODENAME} is not supported."
     exit 1
 fi
@@ -247,7 +247,7 @@ sudo apt-get install -y curl git build-essential dialog
 
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
-echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+echo "deb https://repos.influxdata.com/debian jessie stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
 
 sudo apt-key add  webupd8-key.txt 
 sudo echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee /etc/apt/sources.list.d/webupd8team-java.list
@@ -261,6 +261,8 @@ sudo apt-get install libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
 sudo apt-get install oracle-java8-jdk
 sudo apt-get install oracle-java8-set-default
 sudo apt-get install influxdb
+sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
+sudo service influxdb restart
 sudo apt-get install maven
 sudo apt-get install dnsmasq hostapd
 

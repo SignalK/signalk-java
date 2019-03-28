@@ -10,10 +10,24 @@ Its also possible (and should be quite simple) on a windows PC, but you have to 
 
 Provided under an Apache 2 licence
 
+Install on RPi
+--------------
+
+__The various *.sh scripts need updating with raspbian jessie, jdk11, and the artemis server. Mods welcome.__
+
+See also https://github.com/SignalK/specification/wiki/Raspberry-Pi-Installation-(Java-Server)
+
+This version is easiest from a complete fresh RPi install.
+
+__Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.md)__
+
+Now open a modern web browser (eg not IE or Edge) to `https://[ip_address_of_the_pi]:8443`
+You should get a pretty start page! 
+
 Install on PC
 --------------
 
-First do a standard installation fo Java and Influxdb for your platform:
+First do a standard installation for Java and Influxdb for your platform:
 
 NOTE: WINDOWS users: no spaces in dir/file names, you will cause yourself pain :-(
 
@@ -54,29 +68,20 @@ you can safely continue for non-critical installations. You can also disable htt
 
 See [Security](./SECURITY.md)
 
-Install on RPi
---------------
-
-__The various *.sh scripts need updating with raspbian jessie, jdk11, and the artemis server. Mods welcome.__
-
-See also https://github.com/SignalK/specification/wiki/Raspberry-Pi-Installation-(Java-Server)
-
-This version is easiest from a complete fresh RPi install.
-
-__Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.md)__
-
-Now open a modern web browser (eg not IE or Edge) to `https://[ip_address_of_the_pi]:8443`
-You should get a pretty start page! 
+Using Signalk-java
+------------------
 
 Login or you will only see 'public' data! See [Security](./SECURITY.md)
 
-Go to the 'server' tab and install the 4 apps (Freeboard-sk, Instrument Panel, Sailgauge. Kip)
+Go to the 'Manage Apps' tab and install the major apps (Freeboard-sk, Instrument Panel, SKWiz, and Kip)
 
-Try the apps. (Sailguage and Kip are broken at present, expect a fix for Kip shortly.)
+Try the apps. 
 
-Control logging by using the 'Log Configuration' button on the index page, or editing conf/log4j2.json. 
+Upload your charts using the 'Upload Charts' button in the 'Manage Server' tab. The format is the zip file output by the freeboard-installer (https://github.com/rob42/freeboard-installer)
 
-Upload your charts using the 'Upload Charts' button. The format is the zip file output by the freeboard-installer (https://github.com/rob42/freeboard-installer)
+The 'Manage Server' tab provides a number of options to manage the server configuration and logging, setup users and upload charts
+
+The 'Signalk Api' tab gives you direct access to the raw signalk data.
 
 
 Using the server for your own client
