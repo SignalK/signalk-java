@@ -20,7 +20,7 @@
 #
 #
 # This is a setup script to automate the installation of Signalk-java
-# On Raspbian Jessie.
+# On Raspbian stretch.
 #
 
 # Use bash "strict mode" - http://redsymbol.net/articles/unofficial-bash-strict-mode/
@@ -48,7 +48,7 @@ BOAT_NETWORK_WIFI_CHAN=10
 
 # To test another fork and branch:
 #FREEBOARD_CLONE_URL="https://github.com/ph1l/freeboard-server.git"
-#FREEBOARD_BRANCH="raspbian_jessie"
+#FREEBOARD_BRANCH="raspbian_stretch"
 
 # helper functions
 
@@ -143,7 +143,7 @@ cat << EOF
 
 You're about to set up this raspbian server to run the Artemis signalk server. This script will
 modify your system to do just that. It's developed and tested to work on a
-vanilla 'Raspbian Jessie - Lite' image.
+vanilla 'Raspbian Stretch - Lite' image.
 
 You should have already:
 
@@ -237,8 +237,8 @@ ensure_package_installed "lsb-release"
 LSB_ID=$(lsb_release -is)
 LSB_CODENAME=$(lsb_release -cs)
 
-## check lsb_release for Raspbian jessie
-if [ "${LSB_ID}" != "Raspbian" -o "${LSB_CODENAME}" != "jessie" ]; then
+## check lsb_release for Raspbian stretch
+if [ "${LSB_ID}" != "Raspbian" -o "${LSB_CODENAME}" != "stretch" ]; then
     echo "distro ${LSB_ID} ${LSB_CODENAME} is not supported."
     exit 1
 fi
@@ -247,7 +247,7 @@ sudo apt-get install -y curl git build-essential dialog
 
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
-echo "deb https://repos.influxdata.com/debian jessie stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
 
 sudo apt-key add  webupd8-key.txt 
 sudo echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee /etc/apt/sources.list.d/webupd8team-java.list
@@ -405,7 +405,7 @@ EOF
     fi
 
     ## enable network daemons
-    system_enable_service "hostapd" # Note: Due to a bug in debian jessie, this
+    system_enable_service "hostapd" # Note: Due to a bug in debian stretch, this
                                     # enable service triggers each time you run
                                     # the script. This does not cause a failure
                                     # other than the output:

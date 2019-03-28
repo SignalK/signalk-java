@@ -2,8 +2,16 @@
 #
 # start script for freeboard on a Raspberry Pi
 #
-#Set JAVA_HOME for bellsoft jdk11
-export JAVA_HOME=/usr/lib/jvm/jdk-11-bellsoft-arm32-vfp-hflt
+#prefer jdk11, oracle jdk8, openjdk 8
+if [ -d /usr/lib/jvm/jdk-11-bellsoft-arm32-vfp-hflt ]; then
+	#Set JAVA_HOME for bellsoft jdk11
+	export JAVA_HOME=/usr/lib/jvm/jdk-11-bellsoft-arm32-vfp-hflt
+elif [ -d /usr/lib/jvm/java-8-oracle ]; then
+	#Set JAVA_HOME for bellsoft jdk11
+	export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+else
+	export /usr/lib/jvm/java-8-openjdk-armhf
+fi
 #SIGNALK_HOME=/home/pi/signalk-server
 SIGNALK_HOME=`pwd`
 
@@ -14,7 +22,7 @@ mkdir -p signalk-static/logs
 # jolokia
 JOLOKIA="-javaagent:./hawtio/jolokia-jvm-1.6.0-agent.jar=config=./conf/jolokia.conf"
 EXT="-Djava.util.Arrays.useLegacyMergeSort=true"
-MEM="-Xmx128m -XX:+HeapDumpOnOutOfMemoryError -Dio.netty.leakDetection.level=ADVANCED -XX:+UseParallelGC -XX:+AggressiveOpts"
+MEM="-Xmx256m -XX:+HeapDumpOnOutOfMemoryError -Dio.netty.leakDetection.level=ADVANCED -XX:+UseParallelGC -XX:+AggressiveOpts"
 HAWTIO=-Dhawtio.authenticationEnabled=false
 LOG4J=-Dlog4j.configuration=file://$SIGNALK_HOME/conf/log4j2.json
 
