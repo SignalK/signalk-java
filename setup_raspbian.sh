@@ -243,29 +243,26 @@ if [ "${LSB_ID}" != "Raspbian" -o "${LSB_CODENAME}" != "stretch" ]; then
     exit 1
 fi
 
-sudo apt-get install -y curl git build-essential dialog
+sudo apt-get update
+sudo apt-get upgrade
 
-curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y curl git build-essential dialog wget
+sudo apt-get install libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
+
+# curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
 echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
 
-sudo apt-key add  webupd8-key.txt 
-sudo echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee /etc/apt/sources.list.d/webupd8team-java.list
-echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee -a /etc/apt/sources.list.d/webupd8team-java.list
-
 sudo apt update
 
-sudo apt install nodejs
-sudo apt-get install libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
-#sudo apt-get install libaio1
-sudo apt-get install oracle-java8-jdk
-sudo apt-get install oracle-java8-set-default
 sudo apt-get install influxdb
 sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
 sudo service influxdb restart
-sudo apt-get install maven
-sudo apt-get install dnsmasq hostapd
 
+wget -O /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb https://github.com/bell-sw/Liberica/releases/download/11.0.2/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
+sudo apt-get install  /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
+	
+sudo apt-get install maven
 
 ## check running user is 'pi'
 if [ "$(id -nu)" != "pi" ]; then
@@ -275,6 +272,11 @@ fi
 
 ## change to HOME
 cd ${HOME}
+git clone https://github.com/SignalK/signalk-java.git
+cd signalk-java
+git checkout jdk11
+cd ${HOME}
+touch first_start
 
 #if [ ! -d /opt/jdk ]; then
 #    sudo mkdir /opt/jdk

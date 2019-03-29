@@ -82,6 +82,13 @@ pi@raspberrypi:~/signalk-java $ mvn exec:exec
 ```
 Adding apps can be done via the ui at https://[rpi_ip_address]:8443
 
+Make it autostart at boot
+-------------------------
+
+pi@raspberrypi:~/signalk-java $ sudo cp systemd.signalk-java.environment /etc/default/signalk-java
+pi@raspberrypi:~/signalk-java $ sudo cp systemd.signalk-java.service /etc/systemd/system/signalk-java.service
+pi@raspberrypi:~/signalk-java $ sudo systemctl daemon-reload
+pi@raspberrypi:~/signalk-java $ sudo systemctl enable signalk-java
 
 Configure wifi hotspot and other services (optional)
 ------------------
