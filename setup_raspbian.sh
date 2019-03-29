@@ -287,45 +287,6 @@ fi
 cd ${HOME}
 touch first_start
 
-#if [ ! -d /opt/jdk ]; then
-#    sudo mkdir /opt/jdk
-#fi
-
-#JAVA_HOME="/opt/jdk/jdk${JAVA_VERSION}"
-
-#if [ ! -d ${JAVA_HOME} ]; then
-#    wget --quiet --header "Cookie: oraclelicense=accept-securebackup-cookie" \
-#         --output-document=/tmp/jdk.$$.tgz \
-#         ${JAVA_URL}
-#    sudo tar -C /opt/jdk -zxf /tmp/jdk.$$.tgz
-#    rm /tmp/jdk.$$.tgz
-#fi
-
-#for prog in java javac; do
-#    ensure_alternative "${prog}" "${JAVA_HOME}/bin/${prog}"
-#done
-
-
-
-#if [ ! -d freeboard-server ]; then
-#    if [ -z "${FREEBOARD_BRANCH}" ]; then
-#        git clone --depth=1 ${FREEBOARD_CLONE_URL} freeboard-server
-#    else
-#        git clone --branch=${FREEBOARD_BRANCH} --depth=1 \
-#                  ${FREEBOARD_CLONE_URL} freeboard-server
-#    fi
-#    DO_RESTART_SERVICE=Y
-#else # update
-#    pushd freeboard-server
-#    OLD_REF=$( git_head_ref )
-#    git pull
-#    NEW_REF=$( git_head_ref )
-#    if [ "${OLD_REF}" != "${NEW_REF}" ]; then
-#        DO_RESTART_SERVICE=Y
-#    fi
-#    popd
-#fi
-
 # setup freeboard server as a systemd service
 pushd signalk-java
 
@@ -350,8 +311,8 @@ sudo cp /etc/hostname /etc/hostname.bak
 echo "${HOSTNAME}" | sudo tee /etc/hostname > /dev/null
 if ! diff /etc/hostname.bak /etc/hostname > /dev/null; then
 
-    sudo hostname ${HOSTNAME}
-
+    sudo hostnamectl set-hostname ${HOSTNAME}
+	sudo systemctl restart avahi-daemon
     DO_REBOOT_SYSTEM=Y
 fi
 
