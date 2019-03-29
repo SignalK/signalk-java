@@ -310,7 +310,7 @@ system_enable_service "signalk-java"
 sudo cp /etc/hostname /etc/hostname.bak
 echo "${HOSTNAME}" | sudo tee /etc/hostname > /dev/null
 if ! diff /etc/hostname.bak /etc/hostname > /dev/null; then
-
+	hostname ${HOSTNAME}
     sudo hostnamectl set-hostname ${HOSTNAME}
 	sudo systemctl restart avahi-daemon
     DO_REBOOT_SYSTEM=Y
@@ -377,6 +377,7 @@ EOF
     fi
 
     ## enable network daemons
+    sudo systemctl unmask hostapd.service
     system_enable_service "hostapd" # Note: Due to a bug in debian stretch, this
                                     # enable service triggers each time you run
                                     # the script. This does not cause a failure
