@@ -247,7 +247,7 @@ sudo apt-get update
 sudo apt-get upgrade
 
 sudo apt-get install -y curl git build-essential dialog wget
-sudo apt-get install libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
+sudo apt-get install -y libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
 
 # curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
@@ -255,14 +255,16 @@ echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/ap
 
 sudo apt update
 
-sudo apt-get install influxdb
+sudo apt-get install -y influxdb
 sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
 sudo service influxdb restart
 
-wget -O /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb https://github.com/bell-sw/Liberica/releases/download/11.0.2/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
-sudo apt-get install  /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
+if [ -f /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb ]; then
+	wget -O /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb https://github.com/bell-sw/Liberica/releases/download/11.0.2/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
+}
+sudo apt-get install -y /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
 	
-sudo apt-get install maven
+sudo apt-get install -y maven
 
 ## check running user is 'pi'
 if [ "$(id -nu)" != "pi" ]; then
@@ -341,7 +343,7 @@ sudo cp /etc/hostname /etc/hostname.bak
 echo "${HOSTNAME}" | sudo tee /etc/hostname > /dev/null
 if ! diff /etc/hostname.bak /etc/hostname > /dev/null; then
 
-    sudo /etc/init.d/hostname.sh
+    sudo hostname ${HOSTNAME}
 
     DO_REBOOT_SYSTEM=Y
 fi
