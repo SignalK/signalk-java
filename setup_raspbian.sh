@@ -259,7 +259,7 @@ sudo apt-get install -y influxdb
 sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
 sudo service influxdb restart
 
-if [ -f /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb ]; then
+if [ ! -f /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb ]; then
 	wget -O /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb https://github.com/bell-sw/Liberica/releases/download/11.0.2/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
 fi
 
@@ -275,9 +275,15 @@ fi
 
 ## change to HOME
 cd ${HOME}
-git clone https://github.com/SignalK/signalk-java.git
-cd signalk-java
-git checkout jdk11
+if [ !-d signalk-java ];then
+	git clone https://github.com/SignalK/signalk-java.git
+	cd signalk-java
+	git checkout jdk11
+else
+	cd signalk-java
+	git pull
+	git checkout jdk11
+fi
 cd ${HOME}
 touch first_start
 
