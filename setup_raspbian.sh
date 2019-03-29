@@ -261,7 +261,7 @@ sudo service influxdb restart
 
 if [ -f /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb ]; then
 	wget -O /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb https://github.com/bell-sw/Liberica/releases/download/11.0.2/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
-}
+fi
 sudo apt-get install -y /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
 	
 sudo apt-get install -y maven
