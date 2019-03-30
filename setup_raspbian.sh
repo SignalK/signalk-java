@@ -326,7 +326,9 @@ if [ "${DO_BOAT_NETWORK}" == "Y" ]; then
     sudo tee /etc/hosts << EOF
 # This file is managed by ${0}
 ${STATIC_HOSTS_ENTRIES}
-${BOAT_NETWORK_ADDRESS} ${HOSTNAME} a.${HOSTNAME} b.${HOSTNAME} c.${HOSTNAME} d.${HOSTNAME} raspberrypi
+${BOAT_NETWORK_ADDRESS} ${HOSTNAME} a.${HOSTNAME} b.${HOSTNAME} c.${HOSTNAME} d.${HOSTNAME} 
+
+127.0.1.1 ${HOSTNAME} 
 EOF
 
     if ! diff /etc/hosts.bak /etc/hosts > /dev/null; then
