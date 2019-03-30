@@ -53,6 +53,12 @@
                 ]
             },
             "logger": [
+            	{
+                    "name": "nz.co.fortytwo.signalk",
+                    "level": "ERROR",
+                    "additivity": true,
+                    "appender-ref": []
+                },
                 {
                     "name": "nz.co.fortytwo.signalk.artemis.intercept",
                     "level": "INFO",
@@ -60,19 +66,19 @@
                     "appender-ref": []
                 },
                 {
-                    "name": "nz.co.fortytwo.signalk",
+                    "name": "nz.co.fortytwo.signalk.artemis.transformer",
                     "level": "ERROR",
                     "additivity": true,
                     "appender-ref": []
                 },
                 {
-                    "name": "nz.co.fortytwo.signalk.artemis.intercept.MapToDeltaInterceptor",
-                    "level": "WARN",
+                    "name": "nz.co.fortytwo.signalk.artemis.transformer.NMEAMsgTransformer",
+                    "level": "ERROR",
                     "additivity": true,
                     "appender-ref": []
                 },
                 {
-                    "name": "nz.co.fortytwo.signalk.artemis.intercept.UpdateMsgInterceptor",
+                    "name": "nz.co.fortytwo.signalk.artemis.transformer.N2kMsgTransformer",
                     "level": "ERROR",
                     "additivity": true,
                     "appender-ref": []
@@ -120,18 +126,6 @@
                     "appender-ref": []
                 },
                 {
-                    "name": "nz.co.fortytwo.signalk.artemis.util.JsonSerializer",
-                    "level": "ERROR",
-                    "additivity": true,
-                    "appender-ref": []
-                },
-                {
-                    "name": "org.atmosphere.nettosphere.BridgeRuntime",
-                    "level": "WARN",
-                    "additivity": true,
-                    "appender-ref": []
-                },
-                {
                     "name": "org.atmosphere.nettosphere",
                     "level": "WARN",
                     "additivity": true,
@@ -158,30 +152,6 @@
                 {
                     "name": "nz.co.fortytwo.signalk.artemis.service.ChartService",
                     "level": "INFO",
-                    "additivity": true,
-                    "appender-ref": []
-                },
-                {
-                    "name": "nz.co.fortytwo.signalk.artemis.service.LogListService",
-                    "level": "WARN",
-                    "additivity": true,
-                    "appender-ref": []
-                },
-                {
-                    "name": "nz.co.fortytwo.signalk.artemis.service.GetLogService",
-                    "level": "WARN",
-                    "additivity": true,
-                    "appender-ref": []
-                },
-                {
-                    "name": "nz.co.fortytwo.signalk.artemis.intercept.GetMsgInterceptor",
-                    "level": "ERROR",
-                    "additivity": true,
-                    "appender-ref": []
-                },
-                {
-                    "name": "nz.co.fortytwo.signalk.artemis.service.SignalkMapConvertor",
-                    "level": "ERROR",
                     "additivity": true,
                     "appender-ref": []
                 },
@@ -223,12 +193,6 @@
                 },
                 {
                     "name": "nz.co.fortytwo.signalk.artemis.service.BaseApiService",
-                    "level": "INFO",
-                    "additivity": true,
-                    "appender-ref": []
-                },
-                {
-                    "name": "org.atmosphere.jersey.util.JerseyBroadcasterUtil",
                     "level": "INFO",
                     "additivity": true,
                     "appender-ref": []

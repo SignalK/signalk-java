@@ -1,11 +1,14 @@
 Complete fresh manual install
 =============================
 
+See https://www.raspberrypi.org/documentation/installation/noobs.md
+
 Download fresh raspbian lite (stretch)
 
-Follow instructions on https://www.raspberrypi.org/documentation/installation/installing-images/linux.md to load image to 8Gb SD card
+Follow instructions on https://www.raspberrypi.org/documentation/installation/installing-images/ to load image to 8Gb SD card
+Fit the SD card into the Raspberry Pi and boot it.
 
-Log in to console (using ssh)
+Log in to console (fit a screen and keyboard or remotely using ssh)
 
 pi@raspberrypi:~ $ raspi-config
 
@@ -27,64 +30,65 @@ pi@raspberrypi:~ $ sudo apt-get upgrade
 Install helpful things
 ----------------------
 ```
-pi@raspberrypi:~ $ sudo apt-get install -y curl git build-essential dialog
+pi@raspberrypi:~ $ sudo apt-get install -y curl git build-essential dialog wget
 pi@raspberrypi:~ $ sudo apt-get install libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
+```
+
+Install extra package sources
+--------------------------
+```
+pi@raspberrypi:~ $ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+pi@raspberrypi:~ $ curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+pi@raspberrypi:~ $ echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+
+pi@raspberrypi:~ $ sudo apt update
+```
+
+Install essential packages
+--------------------------
+```
+pi@raspberrypi:~ $ sudo apt-get install influxdb
+pi@raspberrypi:~ $ sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
+pi@raspberrypi:~ $ sudo service influxdb start
+
+pi@raspberrypi:~ $ sudo apt-get install maven
+
+```
+
+Install java jdk11  (this assumes a 32bit OS (eg Rasbian, you may want the 64bit image if you have a 64bit os)
+-------------------------
+```
+pi@raspberrypi:~ $ wget -O /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb https://github.com/bell-sw/Liberica/releases/download/11.0.2/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
+pi@raspberrypi:~ $ sudo apt-get install  /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
+
 ```
 Clone the signalk-java project
 ------------------------------
 ```
 pi@raspberrypi:~ $ git clone https://github.com/SignalK/signalk-java.git
 pi@raspberrypi:~ $ cd signalk-java
-```
-
-Install extra package sources
---------------------------
-```
-pi@raspberrypi:~/signalk-java $ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-pi@raspberrypi:~/signalk-java $ curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
-pi@raspberrypi:~/signalk-java $ echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
-
-pi@raspberrypi:~/signalk-java $ sudo apt-key add webupd8-key.txt 
-pi@raspberrypi:~/signalk-java $ sudo echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee /etc/apt/sources.list.d/webupd8team-java.list
-pi@raspberrypi:~/signalk-java $ echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee -a /etc/apt/sources.list.d/webupd8team-java.list
-
-pi@raspberrypi:~/signalk-java $ sudo apt update
-```
-
-Install essential packages
---------------------------
-```
-pi@raspberrypi:~/signalk-java $ sudo apt-get install oracle-java8-jdk
-pi@raspberrypi:~/signalk-java $ sudo apt-get install influxdb
-pi@raspberrypi:~/signalk-java $ sudo apt-get install maven
-
+pi@raspberrypi:~ $ git checkout jdk11
 ```
 
 Start signalk-java
 --------------------
 Use Cntrl-C to exit.
 ```
-pi@raspberrypi:~/signalk-java $ mvn exec:java
+pi@raspberrypi:~/signalk-java $ export JAVA_HOME=/usr/lib/jvm/jdk-11-bellsoft-arm32-vfp-hflt
+pi@raspberrypi:~/signalk-java $ mvn exec:exec
 	If it fails,
   pi@raspberrypi:~/signalk-java $ rm -rf ~/.m2/repository/com/github/SignalK/artemis-server/
-	and try 'mvn exec:java' again
+	and try 'mvn exec:exec' again
 ```
 Adding apps can be done via the ui at https://[rpi_ip_address]:8443
 
-Fix Influxdb CPU usage (optional but recommended)
-----------------------
-Influxdb can have very high CPU usage on the RPi but can be fixed quite easily.
+Make it autostart at boot
+-------------------------
 
-Edit /etc/influxdb/influxdb.conf
-```
-pi@raspberrypi:~ $ sudo nano /etc/influxdb/influxdb.conf
-```
-change `store-enabled ` to `false` 
-```
-[monitor]
-   store-enabled = false
-```
-Cntrl-X to save
+pi@raspberrypi:~/signalk-java $ sudo cp systemd.signalk-java.environment /etc/default/signalk-java
+pi@raspberrypi:~/signalk-java $ sudo cp systemd.signalk-java.service /etc/systemd/system/signalk-java.service
+pi@raspberrypi:~/signalk-java $ sudo systemctl daemon-reload
+pi@raspberrypi:~/signalk-java $ sudo systemctl enable signalk-java
 
 Configure wifi hotspot and other services (optional)
 ------------------

@@ -10,14 +10,34 @@ Its also possible (and should be quite simple) on a windows PC, but you have to 
 
 Provided under an Apache 2 licence
 
+Install on RPi
+--------------
+
+__The easiest install is the raspbian_setup.sh script__
+
+To use the script, make sure your pi is on the internet, login to your pi (as user pi) and execute
+```
+pi@raspberrypi:~ $ source <(curl -s https://raw.githubusercontent.com/SignalK/signalk-java/jdk11/setup_raspbian.sh)
+
+```
+
+See details at https://github.com/SignalK/specification/wiki/Raspberry-Pi-Installation-(Java-Server)
+
+This version is easiest from a complete fresh RPi install. A full manual install can also be done.
+
+__Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.md)__
+
+Now open a modern web browser (eg not IE or Edge) to `https://[ip_address_of_the_pi]:8443`
+You should get a pretty start page! 
+
 Install on PC
 --------------
 
-First do a standard installation fo Java and Influxdb for your platform:
+First do a standard installation for Java and Influxdb for your platform:
 
 NOTE: WINDOWS users: no spaces in dir/file names, you will cause yourself pain :-(
 
-* Java SE 8 : https://java.com/en/download/
+* Java SE 11 : for x86: https://java.com/en/download/, or for Rpi: https://www.bell-sw.com/pages/java-11.0.2
 * InfluxDb (1.6+): https://portal.influxdata.com/downloads#influxdb
 * Apache Maven 3+: https://maven.apache.org/download.cgi
 * Git: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
@@ -25,6 +45,14 @@ NOTE: WINDOWS users: no spaces in dir/file names, you will cause yourself pain :
 Follow the instructions for each to suit your platform.
 
 You need to be able to type `java` on the command line and get java responding, same for maven (`mvn`) and git (`git`).
+Check you are using java 11: `java -version`, should return something like:
+```
+openjdk version "11.0.2-BellSoft" 2018-10-16
+OpenJDK Runtime Environment (build 11.0.2-BellSoft+7)
+OpenJDK 64-Bit Server VM (build 11.0.2-BellSoft+7, mixed mode)
+
+```
+The `11.x.x` is important, you may get a variety of replacements for `Bellsoft`
 
 Create a suitable directory to install signalk-java. eg C:\dev\
 
@@ -33,7 +61,7 @@ Thats all the prep, then open a command console:
 ```
 C:\dev> git clone https://github.com/SignalK/signalk-java.git
 C:\dev\> cd signalk-java
-C:\dev\signalk-java> mvn exec:java
+C:\dev\signalk-java> mvn exec:exec
 ```
 Maven will install all the required components and start the server.  
 
@@ -46,29 +74,20 @@ you can safely continue for non-critical installations. You can also disable htt
 
 See [Security](./SECURITY.md)
 
-Install on RPi
---------------
-
-__The various *.sh scripts are untried with raspbian jessie and the artemis server. Mods welcome.__
-
-See also https://github.com/SignalK/specification/wiki/Raspberry-Pi-Installation-(Java-Server)
-
-This version is easiest from a complete fresh RPi install.
-
-__Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.md)__
-
-Now open a modern web browser (eg not IE or Edge) to `https://[ip_address_of_the_pi]:8443`
-You should get a pretty start page! 
+Using Signalk-java
+------------------
 
 Login or you will only see 'public' data! See [Security](./SECURITY.md)
 
-Go to the 'server' tab and install the 4 apps (Freeboard-sk, Instrument Panel, Sailgauge. Kip)
+Go to the 'Manage Apps' tab and install the major apps (Freeboard-sk, Instrument Panel, SKWiz, and Kip)
 
-Try the apps. (Sailguage and Kip are broken at present, expect a fix for Kip shortly.)
+Try the apps. 
 
-Control logging by using the 'Log Configuration' button on the index page, or editing conf/log4j2.json. 
+Upload your charts using the 'Upload Charts' button in the 'Manage Server' tab. The format is the zip file output by the freeboard-installer (https://github.com/rob42/freeboard-installer)
 
-Upload your charts using the 'Upload Charts' button. The format is the zip file output by the freeboard-installer (https://github.com/rob42/freeboard-installer)
+The 'Manage Server' tab provides a number of options to manage the server configuration and logging, setup users and upload charts
+
+The 'Signalk Api' tab gives you direct access to the raw signalk data.
 
 
 Using the server for your own client
@@ -110,6 +129,11 @@ You will need to clone the artemis-server project and build it with maven. The d
 
 ```
 mvn -Dsignalk.build=dev install
+```
+
+Running under JDK11 with the Graal js compiler requires java options, already set by `mvn exec:exec`:
+```
+-Xmx256M -XX:+HeapDumpOnOutOfMemoryError -Dio.netty.leakDetection.level=ADVANCED -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCI --module-path=./target/compiler/graal-sdk.jar:./target/compiler/truffle-api.jar --upgrade-module-path=./target/compiler/compiler.jar
 ```
 
 See https://www.42.co.nz/freeboard and https://signalk.github.io/ for more.

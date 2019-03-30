@@ -80,6 +80,10 @@
 					"type": "object",
 					"title": "Log4j2 Appenders",
 					"description": "Add/edit appenders as required",
+					"options": {
+					    "collapsed": true,
+					    "disable_collapse": false
+					  },
 					"properties": {
 						"Console": {
 							"type": "object",
@@ -119,6 +123,7 @@
 							]
 						},
 						"RollingFile": {
+						
 							"type": "array",
 							"uniqueItems": false,
 							"title": " ",
@@ -245,6 +250,10 @@
 					},
 					"properties": {
 						"root": {
+							"options": {
+							    "collapsed": true,
+							    "disable_collapse": false
+							  },
 							"type": "object",
 							"title": "Root Logger",
 							"description": "The root logger",
@@ -317,7 +326,10 @@
 										"minLength": 1,
 										"title": "Name",
 										"default": "nz.co.fortytwo.signalk",
-										"id": "name"
+										"id": "name",
+										"options": {
+											"input_width": "500px"
+										}
 									},
 									"level": {
 										"type": "string",
@@ -333,7 +345,7 @@
 										"default": "ERROR",
 										"id": "level",
 										"options": {
-											"input_width": "150px"
+											"input_width": "100px"
 										}
 									},
 									"additivity": {

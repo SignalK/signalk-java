@@ -20,7 +20,7 @@
 #
 #
 # This is a setup script to automate the installation of Signalk-java
-# On Raspbian Jessie.
+# On Raspbian stretch.
 #
 
 # Use bash "strict mode" - http://redsymbol.net/articles/unofficial-bash-strict-mode/
@@ -48,7 +48,7 @@ BOAT_NETWORK_WIFI_CHAN=10
 
 # To test another fork and branch:
 #FREEBOARD_CLONE_URL="https://github.com/ph1l/freeboard-server.git"
-#FREEBOARD_BRANCH="raspbian_jessie"
+#FREEBOARD_BRANCH="raspbian_stretch"
 
 # helper functions
 
@@ -228,7 +228,6 @@ wmm_enabled=1"
 DNSMASQ_CONFIG="interface=wlan0
 dhcp-range=${BOAT_NETWORK_MIN_DHCP},${BOAT_NETWORK_MAX_DHCP},12h"
 
-
 # Verify our running environment
 
 ## Raspbian Lite does not have lsb-release installed by default
@@ -243,27 +242,29 @@ if [ "${LSB_ID}" != "Raspbian" -o "${LSB_CODENAME}" != "stretch" ]; then
     exit 1
 fi
 
-sudo apt-get install -y curl git build-essential dialog
+sudo apt-get update
+sudo apt-get upgrade -y
 
-curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y curl git build-essential dialog wget
+sudo apt-get install -y libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
+
+# curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
 echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
 
-sudo apt-key add  webupd8-key.txt 
-sudo echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee /etc/apt/sources.list.d/webupd8team-java.list
-echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | sudo tee -a /etc/apt/sources.list.d/webupd8team-java.list
-
 sudo apt update
 
-sudo apt install nodejs
-sudo apt-get install libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
-#sudo apt-get install libaio1
-sudo apt-get install oracle-java8-jdk
-sudo apt-get install oracle-java8-set-default
-sudo apt-get install influxdb
-sudo apt-get install maven
-sudo apt-get install dnsmasq hostapd
+sudo apt-get install -y influxdb
+sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
+sudo service influxdb restart
 
+if [ ! -f /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb ]; then
+	wget -O /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb https://github.com/bell-sw/Liberica/releases/download/11.0.2/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
+fi
+
+sudo apt-get install -y /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb
+	
+sudo apt-get install -y maven
 
 ## check running user is 'pi'
 if [ "$(id -nu)" != "pi" ]; then
@@ -273,45 +274,17 @@ fi
 
 ## change to HOME
 cd ${HOME}
-
-#if [ ! -d /opt/jdk ]; then
-#    sudo mkdir /opt/jdk
-#fi
-
-#JAVA_HOME="/opt/jdk/jdk${JAVA_VERSION}"
-
-#if [ ! -d ${JAVA_HOME} ]; then
-#    wget --quiet --header "Cookie: oraclelicense=accept-securebackup-cookie" \
-#         --output-document=/tmp/jdk.$$.tgz \
-#         ${JAVA_URL}
-#    sudo tar -C /opt/jdk -zxf /tmp/jdk.$$.tgz
-#    rm /tmp/jdk.$$.tgz
-#fi
-
-#for prog in java javac; do
-#    ensure_alternative "${prog}" "${JAVA_HOME}/bin/${prog}"
-#done
-
-
-
-#if [ ! -d freeboard-server ]; then
-#    if [ -z "${FREEBOARD_BRANCH}" ]; then
-#        git clone --depth=1 ${FREEBOARD_CLONE_URL} freeboard-server
-#    else
-#        git clone --branch=${FREEBOARD_BRANCH} --depth=1 \
-#                  ${FREEBOARD_CLONE_URL} freeboard-server
-#    fi
-#    DO_RESTART_SERVICE=Y
-#else # update
-#    pushd freeboard-server
-#    OLD_REF=$( git_head_ref )
-#    git pull
-#    NEW_REF=$( git_head_ref )
-#    if [ "${OLD_REF}" != "${NEW_REF}" ]; then
-#        DO_RESTART_SERVICE=Y
-#    fi
-#    popd
-#fi
+if [ ! -d signalk-java ];then
+	git clone https://github.com/SignalK/signalk-java.git
+	cd signalk-java
+	git checkout jdk11
+else
+	cd signalk-java
+	git pull
+	git checkout jdk11
+fi
+cd ${HOME}
+touch first_start
 
 # setup freeboard server as a systemd service
 pushd signalk-java
@@ -336,9 +309,9 @@ system_enable_service "signalk-java"
 sudo cp /etc/hostname /etc/hostname.bak
 echo "${HOSTNAME}" | sudo tee /etc/hostname > /dev/null
 if ! diff /etc/hostname.bak /etc/hostname > /dev/null; then
-
-    sudo /etc/init.d/hostname.sh
-
+	sudo hostname ${HOSTNAME}
+    sudo hostnamectl set-hostname ${HOSTNAME}
+	sudo systemctl restart avahi-daemon
     DO_REBOOT_SYSTEM=Y
 fi
 
@@ -352,7 +325,9 @@ if [ "${DO_BOAT_NETWORK}" == "Y" ]; then
     sudo tee /etc/hosts << EOF
 # This file is managed by ${0}
 ${STATIC_HOSTS_ENTRIES}
-${BOAT_NETWORK_ADDRESS} ${HOSTNAME} a.${HOSTNAME} b.${HOSTNAME} c.${HOSTNAME} d.${HOSTNAME}
+${BOAT_NETWORK_ADDRESS} ${HOSTNAME} a.${HOSTNAME} b.${HOSTNAME} c.${HOSTNAME} d.${HOSTNAME} 
+
+127.0.1.1 ${HOSTNAME} 
 EOF
 
     if ! diff /etc/hosts.bak /etc/hosts > /dev/null; then
@@ -372,7 +347,7 @@ EOF
 auto lo
 iface lo inet loopback
 
-iface eth0 inet manual
+iface eth0 inet dhcp
 
 allow-hotplug ${BOAT_NETWORK_IFACE}
 iface ${BOAT_NETWORK_IFACE} inet static
@@ -403,7 +378,8 @@ EOF
     fi
 
     ## enable network daemons
-    system_enable_service "hostapd" # Note: Due to a bug in debian jessie, this
+    sudo systemctl unmask hostapd.service
+    system_enable_service "hostapd" # Note: Due to a bug in debian stretch, this
                                     # enable service triggers each time you run
                                     # the script. This does not cause a failure
                                     # other than the output:
@@ -453,7 +429,7 @@ fi # End if DO_BOAT_NETWORK
 
 # make setup script in homedir a symlink to script in source
 if [ ! -L ~/setup_raspbian.sh ]; then
-    rm ~/setup_raspbian.sh
+    # rm ~/setup_raspbian.sh
     ln -s ~/signalk-java/setup_raspbian.sh ~/setup_raspbian.sh
 fi
 

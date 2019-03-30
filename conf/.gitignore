@@ -7,3 +7,6 @@
 /signalk-config.json.bak
 /signalk-config.json~
 /resources.json
+/security-conf.json
+/test-cert.pem
+/test-private.pem

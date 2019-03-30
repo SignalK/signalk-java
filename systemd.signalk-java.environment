@@ -1,4 +1,4 @@
-# Settings for the signalk-java server
+# Settings for the riskgrid server
 #
 # NOTE: This is not a bash snippet, this is a systemd EnvironmentFile(1)
 #
