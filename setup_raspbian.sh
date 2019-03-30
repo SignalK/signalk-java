@@ -429,7 +429,7 @@ fi # End if DO_BOAT_NETWORK
 
 # make setup script in homedir a symlink to script in source
 if [ ! -L ~/setup_raspbian.sh ]; then
-    rm ~/setup_raspbian.sh
+    # rm ~/setup_raspbian.sh
     ln -s ~/signalk-java/setup_raspbian.sh ~/setup_raspbian.sh
 fi
 
