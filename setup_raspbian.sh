@@ -309,7 +309,7 @@ system_enable_service "signalk-java"
 sudo cp /etc/hostname /etc/hostname.bak
 echo "${HOSTNAME}" | sudo tee /etc/hostname > /dev/null
 if ! diff /etc/hostname.bak /etc/hostname > /dev/null; then
-	hostname ${HOSTNAME}
+	sudo hostname ${HOSTNAME}
     sudo hostnamectl set-hostname ${HOSTNAME}
 	sudo systemctl restart avahi-daemon
     DO_REBOOT_SYSTEM=Y
