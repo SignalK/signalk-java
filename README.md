@@ -13,11 +13,17 @@ Provided under an Apache 2 licence
 Install on RPi
 --------------
 
-__The various *.sh scripts need updating with raspbian jessie, jdk11, and the artemis server. Mods welcome.__
+__The easiest install is the raspbian_setup.sh script__
 
-See also https://github.com/SignalK/specification/wiki/Raspberry-Pi-Installation-(Java-Server)
+To use the script, make sure your pi is on the internet, login to your pi (as user pi) and execute
+```
+pi@raspberrypi:~ $ source <(curl -s https://raw.githubusercontent.com/SignalK/signalk-java/jdk11/setup_raspbian.sh)
 
-This version is easiest from a complete fresh RPi install.
+```
+
+See details at https://github.com/SignalK/specification/wiki/Raspberry-Pi-Installation-(Java-Server)
+
+This version is easiest from a complete fresh RPi install. A full manual install can also be done.
 
 __Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.md)__
 
