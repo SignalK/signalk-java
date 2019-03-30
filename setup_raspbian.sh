@@ -228,7 +228,6 @@ wmm_enabled=1"
 DNSMASQ_CONFIG="interface=wlan0
 dhcp-range=${BOAT_NETWORK_MIN_DHCP},${BOAT_NETWORK_MAX_DHCP},12h"
 
-
 # Verify our running environment
 
 ## Raspbian Lite does not have lsb-release installed by default
@@ -244,7 +243,7 @@ if [ "${LSB_ID}" != "Raspbian" -o "${LSB_CODENAME}" != "stretch" ]; then
 fi
 
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get upgrade -y
 
 sudo apt-get install -y curl git build-essential dialog wget
 sudo apt-get install -y libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
@@ -275,7 +274,7 @@ fi
 
 ## change to HOME
 cd ${HOME}
-if [ !-d signalk-java ];then
+if [ ! -d signalk-java ];then
 	git clone https://github.com/SignalK/signalk-java.git
 	cd signalk-java
 	git checkout jdk11
@@ -348,7 +347,7 @@ EOF
 auto lo
 iface lo inet loopback
 
-iface eth0 inet manual
+iface eth0 inet dhcp
 
 allow-hotplug ${BOAT_NETWORK_IFACE}
 iface ${BOAT_NETWORK_IFACE} inet static
