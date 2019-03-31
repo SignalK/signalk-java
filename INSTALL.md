@@ -10,15 +10,26 @@ Fit the SD card into the Raspberry Pi and boot it.
 
 Log in to console (fit a screen and keyboard or remotely using ssh)
 
+```
 pi@raspberrypi:~ $ raspi-config
+```
+In the menu that appears use the arrow keys to select, and the [TAB] key to jump to the <ok> <cancel> options
+Set the following:
 
-	-"Interfacing Options" 
-		setup remote ssh
-		Set Overclock too high
-	-"Advanced Settings"
-		expand root filesystem
-		set GPU ram to 16Mb
-	- exit
+```
+      Localization>
+	       Timezone: select your timezone
+      Interfacing options>
+	       Enable SSH: yes, you want ssh to start at boot time
+      Advanced Options>	
+	       Expand filesystem: yes
+	       Memory split: 16
+      Network>
+		N2 WiFi>
+			Country: Select your country (NZ for me, this must be set to something even if you dont have WiFi access)
+			SSID: the name of your home wifi network, or blank
+ 	                Passphrase: the password for your wifi network, or blank
+```
 	
 Update to latest
 ----------------
