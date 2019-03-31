@@ -35,24 +35,10 @@ fi
 
 HOSTNAME=${1}
 DO_BOAT_NETWORK=${2}
+BOAT_NETWORK_WIFI_SSID=${3:-${HOSTNAME}}
+BOAT_NETWORK_WIFI_PASS=${4:-${BOAT_NETWORK_WIFI_SSID}}
 
-if [ -z "$3" ]
-  then
-    BOAT_NETWORK_WIFI_SSID=${1}
-  else
-  	BOAT_NETWORK_WIFI_SSID=${3}
-fi
-
-if [ -z "$4" ]
-  then
-    if [ -z "$3" ]
-	  then
-	    BOAT_NETWORK_WIFI_PASS=${3}
-	fi
-  else
-  	BOAT_NETWORK_WIFI_PASS=${4}
-fi
-
+#echo "    running: setup_network.sh $HOSTNAME $DO_BOAT_NETWORK $BOAT_NETWORK_WIFI_SSID $BOAT_NETWORK_WIFI_PASS"
 
 # Boat Network Defaults
 BOAT_NETWORK_IFACE=wlan0
