@@ -13,6 +13,8 @@ Provided under an Apache 2 licence
 Install on RPi
 --------------
 
+This version is easiest from a complete fresh RPi install. 
+
 __The easiest install is the raspbian_setup.sh script__
 
 To use the script, make sure your pi is on the internet, login to your pi (as user pi) and execute
@@ -23,7 +25,7 @@ pi@raspberrypi:~ $ source <(curl -s https://raw.githubusercontent.com/SignalK/si
 
 See details at https://github.com/SignalK/specification/wiki/Raspberry-Pi-Installation-(Java-Server)
 
-This version is easiest from a complete fresh RPi install. A full manual install can also be done.
+A full manual install can also be done.
 
 __Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.md)__
 

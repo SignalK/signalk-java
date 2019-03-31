@@ -153,7 +153,7 @@ You should have already:
 
     * Expand the filesystem to make entire SD card space available
 
-    * Optionally, Overclock the CPU
+	* Setup internet access
 
   2) rebooted (to apply the filesystem change.)
 
@@ -163,36 +163,30 @@ if ! yesno "do you want to continue"; then
     exit 0
 fi
 
-#if ! yesno "
-#Do you accept the Oracle Binary Code License Agreement for Java SE. Available at
-#  http://www.oracle.com/technetwork/java/javase/terms/license/index.html
-#"; then
-#    exit 0
-#fi
-
-cat << EOF
-
-BOAT MODE ?
-
-You can configure your pi to host a captive wifi network for freeboard. This has
-been tested on the Raspberry Pi 3 with the builtin wifi interface.
-
-BOAT_NETWORK_IFACE = ${BOAT_NETWORK_IFACE}
-BOAT_NETWORK_ADDRESS = ${BOAT_NETWORK_ADDRESS}
-BOAT_NETWORK_NETMASK = ${BOAT_NETWORK_NETMASK}
-BOAT_NETWORK_MIN_DHCP = ${BOAT_NETWORK_MIN_DHCP}
-BOAT_NETWORK_MAX_DHCP = ${BOAT_NETWORK_MAX_DHCP}
-BOAT_NETWORK_WIFI_SSID = ${BOAT_NETWORK_WIFI_SSID}
-BOAT_NETWORK_WIFI_PASS = ${BOAT_NETWORK_WIFI_PASS}
-BOAT_NETWORK_WIFI_CHAN = ${BOAT_NETWORK_WIFI_CHAN}
-
-EOF
-
-if yesno "Do you want your pi in boat mode"; then
-    DO_BOAT_NETWORK=Y
-else
-    DO_BOAT_NETWORK=N
-fi
+DO_BOAT_NETWORK=N
+#CAT << EOF
+#
+#BOAT MODE ?
+#
+#YOU CAN CONFIGURE YOUR PI TO HOST A CAPTIVE WIFI NETWORK FOR FREEBOARD. THIS HAS
+#BEEN TESTED ON THE RASPBERRY PI 3 WITH THE BUILTIN WIFI INTERFACE.
+#
+#BOAT_NETWORK_IFACE = ${BOAT_NETWORK_IFACE}
+#BOAT_NETWORK_ADDRESS = ${BOAT_NETWORK_ADDRESS}
+#BOAT_NETWORK_NETMASK = ${BOAT_NETWORK_NETMASK}
+#BOAT_NETWORK_MIN_DHCP = ${BOAT_NETWORK_MIN_DHCP}
+#BOAT_NETWORK_MAX_DHCP = ${BOAT_NETWORK_MAX_DHCP}
+#BOAT_NETWORK_WIFI_SSID = ${BOAT_NETWORK_WIFI_SSID}
+#BOAT_NETWORK_WIFI_PASS = ${BOAT_NETWORK_WIFI_PASS}
+#BOAT_NETWORK_WIFI_CHAN = ${BOAT_NETWORK_WIFI_CHAN}
+#
+#EOF
+#
+#IF YESNO "DO YOU WANT YOUR PI IN BOAT MODE"; THEN
+#    DO_BOAT_NETWORK=Y
+#ELSE
+#    DO_BOAT_NETWORK=N
+#FI
 
 # TODO: allow user to override the boat network settings, and cache the overrides
 # for next time
@@ -200,7 +194,8 @@ fi
 set -x # Turn on debug output
 
 DO_RESTART_SERVICE=N
-DO_REBOOT_SYSTEM=N
+#DO_REBOOT_SYSTEM=N
+DO_REBOOT_SYSTEM=Y
 DO_RESTART_DNSMASQ=N
 DO_RESTART_HOSTAPD=N
 
@@ -208,7 +203,9 @@ STATIC_HOSTS_ENTRIES="127.0.0.1       localhost
 ::1             localhost ip6-localhost ip6-loopback
 ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters"
+
 HOSTAPD_DEFAULT="DAEMON_CONF=\"/etc/hostapd/hostapd.conf\""
+
 HOSTAPD_CONFIG="interface=${BOAT_NETWORK_IFACE}
 driver=nl80211
 ctrl_interface=/var/run/hostapd
@@ -225,6 +222,7 @@ rsn_pairwise=CCMP
 beacon_int=100
 auth_algs=3
 wmm_enabled=1"
+
 DNSMASQ_CONFIG="interface=wlan0
 dhcp-range=${BOAT_NETWORK_MIN_DHCP},${BOAT_NETWORK_MAX_DHCP},12h"
 
@@ -248,6 +246,15 @@ sudo apt-get upgrade -y
 sudo apt-get install -y curl git build-essential dialog wget
 sudo apt-get install -y libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
 
+# add ntp
+sudo systemctl stop systemd-timesyncd
+sudo systemctl disable systemd-timesyncd
+sudo apt-get install -y ntp
+sudo service ntp start
+
+# routing
+sudo apt-get install -y ifmetric
+	
 # curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
 echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
@@ -319,7 +326,10 @@ fi
 if [ "${DO_BOAT_NETWORK}" == "Y" ]; then
 
     ## TODO: validate wifi device supports master mode
-
+	## turn on ip forwarding
+	#net.ipv4.ip_forward = 1
+	#insert or edit the following line in edit /etc/sysctl.conf:
+	
     ## setup hosts file
     sudo cp /etc/hosts /etc/hosts.bak
     sudo tee /etc/hosts << EOF
@@ -348,6 +358,7 @@ auto lo
 iface lo inet loopback
 
 iface eth0 inet dhcp
+allow-hotplug eth0
 
 allow-hotplug ${BOAT_NETWORK_IFACE}
 iface ${BOAT_NETWORK_IFACE} inet static
