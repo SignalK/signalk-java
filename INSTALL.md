@@ -91,7 +91,18 @@ pi@raspberrypi:~/signalk-java $ mvn exec:exec
   pi@raspberrypi:~/signalk-java $ rm -rf ~/.m2/repository/com/github/SignalK/artemis-server/
 	and try 'mvn exec:exec' again
 ```
-Adding apps can be done via the ui at https://[rpi_ip_address]:8443
+
+When ready it will print a message
+```
+URLS:
+https://[rpi_ip_address]:8443
+https://127.0.0.1:8443
+
+### The artemis server is ready! ###
+
+```
+Adding apps can be done via the ui at one of the URLs above https://[rpi_ip_address]:8443. 
+The https://127.0.0.1:8443 address is only available if you are running the browser on the Rpi itself.
 
 Make it autostart at boot
 -------------------------
