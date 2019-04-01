@@ -30,7 +30,7 @@ IFS=$'\n\t'
 if [[ $# -lt 2 ]] ; then
    echo 'Correct usage is: setup_network.sh [HOSTNAME] [boat network (Y|N)] [Wifi SSID] [Wifi PASSWORD]'
    echo '    eg: setup_network.sh freeboard Y freeboard passit'
-    exit 1
+   exit 1
 fi
 
 HOSTNAME=${1}
@@ -186,9 +186,6 @@ fi
 if [ "${DO_BOAT_NETWORK}" == "Y" ]; then
 
     ## TODO: validate wifi device supports master mode
-	## turn on ip forwarding
-	#net.ipv4.ip_forward = 1
-	#insert or edit the following line in edit /etc/sysctl.conf:
 	
     ## setup hosts file
     sudo cp /etc/hosts /etc/hosts.bak
@@ -215,21 +212,22 @@ EOF
 
 	## Add rc.local
     if ! grep "^# This file is managed by signalk-java" /etc/rc.local > /dev/null; then
-        sudo tee /etc/rc.local << EOF
+        echo "
 #!/bin/sh -e
 # This file is managed by signalk-java
 # Print the IP address
 _IP=$(hostname -I) || true
 if [ "$_IP" ]; then
-  printf "My IP address is %s\n" "$_IP"
+  printf \"My IP address is %s\n\" \"\$_IP\"
 fi
 #setup routing
-sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+sudo sh -c \"echo 1 > /proc/sys/net/ipv4/ip_forward\"
 sudo iptables-restore < /etc/iptables.ipv4.nat
 exit 0
-
-
-EOF
+" | sudo tee /etc/rc.local
+	
+	fi
+	
     ## Add interface config
     if ! grep "^# This file is managed by signalk-java" /etc/network/interfaces > /dev/null; then
         sudo tee /etc/network/interfaces << EOF
