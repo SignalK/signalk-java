@@ -212,7 +212,7 @@ EOF
 
 	## Add rc.local
     if ! grep "^# This file is managed by signalk-java" /etc/rc.local > /dev/null; then
-        echo "
+        echo '
 #!/bin/sh -e
 # This file is managed by signalk-java
 # Print the IP address
@@ -224,7 +224,7 @@ fi
 sudo sh -c \"echo 1 > /proc/sys/net/ipv4/ip_forward\"
 sudo iptables-restore < /etc/iptables.ipv4.nat
 exit 0
-" | sudo tee /etc/rc.local
+' | sudo tee /etc/rc.local
 	
 	fi
 	
@@ -351,7 +351,7 @@ if [ "${DO_REBOOT_SYSTEM}" == "Y" ]; then
     echo
     echo "Press ENTER to reboot or CTRL-c to cancel"
 
-    read # wait for user to hit enter
+    read -t 10# wait for user to hit enter
 
     sudo shutdown -r now
 
