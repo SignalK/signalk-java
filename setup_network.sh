@@ -38,7 +38,15 @@ DO_BOAT_NETWORK=${2}
 BOAT_NETWORK_WIFI_SSID=${3:-${HOSTNAME}}
 BOAT_NETWORK_WIFI_PASS=${4:-${BOAT_NETWORK_WIFI_SSID}}
 
+# check the pass is > 8
+if [ ${#BOAT_NETWORK_WIFI_PASS} -lt 8 ];then
+	BOAT_NETWORK_WIFI_PASS=${BOAT_NETWORK_WIFI_PASS}${BOAT_NETWORK_WIFI_PASS}
+fi
+if [ ${#BOAT_NETWORK_WIFI_PASS} -lt 8 ];then
+	BOAT_NETWORK_WIFI_PASS=${BOAT_NETWORK_WIFI_PASS}${BOAT_NETWORK_WIFI_PASS}
+fi
 #echo "    running: setup_network.sh $HOSTNAME $DO_BOAT_NETWORK $BOAT_NETWORK_WIFI_SSID $BOAT_NETWORK_WIFI_PASS"
+#exit 1
 
 # Boat Network Defaults
 BOAT_NETWORK_IFACE=wlan0
@@ -196,11 +204,32 @@ EOF
         DO_RESTART_DNSMASQ=Y
     fi
 
+	## save a backup original rc.local file
+    if [ ! -e /etc/rc.local.orig ]; then
+        sudo cp /etc/rc.local /etc/rc.local.orig
+    fi
     ## save a backup original interfaces file
     if [ ! -e /etc/network/interfaces.orig ]; then
         sudo cp /etc/network/interfaces /etc/network/interfaces.orig
     fi
 
+	## Add rc.local
+    if ! grep "^# This file is managed by signalk-java" /etc/rc.local > /dev/null; then
+        sudo tee /etc/rc.local << EOF
+#!/bin/sh -e
+# This file is managed by signalk-java
+# Print the IP address
+_IP=$(hostname -I) || true
+if [ "$_IP" ]; then
+  printf "My IP address is %s\n" "$_IP"
+fi
+#setup routing
+sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+sudo iptables-restore < /etc/iptables.ipv4.nat
+exit 0
+
+
+EOF
     ## Add interface config
     if ! grep "^# This file is managed by signalk-java" /etc/network/interfaces > /dev/null; then
         sudo tee /etc/network/interfaces << EOF
@@ -211,6 +240,7 @@ iface lo inet loopback
 
 allow-hotplug eth0
 iface eth0 inet dhcp
+    metric 20
 
 allow-hotplug ${BOAT_NETWORK_IFACE}
 iface ${BOAT_NETWORK_IFACE} inet static
@@ -218,8 +248,10 @@ iface ${BOAT_NETWORK_IFACE} inet static
     netmask ${BOAT_NETWORK_NETMASK}
     
 allow-hotplug ${BOAT_ROAM_IFACE}
-iface ${BOAT_ROAM_IFACE} inet dhcp
+iface ${BOAT_ROAM_IFACE} inet manual
    wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+   metric 10
+iface default inet dhcp
 EOF
     fi
 
@@ -243,7 +275,17 @@ EOF
         echo "${HOSTAPD_DEFAULT}" | sudo tee /etc/default/hostapd
         DO_RESTART_HOSTAPD=Y
     fi
-
+	# setup routing
+	sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+	
+	sudo iptables -t nat -A POSTROUTING -o wlan1 -j MASQUERADE  
+	sudo iptables -A FORWARD -i wlan1 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT  
+	sudo iptables -A FORWARD -i wlan0 -o wlan1 -j ACCEPT
+		
+	sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
+		# insert into rclocal
+		#iptables-restore < /etc/iptables.ipv4.nat 
+		
     ## enable network daemons
     sudo systemctl unmask hostapd.service
     system_enable_service "hostapd" # Note: Due to a bug in debian stretch, this
@@ -278,6 +320,9 @@ else
     system_stop_service "dnsmasq"
     system_disable_service "dnsmasq"
 
+	if [ -e /etc/rc.local.orig ]; then
+        sudo mv /etc/rc.local.orig /etc/rc.local
+    fi
     ## Revert to default network settings
     if [ -e /etc/network/interfaces.orig ]; then
         sudo mv /etc/network/interfaces.orig /etc/network/interfaces
