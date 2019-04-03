@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="cleartype" content="on">
+<meta name="MobileOptimized" content="320">
+<meta name="HandheldFriendly" content="True">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="../css/bootstrap2-combined.min.css">
+<link rel="stylesheet" href="../css/font-awesome4.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jsoneditor.js"></script>
+<style>
+
+body {
+	font-weight: 500;
+	padding-top: 5px;
+	padding-bottom: 5px; //
+	background-color: #eee;
+	width: 100%;
+	height: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 500;
+ }
+.well {
+    min-height: 5px;
+    padding: 5px;
+        padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+.btn-primary a {
+	color: aliceblue;
+}
+
+.row {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border: 1px;
+	border-bottom: 1px solid #EEE;
+}
+</style>
+<title>Freeboard K - Logging Configuration</title>
+</head>
+
+<div class="container">
+	<div class="page-header">
+		<h1>Signal K - Network Configuration</h1>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-2">
+		<input type="button" id="configureButton" value="Apply" class="btn btn-primary btn-lg" role="button" onclick="validate();" />
+		<a id="logCfgBtn" class="btn btn-primary btn-lg" role="button"
+						href="/index.html">Cancel</a>
+		</div>
+		<div></div>
+	</div>
+<div class="row">
+		<div id="editor_holder" class="col-md-10"></div>
+	</div>
+
+</div>
+<script type="text/javascript" >
+   var checkMode = function (editor) {
+		console.log(editor.getEditor('root.configuration.mode').getValue());
+		if(editor.getEditor('root.configuration.mode').getValue()==='HOME'){
+			editor.getEditor('root.configuration.ssid').disable();
+			editor.getEditor('root.configuration.password').disable();
+		}else{
+			editor.getEditor('root.configuration.ssid').enable();
+			editor.getEditor('root.configuration.password').enable();
+		}
+   }
+	$(document)
+			.ready(
+					function() {
+						$.ajax({
+							url : '../js/network-conf-schema.json',
+							dataType: 'json',
+							mimeType: 'application/json',
+							success : function (schemaData) {
+								console.log("ready to parse");
+							    //var schema = JSON.parse(data);
+								// Set default options
+								//console.log("load theme");
+								JSONEditor.defaults.iconlib = "fontawesome4";
+								JSONEditor.defaults.theme = 'bootstrap2';
+								JSONEditor.defaults.custom_validators.push(function(schema, value, path) {
+									  var errors = [];
+									  if(schema.format==="simpletext") {
+									    if(!/^[0-9a-zA-Z_-]*$/.test(value)) {
+									      // Errors must be an object with `path`, `property`, and `message`
+									      errors.push({
+									        path: path,
+									        property: 'format',
+									        message: 'Use only a-z,A-Z,0-9,_-"'
+									      });
+									    }
+									  }
+									  return errors;
+									});
+								//console.log("start editor");
+								// Initialize the editor
+								var editor = new JSONEditor(document.getElementById("editor_holder"),{
+									schema:schemaData,
+									startval: null,
+									disable_collapse: true,
+									disable_edit_json: true,
+									disable_properties: true,
+									disable_array_reorder: false
+									});
+								//init the button
+								$("#configureButton")
+								    .on(
+										'click',
+										function() {
+											
+											 var cfg = JSON.stringify(editor.getValue());
+											  console.log(cfg);
+											  $.ajax("/signalk/control/configureNetwork", {
+												    data : JSON.stringify(editor.getValue(),null, 4),
+												    contentType : 'application/json',
+												    type : 'POST',
+												    success : function(data) {
+														alert(data);
+													},
+													error : function(data) {
+														alert("Error:"
+																+ JSON.stringify(data.responseText));
+													}
+											  });
+										});
+								
+								// Get the current config 
+								$.ajax({
+									url : '/signalk/control/loadNetwork',
+									dataType: 'json',
+									mimeType: 'application/json',
+									success : function (data) {
+										console.log(JSON.stringify(data));
+										if(data){
+											editor.setValue(data);
+										}
+										checkMode(editor);
+										// Listen for mode changes from now on
+										editor.watch('root.configuration.mode', function() {
+											checkMode(editor);
+										});
+										
+									}
+								});
+								
+								// Validate
+								var errors = editor.validate();
+								if(errors.length) {
+								  console.log(errors);
+								}
+		
+								
+						}});
+						
+					});
+</script>
+</body>
+</html>

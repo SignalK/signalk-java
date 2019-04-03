@@ -28,34 +28,34 @@ set -euo pipefail
 IFS=$'\n\t'
 
 if [[ $# -lt 2 ]] ; then
-   echo 'Correct usage is: setup_network.sh [HOSTNAME] [boat network (Y|N)] [Wifi SSID] [Wifi PASSWORD]'
+   echo 'Correct usage is: setup_network.sh [HOSTNAME] [hotspot (Y|N)] [Wifi SSID] [Wifi PASSWORD]'
    echo '    eg: setup_network.sh freeboard Y freeboard passit'
    exit 1
 fi
 
 HOSTNAME=${1}
-DO_BOAT_NETWORK=${2}
-BOAT_NETWORK_WIFI_SSID=${3:-${HOSTNAME}}
-BOAT_NETWORK_WIFI_PASS=${4:-${BOAT_NETWORK_WIFI_SSID}}
+DO_HOTSPOT_NETWORK=${2}
+HOTSPOT_NETWORK_WIFI_SSID=${3:-${HOSTNAME}}
+HOTSPOT_NETWORK_WIFI_PASS=${4:-${HOTSPOT_NETWORK_WIFI_SSID}}
 
 # check the pass is > 8
-if [ ${#BOAT_NETWORK_WIFI_PASS} -lt 8 ];then
-	BOAT_NETWORK_WIFI_PASS=${BOAT_NETWORK_WIFI_PASS}${BOAT_NETWORK_WIFI_PASS}
+if [ ${#HOTSPOT_NETWORK_WIFI_PASS} -lt 8 ];then
+	HOTSPOT_NETWORK_WIFI_PASS=${HOTSPOT_NETWORK_WIFI_PASS}${HOTSPOT_NETWORK_WIFI_PASS}
 fi
-if [ ${#BOAT_NETWORK_WIFI_PASS} -lt 8 ];then
-	BOAT_NETWORK_WIFI_PASS=${BOAT_NETWORK_WIFI_PASS}${BOAT_NETWORK_WIFI_PASS}
+if [ ${#HOTSPOT_NETWORK_WIFI_PASS} -lt 8 ];then
+	HOTSPOT_NETWORK_WIFI_PASS=${HOTSPOT_NETWORK_WIFI_PASS}${HOTSPOT_NETWORK_WIFI_PASS}
 fi
-#echo "    running: setup_network.sh $HOSTNAME $DO_BOAT_NETWORK $BOAT_NETWORK_WIFI_SSID $BOAT_NETWORK_WIFI_PASS"
+#echo "    running: setup_network.sh $HOSTNAME $DO_HOTSPOT_NETWORK $HOTSPOT_NETWORK_WIFI_SSID $HOTSPOT_NETWORK_WIFI_PASS"
 #exit 1
 
 # Boat Network Defaults
-BOAT_NETWORK_IFACE=wlan0
-BOAT_ROAM_IFACE=wlan1
-BOAT_NETWORK_ADDRESS=192.168.0.1
-BOAT_NETWORK_NETMASK=255.255.255.0
-BOAT_NETWORK_MIN_DHCP=192.168.0.10
-BOAT_NETWORK_MAX_DHCP=192.168.0.128
-BOAT_NETWORK_WIFI_CHAN=10
+HOTSPOT_NETWORK_IFACE=wlan0
+HOTSPOT_ROAM_IFACE=wlan1
+HOTSPOT_NETWORK_ADDRESS=192.168.0.1
+HOTSPOT_NETWORK_NETMASK=255.255.255.0
+HOTSPOT_NETWORK_MIN_DHCP=192.168.0.10
+HOTSPOT_NETWORK_MAX_DHCP=192.168.0.128
+HOTSPOT_NETWORK_WIFI_CHAN=10
 
 # helper functions
 
@@ -126,16 +126,16 @@ ff02::2         ip6-allrouters"
 
 HOSTAPD_DEFAULT="DAEMON_CONF=\"/etc/hostapd/hostapd.conf\""
 
-HOSTAPD_CONFIG="interface=${BOAT_NETWORK_IFACE}
+HOSTAPD_CONFIG="interface=${HOTSPOT_NETWORK_IFACE}
 driver=nl80211
 ctrl_interface=/var/run/hostapd
 ctrl_interface_group=0
-ssid=${BOAT_NETWORK_WIFI_SSID}
+ssid=${HOTSPOT_NETWORK_WIFI_SSID}
 hw_mode=g
-channel=${BOAT_NETWORK_WIFI_CHAN}
+channel=${HOTSPOT_NETWORK_WIFI_CHAN}
 ieee80211n=1
 wpa=1
-wpa_passphrase=${BOAT_NETWORK_WIFI_PASS}
+wpa_passphrase=${HOTSPOT_NETWORK_WIFI_PASS}
 wpa_key_mgmt=WPA-PSK
 wpa_pairwise=TKIP
 rsn_pairwise=CCMP
@@ -144,7 +144,7 @@ auth_algs=3
 wmm_enabled=1"
 
 DNSMASQ_CONFIG="interface=wlan0
-dhcp-range=${BOAT_NETWORK_MIN_DHCP},${BOAT_NETWORK_MAX_DHCP},12h"
+dhcp-range=${HOTSPOT_NETWORK_MIN_DHCP},${HOTSPOT_NETWORK_MAX_DHCP},12h"
 
 # Verify our running environment
 
@@ -183,7 +183,7 @@ if ! diff /etc/hostname.bak /etc/hostname > /dev/null; then
 fi
 
 # Optionally Setup Boat Network
-if [ "${DO_BOAT_NETWORK}" == "Y" ]; then
+if [ "${DO_HOTSPOT_NETWORK}" == "Y" ]; then
 
     ## TODO: validate wifi device supports master mode
 	
@@ -192,7 +192,7 @@ if [ "${DO_BOAT_NETWORK}" == "Y" ]; then
     sudo tee /etc/hosts << EOF
 # This file is managed by ${0}
 ${STATIC_HOSTS_ENTRIES}
-${BOAT_NETWORK_ADDRESS} ${HOSTNAME} a.${HOSTNAME} b.${HOSTNAME} c.${HOSTNAME} d.${HOSTNAME} 
+${HOTSPOT_NETWORK_ADDRESS} ${HOSTNAME} a.${HOSTNAME} b.${HOSTNAME} c.${HOSTNAME} d.${HOSTNAME} 
 
 127.0.1.1 ${HOSTNAME} 
 EOF
@@ -240,13 +240,13 @@ allow-hotplug eth0
 iface eth0 inet dhcp
     metric 20
 
-allow-hotplug ${BOAT_NETWORK_IFACE}
-iface ${BOAT_NETWORK_IFACE} inet static
-    address ${BOAT_NETWORK_ADDRESS}
-    netmask ${BOAT_NETWORK_NETMASK}
+allow-hotplug ${HOTSPOT_NETWORK_IFACE}
+iface ${HOTSPOT_NETWORK_IFACE} inet static
+    address ${HOTSPOT_NETWORK_ADDRESS}
+    netmask ${HOTSPOT_NETWORK_NETMASK}
     
-allow-hotplug ${BOAT_ROAM_IFACE}
-iface ${BOAT_ROAM_IFACE} inet manual
+allow-hotplug ${HOTSPOT_ROAM_IFACE}
+iface ${HOTSPOT_ROAM_IFACE} inet manual
    wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
    metric 10
 iface default inet dhcp
@@ -307,8 +307,8 @@ EOF
 else
 
     ## bring down wireless
-    if sudo ifquery --state ${BOAT_NETWORK_IFACE} > /dev/null; then
-        sudo ifdown ${BOAT_NETWORK_IFACE}
+    if sudo ifquery --state ${HOTSPOT_NETWORK_IFACE} > /dev/null; then
+        sudo ifdown ${HOTSPOT_NETWORK_IFACE}
     fi
 
     ## disable and stop network daemons
@@ -335,7 +335,7 @@ ${STATIC_HOSTS_ENTRIES}
 127.0.1.1 ${HOSTNAME}
 EOF
 
-fi # End if DO_BOAT_NETWORK
+fi # End if DO_HOTSPOT_NETWORK
 
 # make setup script in homedir a symlink to script in source
 if [ ! -L ~/setup_network.sh ]; then
@@ -350,8 +350,8 @@ echo "The script has completed successfully."
 if [ "${DO_REBOOT_SYSTEM}" == "Y" ]; then
     echo
     echo "Press ENTER to reboot or CTRL-c to cancel"
-
-    read -t 10# wait for user to hit enter
+# wait for user to hit enter
+    read -t 5
 
     sudo shutdown -r now
 

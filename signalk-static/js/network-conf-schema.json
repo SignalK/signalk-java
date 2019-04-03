@@ -1,0 +1,132 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"title": "Network Configuration",
+	"description": "Control network modes",
+	"properties": {
+		"configuration": {
+			"type": "object",
+			"title": "Configuration",
+			"description": "",
+			"format": "table",
+			"properties": {
+				"mode": {
+					"type": "string",
+					"minLength": 1,
+					"title": "Network Mode",
+					"description": "Hotspot starts a private wifi hotspot, Home tries to connect to an existing wifi network.",
+					"default": "HOME",
+					"enum": [
+						"HOME",
+						"HOTSPOT"
+					],
+					"id": "mode"
+				},
+				"hostname": {
+					"type": "string",
+					"minLength": 4,
+					"title": "Hostname",
+					"description": "The hostname of this server, usually your boatname",
+					"default": "raspberrypi",
+					"format": "simpletext",
+					"id": "hostname",
+					"options": {
+						"input_width": "200px"
+					}
+				},
+				"ssid": {
+					"type": "string",
+					"minLength": 4,
+					"title": "Hotspot Name",
+					"description": "The hotspot name",
+					"default": "freeboard",
+					"format": "simpletext",
+					"id": "ssid",
+					"options": {
+						"input_width": "200px"
+					}
+				},
+				"password": {
+					"type": "string",
+					"minLength": 8,
+					"title": "Hotspot Password",
+					"description": "The password for the hotspot",
+					"default": "raspberrypi",
+					"id": "password",
+					"options": {
+						"input_width": "200px"
+					}
+				},
+				"roam": {
+					"id": "roam",
+					"type": "object",
+					"title": "Roam",
+					"description": "Define hotspots to connect with",
+					"options": {
+						"remove_empty_properties": true
+					},
+					"properties": {
+						"networks": {
+							"id": "networks",
+							"type": "array",
+							"uniqueItems": true,
+							"title": "Networks",
+							"description": "Auto-connect to these networks when in range. <br/>SSID: The hotspot name, eg myHomeWifi,<br/>Passphrase: the access passphrase",
+							"format": "table",
+							"items": {
+								"type": "object",
+								"title": "Hotspot",
+								"description": "The wifi network to auto-connect",
+								"format": "grid",
+								"properties": {
+									"ssid": {
+										"type": "string",
+										"minLength": 1,
+										"title": "SSID",
+										"id": "ssid",
+										"format": "simpletext",
+										"options": {
+											"input_width": "200px"
+										}
+									},
+									"password": {
+										"type": "string",
+										"minLength": 1,
+										"title": "WPA2 Passphrase",
+										"id": "password",
+										"options": {
+											"input_width": "200px"
+										}
+									}
+									
+								},
+								"id": "1",
+								"required": [
+									"ssid",
+									"password"
+								]
+							},
+							"required": [
+								"networks"
+							]
+						}
+					}
+					
+					
+				}
+			},
+			"id": "configuration",
+			"required": [
+				"mode",
+				"hostname",
+				"ssid",
+				"password",
+				"roam"
+			]
+		}
+	},
+	"id": "/",
+	"required": [
+		"configuration"
+	]
+}
