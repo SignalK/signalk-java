@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nz.co.fortytwo.signalk</groupId>
 	<artifactId>signalk-java</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.9.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Signalk Java</name>
 	<description>The Signalk java server, packaged as a maven install, ready to run.</description>
 	<properties>
 		<!-- <bundle.name>nsb-${project.version}</bundle.name> -->
-		<signalk.server.version>jdk11-SNAPSHOT</signalk.server.version>
+		<signalk.server.version>master-SNAPSHOT</signalk.server.version>
 		<graalvm.version>1.0.0-rc12</graalvm.version>
 		<compiler.dir>${project.build.directory}/compiler</compiler.dir>
 	</properties>
