@@ -15,6 +15,9 @@ Install on RPi
 
 This version is easiest from a complete fresh RPi install. 
 
+I strongly recommend adding an RTC module to the RPi as it keeps correct time even when off. This is important for the databse.
+I used https://www.aliexpress.com/item/JunRoc-Raspberry-Pi-RTC-module-DS1307-IO-Pin-Connect-Compatible-With-Raspberry-Pi-3B-Pi-3B/32921678474.html
+
 __The easiest install is the raspbian_setup.sh script__
 
 To use the script, make sure your pi is on the internet, login to your pi (as user pi) and execute
