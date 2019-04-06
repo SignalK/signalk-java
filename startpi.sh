@@ -7,6 +7,14 @@ if [ -d /usr/lib/jvm/jdk-11-bellsoft-arm32-vfp-hflt ]; then
 	#Set JAVA_HOME for bellsoft jdk11
 	export JAVA_HOME=/usr/lib/jvm/jdk-11-bellsoft-arm32-vfp-hflt
 	echo "JAVA_HOME=/usr/lib/jvm/jdk-11-bellsoft-arm32-vfp-hflt" 2>&1
+elif [ -d /usr/lib/jvm/jdk-11-bellsoft-aarch64 ]; then
+	#Set JAVA_HOME for bellsoft jdk11 arm64
+	export JAVA_HOME=/usr/lib/jvm/jdk-11-bellsoft-aarch64
+	echo "JAVA_HOME=/usr/lib/jvm/jdk-11-bellsoft-aarch64" 2>&1
+elif [ -d /usr/lib/jvm/java-11-openjdk-arm64 ]; then
+	#Set JAVA_HOME for openjdk jdk11 arm64
+	export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64
+	echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64" 2>&1
 elif [ -d /usr/lib/jvm/java-8-oracle ]; then
 	#Set JAVA_HOME for bellsoft jdk11
 	export JAVA_HOME=/usr/lib/jvm/java-8-oracle

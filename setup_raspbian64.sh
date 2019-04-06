@@ -211,7 +211,7 @@ sudo service ntp start
 sudo apt-get install -y ifmetric
 	
 curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
-echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+echo "deb https://repos.influxdata.com/debian bionic stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
 
 sudo apt update
 
@@ -219,12 +219,13 @@ sudo apt-get install -y influxdb
 sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
 sudo service influxdb restart
 
-if [ ! -f /tmp/bellsoft-jdk11.0.2-linux-aarch64-lite.deb ]; then
-	wget -O /tmp/bellsoft-jdk11.0.2-linux-aarch64.deb https://download.bell-sw.com/java/11.0.2/bellsoft-jdk11.0.2-linux-aarch64-lite.deb
-fi
-
-sudo apt-get install -y /tmp/bellsoft-jdk11.0.2-linux-aarch64-lite.deb
+#if [ ! -f /tmp/bellsoft-jdk11.0.2-linux-aarch64-lite.deb ]; then
+#	wget -O /tmp/bellsoft-jdk11.0.2-linux-aarch64.deb https://download.bell-sw.com/java/11.0.2/bellsoft-jdk11.0.2-linux-aarch64-lite.deb
+#fi
+#
+#sudo apt-get install -y /tmp/bellsoft-jdk11.0.2-linux-aarch64-lite.deb
 	
+sudo apt-get install -y openjdk-11-jre-headless
 sudo apt-get install -y maven
 
 ## check running user is 'pi'
