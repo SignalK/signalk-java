@@ -190,10 +190,10 @@ LSB_ID=$(lsb_release -is)
 LSB_CODENAME=$(lsb_release -cs)
 
 ## check lsb_release for Raspbian stretch
-if [ "${LSB_ID}" != "Raspbian" -o "${LSB_CODENAME}" != "stretch" ]; then
-    echo "distro ${LSB_ID} ${LSB_CODENAME} is not supported."
-    exit 1
-fi
+#if [ "${LSB_ID}" != "Raspbian" -o "${LSB_CODENAME}" != "stretch" ]; then
+#    echo "distro ${LSB_ID} ${LSB_CODENAME} is not supported."
+#    exit 1
+#fi
 
 sudo apt-get update
 sudo apt-get upgrade -y
@@ -219,11 +219,11 @@ sudo apt-get install -y influxdb
 sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
 sudo service influxdb restart
 
-if [ ! -f /tmp/bellsoft-jdk11.0.2-linux-aarch64.deb ]; then
-	wget -O /tmp/bellsoft-jdk11.0.2-linux-aarch64.deb https://download.bell-sw.com/java/11.0.2/bellsoft-jdk11.0.2-linux-aarch64.deb
+if [ ! -f /tmp/bellsoft-jdk11.0.2-linux-aarch64-lite.deb ]; then
+	wget -O /tmp/bellsoft-jdk11.0.2-linux-aarch64.deb https://download.bell-sw.com/java/11.0.2/bellsoft-jdk11.0.2-linux-aarch64-lite.deb
 fi
 
-sudo apt-get install -y /tmp/bellsoft-jdk11.0.2-linux-aarch64.deb
+sudo apt-get install -y /tmp/bellsoft-jdk11.0.2-linux-aarch64-lite.deb
 	
 sudo apt-get install -y maven
 
