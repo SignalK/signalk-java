@@ -72,6 +72,12 @@
                     "appender-ref": []
                 },
                 {
+                    "name": "nz.co.fortytwo.signalk.artemis.graal.GraalPool",
+                    "level": "INFO",
+                    "additivity": true,
+                    "appender-ref": []
+                },
+                {
                     "name": "nz.co.fortytwo.signalk.artemis.transformer.NMEAMsgTransformer",
                     "level": "ERROR",
                     "additivity": true,
