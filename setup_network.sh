@@ -119,11 +119,14 @@ DO_REBOOT_SYSTEM=Y
 DO_RESTART_DNSMASQ=N
 DO_RESTART_HOSTAPD=N
 
+###########
 STATIC_HOSTS_ENTRIES="127.0.0.1       localhost
 ::1             localhost ip6-localhost ip6-loopback
 ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters"
+###########
 
+###########
 HOSTAPD_DEFAULT="DAEMON_CONF=\"/etc/hostapd/hostapd.conf\""
 
 HOSTAPD_CONFIG="interface=${HOTSPOT_NETWORK_IFACE}
@@ -142,9 +145,62 @@ rsn_pairwise=CCMP
 beacon_int=100
 auth_algs=3
 wmm_enabled=1"
+###########
 
+###########
 DNSMASQ_CONFIG="interface=wlan0
 dhcp-range=${HOTSPOT_NETWORK_MIN_DHCP},${HOTSPOT_NETWORK_MAX_DHCP},12h"
+###########
+
+###########
+NETWORK_INTERFACES="
+# This file is managed by signalk-java
+
+auto lo
+iface lo inet loopback
+
+allow-hotplug eth0
+iface eth0 inet dhcp
+    metric 20
+
+allow-hotplug ${HOTSPOT_NETWORK_IFACE}
+iface ${HOTSPOT_NETWORK_IFACE} inet static
+    address ${HOTSPOT_NETWORK_ADDRESS}
+    netmask ${HOTSPOT_NETWORK_NETMASK}
+    
+allow-hotplug ${HOTSPOT_ROAM_IFACE}
+iface ${HOTSPOT_ROAM_IFACE} inet manual
+   wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+   metric 10
+iface default inet dhcp
+"
+###########
+
+###########
+RC_LOCAL="
+#!/bin/sh -e
+# This file is managed by signalk-java
+# Print the IP address
+_IP=$(hostname -I) || true
+if [ "$_IP" ]; then
+  printf \"My IP address is %s\n\" \"\$_IP\"
+fi
+#setup routing
+sudo sh -c \"echo 1 > /proc/sys/net/ipv4/ip_forward\"
+sudo iptables-restore < /etc/iptables.ipv4.nat
+exit 0
+"
+###########
+
+###########
+HOSTS_FILE="
+# This file is managed by ${0}
+${STATIC_HOSTS_ENTRIES}
+${HOTSPOT_NETWORK_ADDRESS} ${HOSTNAME} a.${HOSTNAME} b.${HOSTNAME} c.${HOSTNAME} d.${HOSTNAME} 
+
+127.0.1.1 ${HOSTNAME}
+"
+###########
 
 # Verify our running environment
 
@@ -189,13 +245,7 @@ if [ "${DO_HOTSPOT_NETWORK}" == "Y" ]; then
 	
     ## setup hosts file
     sudo cp /etc/hosts /etc/hosts.bak
-    sudo tee /etc/hosts << EOF
-# This file is managed by ${0}
-${STATIC_HOSTS_ENTRIES}
-${HOTSPOT_NETWORK_ADDRESS} ${HOSTNAME} a.${HOSTNAME} b.${HOSTNAME} c.${HOSTNAME} d.${HOSTNAME} 
-
-127.0.1.1 ${HOSTNAME} 
-EOF
+    echo "${HOSTS_FILE}" | sudo tee /etc/hosts 
 
     if ! diff /etc/hosts.bak /etc/hosts > /dev/null; then
         DO_RESTART_DNSMASQ=Y
@@ -212,45 +262,12 @@ EOF
 
 	## Add rc.local
     if ! grep "^# This file is managed by signalk-java" /etc/rc.local > /dev/null; then
-        echo '
-#!/bin/sh -e
-# This file is managed by signalk-java
-# Print the IP address
-_IP=$(hostname -I) || true
-if [ "$_IP" ]; then
-  printf \"My IP address is %s\n\" \"\$_IP\"
-fi
-#setup routing
-sudo sh -c \"echo 1 > /proc/sys/net/ipv4/ip_forward\"
-sudo iptables-restore < /etc/iptables.ipv4.nat
-exit 0
-' | sudo tee /etc/rc.local
-	
+        echo "${RC_LOCAL}" | sudo tee /etc/rc.local
 	fi
 	
     ## Add interface config
     if ! grep "^# This file is managed by signalk-java" /etc/network/interfaces > /dev/null; then
-        sudo tee /etc/network/interfaces << EOF
-# This file is managed by signalk-java
-
-auto lo
-iface lo inet loopback
-
-allow-hotplug eth0
-iface eth0 inet dhcp
-    metric 20
-
-allow-hotplug ${HOTSPOT_NETWORK_IFACE}
-iface ${HOTSPOT_NETWORK_IFACE} inet static
-    address ${HOTSPOT_NETWORK_ADDRESS}
-    netmask ${HOTSPOT_NETWORK_NETMASK}
-    
-allow-hotplug ${HOTSPOT_ROAM_IFACE}
-iface ${HOTSPOT_ROAM_IFACE} inet manual
-   wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
-   metric 10
-iface default inet dhcp
-EOF
+        echo "${NETWORK_INTERFACES}" | sudo tee /etc/network/interfaces 
     fi
 
     ## ensure required packages are installed

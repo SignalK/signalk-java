@@ -20,12 +20,17 @@
 #
 #
 # This is a setup script to automate the installation of Signalk-java
-# On Raspbian stretch.
+# Mods by robert@42.co.nz to use in Ubuntu 64 bit on RPi 3B+
 #
 
 # Use bash "strict mode" - http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euo pipefail
 IFS=$'\n\t'
+
+# NOTE WELL: The date Must be correct of various commands fail!
+echo "The date MUST be correct or failures will occur"
+echo "Current System Time:"
+date
 
 # Freeboard source location
 #FREEBOARD_CLONE_URL="https://github.com/rob42/freeboard-server.git"
@@ -126,60 +131,110 @@ cat << EOF
 
                !!!WARNING!!!
 
-You're about to set up this raspbian server to run the Artemis signalk server. This script will
+You're about to set up this ubuntu server to run the Artemis signalk server. This script will
 modify your system to do just that. It's developed and tested to work on a
-vanilla 'Raspbian Stretch - Lite' image.
+vanilla 'ubuntu 18.04 bionic - 64-bit server' image.
 
 You should have already:
 
-  1) Run raspi-config to:
-
-    * Change the password for your rasbian install
-
-    * Expand the filesystem to make entire SD card space available
-
-	* Setup internet access
-
-  2) rebooted (to apply the filesystem change.)
-
+  1) * Changed the password for your ubuntu install
+	 * Setup internet access
+	 * Checked the time is correct
 EOF
 
 if ! yesno "do you want to continue"; then
     exit 0
 fi
 
-#CAT << EOF
-#
-#BOAT MODE ?
-#
-#YOU CAN CONFIGURE YOUR PI TO HOST A CAPTIVE WIFI NETWORK FOR FREEBOARD. THIS HAS
-#BEEN TESTED ON THE RASPBERRY PI 3 WITH THE BUILTIN WIFI INTERFACE.
-#
-#BOAT_NETWORK_IFACE = ${BOAT_NETWORK_IFACE}
-#BOAT_NETWORK_ADDRESS = ${BOAT_NETWORK_ADDRESS}
-#BOAT_NETWORK_NETMASK = ${BOAT_NETWORK_NETMASK}
-#BOAT_NETWORK_MIN_DHCP = ${BOAT_NETWORK_MIN_DHCP}
-#BOAT_NETWORK_MAX_DHCP = ${BOAT_NETWORK_MAX_DHCP}
-#BOAT_NETWORK_WIFI_SSID = ${BOAT_NETWORK_WIFI_SSID}
-#BOAT_NETWORK_WIFI_PASS = ${BOAT_NETWORK_WIFI_PASS}
-#BOAT_NETWORK_WIFI_CHAN = ${BOAT_NETWORK_WIFI_CHAN}
-#
-#EOF
-#
-#IF YESNO "DO YOU WANT YOUR PI IN BOAT MODE"; THEN
-#    DO_BOAT_NETWORK=Y
-#ELSE
-#    DO_BOAT_NETWORK=N
-#FI
+if yesno "Do you have a hardware (RTC) clock module"; then
+	DO_RTC=Y
+	cat << EOF
+	RTC chip type selection. 
+	
+	The chip type will be on the documentation with the RTC module
+	or on the module itself (on the chip).
+	
+EOF
+	PS3='Enter selection: '
+	options=("ds1307" "pcf8523" "ds3231" "Quit")
+	select opt in "${options[@]}"
+	do
+	    case $opt in
+	        "ds1307")
+	        	RTC_CHIP=ds1307
+	        	break
+	            ;;
+	        "pcf8523")
+	            RTC_CHIP=pcf8523
+	            break
+	            ;;
+	        "ds3231")
+	            RTC_CHIP=ds3231
+	            break
+	            ;;
+	        "Quit")
+	            break
+	            ;;
+	        *) echo "invalid option $REPLY";;
+	    esac
+	done
+   echo "Selected $RTC_CHIP";
+else
+    DO_RTC=N
+fi
 
 set -x # Turn on debug output
 
 DO_REBOOT_SYSTEM=Y
 
+########
 STATIC_HOSTS_ENTRIES="127.0.0.1       localhost
 ::1             localhost ip6-localhost ip6-loopback
 ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters"
+########
+
+########
+HW_CLOCK_SET="
+#!/bin/sh
+# Reset the System Clock to UTC if the hardware clock from which it
+# was copied by the kernel was in localtime.
+
+dev=$1
+
+#if [ -e /run/systemd/system ] ; then
+#    exit 0
+#fi
+
+if [ -e /run/udev/hwclock-set ]; then
+    exit 0
+fi
+
+if [ -f /etc/default/rcS ] ; then
+    . /etc/default/rcS
+fi
+
+# These defaults are user-overridable in /etc/default/hwclock
+BADYEAR=no
+HWCLOCKACCESS=yes
+HWCLOCKPARS=
+HCTOSYS_DEVICE=rtc0
+if [ -f /etc/default/hwclock ] ; then
+    . /etc/default/hwclock
+fi
+
+if [ yes = "$BADYEAR" ] ; then
+    /sbin/hwclock --rtc=$dev --systz --badyear
+    /sbin/hwclock --rtc=$dev --hctosys --badyear
+else
+    /sbin/hwclock --rtc=$dev --systz
+    /sbin/hwclock --rtc=$dev --hctosys
+fi
+
+# Note 'touch' may not be available in initramfs
+> /run/udev/hwclock-set
+"
+########
 
 # Verify our running environment
 
@@ -190,10 +245,10 @@ LSB_ID=$(lsb_release -is)
 LSB_CODENAME=$(lsb_release -cs)
 
 ## check lsb_release for Raspbian stretch
-#if [ "${LSB_ID}" != "Raspbian" -o "${LSB_CODENAME}" != "stretch" ]; then
-#    echo "distro ${LSB_ID} ${LSB_CODENAME} is not supported."
-#    exit 1
-#fi
+if [ "${LSB_ID}" != "Ubuntu" -o "${LSB_CODENAME}" != "bionic" ]; then
+    echo "distro ${LSB_ID} ${LSB_CODENAME} is not supported."
+    exit 1
+fi
 
 sudo apt-get update
 sudo apt-get upgrade -y
@@ -210,22 +265,57 @@ sudo service ntp start
 # routing
 sudo apt-get install -y ifmetric
 	
+#add rasbian-config
+sudo add-apt-repository ppa:ubuntu-pi-flavour-makers/ppa
+sudo apt-get update
+sudo apt-get install raspi-config
+
+if [ "${DO_RTC}" == "Y" ]; then
+    # setup hwclock
+    sudo apt-get install python-smbus i2c-tools
+	# Add one of these to /boot/config.txt
+	# remove any current drivers
+	sudo sed -i 's/dtoverlay=i2c-rtc,ds1307//' /boot/config.txt
+	sudo sed -i 's/dtoverlay=i2c-rtc,pcf8523//' /boot/config.txt
+	sudo sed -i 's/dtoverlay=i2c-rtc,ds3231//' /boot/config.txt	 
+    echo "dtoverlay=i2c-rtc,${RTC_CHIP}" >> /boot/config.txt
+    
+    sudo apt-get -y remove fake-hwclock
+    sudo update-rc.d -f fake-hwclock remove
+    
+    # rewrite /lib/udev/hwclock-set
+    if [ ! -e /lib/udev/hwclock-set.orig ]; then
+    	sudo cp /lib/udev/hwclock-set /lib/udev/hwclock-set.orig
+ 	fi
+    echo "${HW_CLOCK_SET}" | sudo tee /lib/udev/hwclock-set
+
+    #set RTC time
+    sudo hwclock -w
+else
+	# remove any current drivers
+	sudo sed -i 's/dtoverlay=i2c-rtc,ds1307//' /boot/config.txt
+	sudo sed -i 's/dtoverlay=i2c-rtc,pcf8523//' /boot/config.txt
+	sudo sed -i 's/dtoverlay=i2c-rtc,ds3231//' /boot/config.txt
+	sudo apt-get -y install fake-hwclock
+	sudo cp /lib/udev/hwclock-set.orig /lib/udev/hwclock-set
+fi
+
 curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
 echo "deb https://repos.influxdata.com/debian bionic stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
 
 sudo apt update
 
 sudo apt-get install -y influxdb
-sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
+sudo sed -i 's/store-enabled = true/store-enabled = false/' less
 sudo service influxdb restart
 
-#if [ ! -f /tmp/bellsoft-jdk11.0.2-linux-aarch64-lite.deb ]; then
-#	wget -O /tmp/bellsoft-jdk11.0.2-linux-aarch64.deb https://download.bell-sw.com/java/11.0.2/bellsoft-jdk11.0.2-linux-aarch64-lite.deb
-#fi
-#
-#sudo apt-get install -y /tmp/bellsoft-jdk11.0.2-linux-aarch64-lite.deb
-	
-sudo apt-get install -y openjdk-11-jre-headless
+if [ ! -f /tmp/bellsoft-jdk11.0.2-linux-aarch64-lite.tar.gz ]; then
+	wget --no-check-certificate -O /tmp/bellsoft-jdk11.0.2-linux-arm64-lite.deb https://download.bell-sw.com/java/11.0.2/bellsoft-jdk11.0.2-linux-aarch64-lite.deb
+fi
+
+#sudo apt-get install -y openjdk-11-jre-headless
+sudo apt-get install -y /tmp/bellsoft-jdk11.0.2-linux-arm64-lite.deb
+
 sudo apt-get install -y maven
 
 ## check running user is 'pi'
@@ -239,11 +329,11 @@ cd ${HOME}
 if [ ! -d signalk-java ];then
 	git clone https://github.com/SignalK/signalk-java.git
 	cd signalk-java
-	git checkout master
+	git checkout jdk11
 else
 	cd signalk-java
 	git pull
-	git checkout master
+	git checkout jdk11
 fi
 cd ${HOME}
 touch first_start
@@ -255,8 +345,8 @@ if ! diff systemd.signalk-java.environment /etc/default/signalk-java; then
     sudo cp systemd.signalk-java.environment /etc/default/signalk-java
 fi
 
-if ! diff systemd.signalk-java.service /etc/systemd/system/signalk-java.service; then
-    sudo cp systemd.signalk-java.service /etc/systemd/system/signalk-java.service
+if ! diff systemd.signalk-java.service.arm64 /etc/systemd/system/signalk-java.service; then
+    sudo cp systemd.signalk-java.service.arm64 /etc/systemd/system/signalk-java.service
     sudo systemctl daemon-reload
 fi
 
