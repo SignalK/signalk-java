@@ -137,14 +137,27 @@ vanilla 'ubuntu 18.04 bionic - 64-bit server' image.
 
 You should have already:
 
-  1) * Changed the password for your ubuntu install
-	 * Setup internet access
-	 * Checked the time is correct
+  * Changed the password for your ubuntu install
+  * Setup internet access
+
 EOF
 
 if ! yesno "do you want to continue"; then
     exit 0
+else
+	NOW=`date`
+	if ! yesno "Is the system time correct (note timezone): ${NOW} ?"; then
+		read -p "Enter current date/time as (YYYY-MM-DDTHH:MM:SS), eg 2019-04-07T15:35:00 : " DATE_TIME	
+		sudo date -s ${DATE_TIME}
+		NOW=`date`
+		if ! yesno "Is the system time correct (note timezone): ${NOW} ?"; then
+			echo "The date MUST be correct to install successfully, please try again"
+    		exit 0
+    	fi
+    fi
 fi
+
+exit 0
 
 if yesno "Do you have a hardware (RTC) clock module"; then
 	DO_RTC=Y
@@ -178,7 +191,7 @@ EOF
 	        *) echo "invalid option $REPLY";;
 	    esac
 	done
-   echo "Selected $RTC_CHIP";
+   echo "Selected ${RTC_CHIP}";
 else
     DO_RTC=N
 fi
@@ -236,6 +249,20 @@ fi
 "
 ########
 
+########
+DS_RTC_SERVICE="
+[Unit]
+Description=Enable ${RTC_CHIP} I2C RTC
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/bash -c "echo ${RTC_CHIP} 0x68 | tee /sys/class/i2c-adapter/i2c-1/new_device"
+ExecStart=/sbin/hwclock -s
+
+[Install]
+WantedBy=basic.target
+"
+########
 # Verify our running environment
 
 ## Raspbian Lite does not have lsb-release installed by default
@@ -289,6 +316,12 @@ if [ "${DO_RTC}" == "Y" ]; then
  	fi
     echo "${HW_CLOCK_SET}" | sudo tee /lib/udev/hwclock-set
 
+	#setup service
+	echo "${DS_RTC_SERVICE}" | sudo tee /etc/systemd/system/${RTC_CHIP}.service
+	sudo systemctl daemon-reload
+	sudo systemctl enable ${RTC_CHIP}
+	sudo systemctl daemon-reload
+    
     #set RTC time
     sudo hwclock -w
 else
@@ -306,7 +339,7 @@ echo "deb https://repos.influxdata.com/debian bionic stable" | sudo tee /etc/apt
 sudo apt update
 
 sudo apt-get install -y influxdb
-sudo sed -i 's/store-enabled = true/store-enabled = false/' less
+sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
 sudo service influxdb restart
 
 if [ ! -f /tmp/bellsoft-jdk11.0.2-linux-aarch64-lite.tar.gz ]; then

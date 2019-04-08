@@ -27,6 +27,8 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+# NOTE WELL: The date Must be correct of various commands fail!
+
 # Freeboard source location
 #FREEBOARD_CLONE_URL="https://github.com/rob42/freeboard-server.git"
 #FREEBOARD_BRANCH=""
@@ -146,7 +148,20 @@ EOF
 
 if ! yesno "do you want to continue"; then
     exit 0
+else
+	NOW=`date`
+	if ! yesno "Is the system time correct (note timezone): ${NOW} ?"; then
+		read -p "Enter current date/time as (YYYY-MM-DDTHH:MM:SS), eg 2019-04-07T15:35:00 : " DATE_TIME	
+		sudo date -s ${DATE_TIME}
+		NOW=`date`
+		if ! yesno "Is the system time correct (note timezone): ${NOW} ?"; then
+			echo "The date MUST be correct to install successfully, please try again"
+    		exit 0
+    	fi
+    fi
+
 fi
+
 
 if yesno "Do you have a hardware (RTC) clock module"; then
 	DO_RTC=Y
