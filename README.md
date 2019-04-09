@@ -19,7 +19,7 @@ __The easiest install is the raspbian_setup.sh script__
 
 To use the script, make sure your pi is on the internet, login to your pi (as user pi) and execute
 ```
-pi@raspberrypi:~ $ source <(curl -s https://raw.githubusercontent.com/SignalK/signalk-java/jdk11/setup_raspbian.sh)
+pi@raspberrypi:~ $ source <(curl -s https://raw.githubusercontent.com/SignalK/signalk-java/master/setup_raspbian.sh)
 
 ```
 
@@ -27,7 +27,7 @@ See details at https://github.com/SignalK/specification/wiki/Raspberry-Pi-Instal
 
 A full manual install can also be done.
 
-__Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/artemis/INSTALL.md)__
+__Goto INSTALL.md (https://github.com/SignalK/signalk-java/blob/master/INSTALL.md)__
 
 Now open a modern web browser (eg not IE or Edge) to `https://[ip_address_of_the_pi]:8443`
 You should get a pretty start page! 
