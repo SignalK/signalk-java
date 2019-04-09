@@ -217,7 +217,7 @@ HW_CLOCK_SET="
 # Reset the System Clock to UTC if the hardware clock from which it
 # was copied by the kernel was in localtime.
 
-dev=$1
+dev=\$1
 
 #if [ -e /run/systemd/system ] ; then
 #    exit 0
@@ -240,12 +240,12 @@ if [ -f /etc/default/hwclock ] ; then
     . /etc/default/hwclock
 fi
 
-if [ yes = "$BADYEAR" ] ; then
-    /sbin/hwclock --rtc=$dev --systz --badyear
-    /sbin/hwclock --rtc=$dev --hctosys --badyear
+if [ yes = \"\$BADYEAR\" ] ; then
+    /sbin/hwclock --rtc=\$dev --systz --badyear
+    /sbin/hwclock --rtc=\$dev --hctosys --badyear
 else
-    /sbin/hwclock --rtc=$dev --systz
-    /sbin/hwclock --rtc=$dev --hctosys
+    /sbin/hwclock --rtc=\$dev --systz
+    /sbin/hwclock --rtc=\$dev --hctosys
 fi
 
 # Note 'touch' may not be available in initramfs
@@ -278,6 +278,7 @@ sudo systemctl stop systemd-timesyncd
 sudo systemctl disable systemd-timesyncd
 sudo apt-get install -y ntp
 #force time sync
+sudo service ntp stop
 sudo ntpd -gq
 sudo service ntp start
 
@@ -311,7 +312,9 @@ else
 	sudo sed -i 's/dtoverlay=i2c-rtc,pcf8523//' /boot/config.txt
 	sudo sed -i 's/dtoverlay=i2c-rtc,ds3231//' /boot/config.txt
 	sudo apt-get -y install fake-hwclock
-	sudo cp /lib/udev/hwclock-set.orig /lib/udev/hwclock-set
+	if [ -e /lib/udev/hwclock-set.orig ]; then
+		sudo cp /lib/udev/hwclock-set.orig /lib/udev/hwclock-set
+	fi
 fi
 
 curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
