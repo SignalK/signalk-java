@@ -28,6 +28,9 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # NOTE WELL: The date Must be correct of various commands fail!
+echo "The date MUST be correct or failures will occur"
+echo "Current System Time:"
+date
 
 # Freeboard source location
 #FREEBOARD_CLONE_URL="https://github.com/rob42/freeboard-server.git"
@@ -195,7 +198,7 @@ EOF
 	        *) echo "invalid option $REPLY";;
 	    esac
 	done
-   echo "Selected $RTC_CHIP";
+   echo "Selected ${RTC_CHIP}";
 else
     DO_RTC=N
 fi
