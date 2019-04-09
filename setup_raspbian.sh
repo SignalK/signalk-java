@@ -321,6 +321,11 @@ sudo apt update
 
 sudo apt-get install -y influxdb
 sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
+sudo sed -i 's/log-enabled = true/log-enabled = false/' /etc/influxdb/influxdb.conf
+sudo sed -i 's/# log-enabled = false/log-enabled = false/' /etc/influxdb/influxdb.conf
+	#max-connection-limit = 0
+	#max-enqueued-write-limit = 0
+	#enqueued-write-timeout = 3s
 sudo service influxdb restart
 
 if [ ! -f /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb ]; then
