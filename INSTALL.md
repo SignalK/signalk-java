@@ -78,7 +78,7 @@ Clone the signalk-java project
 ```
 pi@raspberrypi:~ $ git clone https://github.com/SignalK/signalk-java.git
 pi@raspberrypi:~ $ cd signalk-java
-pi@raspberrypi:~ $ git checkout jdk11
+pi@raspberrypi:~ $ git checkout master
 ```
 
 Start signalk-java
