@@ -342,7 +342,7 @@ echo "deb https://repos.influxdata.com/debian bionic stable" | sudo tee /etc/apt
 
 sudo apt update
 
-sudo apt-get install -y influxdb
+sudo apt-get install -y influxdb=1.7.4-1
 sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
 sudo sed -i 's/log-enabled = true/log-enabled = false/' /etc/influxdb/influxdb.conf
 sudo sed -i 's/# log-enabled = false/log-enabled = false/' /etc/influxdb/influxdb.conf
