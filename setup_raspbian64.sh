@@ -262,6 +262,100 @@ ExecStart=/sbin/hwclock -s
 WantedBy=basic.target
 "
 ########
+
+########
+INFLUX_CONF="
+### Welcome to the InfluxDB configuration file.
+
+# Change this option to true to disable reporting to influx every 24hrs.
+reporting-disabled = true
+# Bind address to use for the RPC service for backup and restore.
+bind-address = \"127.0.0.1:8088\"
+
+[meta]
+  # Where the metadata/raft database is stored
+  dir = \"/var/lib/influxdb/meta\"
+
+[data]
+  # The directory where the TSM storage engine stores TSM files.
+  dir = \"/var/lib/influxdb/data\"
+
+  # The directory where the TSM storage engine stores WAL files.
+  wal-dir = \"/var/lib/influxdb/wal\"
+  
+  # Values in the range of 0-100ms are recommended for non-SSD disks.
+  wal-fsync-delay = \"500ms\"
+  
+  # query-log-enabled = false
+
+  cache-max-memory-size = \"100m\"
+
+[coordinator]
+  # The default time a write request will wait until a "timeout" error is returned to the caller.
+  write-timeout = \"9s\"
+
+  # The maximum time a query will is allowed to execute before being killed by the system.  
+  query-timeout = \"9s\"
+
+  # The time threshold when a query will be logged as a slow query.  
+  log-queries-after = \"6s\"
+
+[retention]
+
+[shard-precreation]
+ 
+[monitor]
+  # Whether to record statistics internally.
+  store-enabled = false
+
+[http]
+
+  # Determines whether HTTP request logging is enabled.
+  log-enabled = false
+
+  # The maximum number of HTTP connections that may be open at once.  New connections that
+  # would exceed this limit are dropped.  Setting this value to 0 disables the limit.
+  max-connection-limit = 2000
+
+  # The maximum number of writes processed concurrently.
+  # Setting this to 0 disables the limit.
+  # max-concurrent-write-limit = 0
+
+  # The maximum number of writes queued for processing.
+  # Setting this to 0 disables the limit.
+  # max-enqueued-write-limit = 0
+
+  # The maximum duration for a write to wait in the queue to be processed.
+  # Setting this to 0 or setting max-concurrent-write-limit to 0 disables the limit.
+  enqueued-write-timeout = \"9s\"
+
+[logging]
+
+  # Determines which level of logs will be emitted. The available levels
+  # are error, warn, info, and debug. Logs that are equal to or above the
+  # specified level will be emitted.
+  # level = \"info\"
+
+[subscriber]
+  # Determines whether the subscriber service is enabled.
+  # enabled = true
+
+[[graphite]]
+  
+[[collectd]]
+  
+[[opentsdb]]
+  
+[[udp]]
+  
+[continuous_queries]
+  # Determines whether the continuous query service is enabled.
+  # enabled = true
+
+[tls]
+"
+##########
+
 # Verify our running environment
 
 ## Raspbian Lite does not have lsb-release installed by default
@@ -343,12 +437,11 @@ echo "deb https://repos.influxdata.com/debian bionic stable" | sudo tee /etc/apt
 sudo apt update
 
 sudo apt-get install -y influxdb=1.7.4-1
-sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
-sudo sed -i 's/log-enabled = true/log-enabled = false/' /etc/influxdb/influxdb.conf
-sudo sed -i 's/# log-enabled = false/log-enabled = false/' /etc/influxdb/influxdb.conf
-	#max-connection-limit = 0
-	#max-enqueued-write-limit = 0
-	#enqueued-write-timeout = 3s
+
+if [ ! -e /etc/influxdb/influxdb.conf.orig ]; then
+    	sudo cp /etc/influxdb/influxdb.conf /etc/influxdb/influxdb.conf.orig
+fi
+echo "${INFLUX_CONF}" | sudo tee /etc/influxdb/influxdb.conf
 sudo service influxdb restart
 
 if [ ! -f /tmp/bellsoft-jdk11.0.2-linux-aarch64-lite.tar.gz ]; then
