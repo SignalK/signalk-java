@@ -270,7 +270,7 @@ INFLUX_CONF="
 # Change this option to true to disable reporting to influx every 24hrs.
 reporting-disabled = true
 # Bind address to use for the RPC service for backup and restore.
-bind-address = \"127.0.0.1:8088\"
+# bind-address = \"127.0.0.1:8088\"
 
 [meta]
   # Where the metadata/raft database is stored
@@ -288,7 +288,7 @@ bind-address = \"127.0.0.1:8088\"
   
   # query-log-enabled = false
 
-  cache-max-memory-size = \"100m\"
+  # cache-max-memory-size = \"100m\"
 
 [coordinator]
   # The default time a write request will wait until a "timeout" error is returned to the caller.
@@ -327,7 +327,7 @@ bind-address = \"127.0.0.1:8088\"
 
   # The maximum duration for a write to wait in the queue to be processed.
   # Setting this to 0 or setting max-concurrent-write-limit to 0 disables the limit.
-  enqueued-write-timeout = \"9s\"
+  # enqueued-write-timeout = \"9s\"
 
 [logging]
 
