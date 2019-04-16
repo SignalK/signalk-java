@@ -116,6 +116,7 @@
 								<argument>-classpath</argument>
 								<classpath />
 								<argument>-Xmx256M</argument>
+								<argument>-Dfile.encoding=UTF-8</argument>
 								<argument>-XX:+HeapDumpOnOutOfMemoryError</argument>
 								<argument>-Dio.netty.leakDetection.level=ADVANCED</argument>
 								<argument>-XX:+UnlockExperimentalVMOptions</argument>
