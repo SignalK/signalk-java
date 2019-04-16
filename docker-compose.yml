@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+  influxdb:
+    image: influxdb:influxdb
+    container_name: influxdb
+    ports:
+      - 8086:8086
+      - 8088:8088
+    volumes:
+      - /var/lib/influxdb:/var/lib/influxdb:Z
+    command: influxd
+    network_mode: host
+  signalk:
+    image: signalk:signalk
+    container_name: signalk
+    volumes:
+      - ./:/etc/signalkJavaServer:Z
+    ports:
+      - 80:80
+      - 443:443
+      - 3000:3000
+      - 8888:8888
+      - 8443:8443     # http
+      - 55555:55555   # tcp
+      - 55557:55557   # udp
+    depends_on:
+      - influxdb
+    network_mode: host
+  grafana:
+    image: grafana/grafana:5.1.0
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SERVER_ROOT_URL=http://localhost
+    ports:
+      - 3000:3000
+    depends_on:
+      - influxdb
+    network_mode: host
