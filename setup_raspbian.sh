@@ -325,7 +325,7 @@ echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/ap
 
 sudo apt update
 
-sudo apt-get install -y influxdb=1.7.4-1
+sudo apt-get install -y influxdb=1.7.6-1
 sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
 sudo sed -i 's/log-enabled = true/log-enabled = false/' /etc/influxdb/influxdb.conf
 sudo sed -i 's/# log-enabled = false/log-enabled = false/' /etc/influxdb/influxdb.conf

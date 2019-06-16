@@ -436,7 +436,7 @@ echo "deb https://repos.influxdata.com/debian bionic stable" | sudo tee /etc/apt
 
 sudo apt update
 
-sudo apt-get install -y influxdb=1.7.4-1
+sudo apt-get install -y influxdb=1.7.6-1
 
 if [ ! -e /etc/influxdb/influxdb.conf.orig ]; then
     	sudo cp /etc/influxdb/influxdb.conf /etc/influxdb/influxdb.conf.orig
