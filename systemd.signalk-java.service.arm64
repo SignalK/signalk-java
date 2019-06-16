@@ -1,0 +1,15 @@
+[Unit]
+Description=Signalk Java Server
+Requires=influxd.service
+After=influxd.service
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/signalk-java
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/signalk-java
+ExecStart=/home/ubuntu/signalk-java/startpi.sh
+
+[Install]
+WantedBy=multi-user.target

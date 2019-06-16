@@ -27,6 +27,11 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+# NOTE WELL: The date Must be correct of various commands fail!
+echo "The date MUST be correct or failures will occur"
+echo "Current System Time:"
+date
+
 # Freeboard source location
 #FREEBOARD_CLONE_URL="https://github.com/rob42/freeboard-server.git"
 #FREEBOARD_BRANCH=""
@@ -146,40 +151,110 @@ EOF
 
 if ! yesno "do you want to continue"; then
     exit 0
+else
+	NOW=`date`
+	if ! yesno "Is the system time correct (note timezone): ${NOW} ?"; then
+		read -p "Enter current date/time as (YYYY-MM-DDTHH:MM:SS), eg 2019-04-07T15:35:00 : " DATE_TIME	
+		sudo date -s ${DATE_TIME}
+		NOW=`date`
+		if ! yesno "Is the system time correct (note timezone): ${NOW} ?"; then
+			echo "The date MUST be correct to install successfully, please try again"
+    		exit 0
+    	fi
+    fi
+
 fi
 
-#CAT << EOF
-#
-#BOAT MODE ?
-#
-#YOU CAN CONFIGURE YOUR PI TO HOST A CAPTIVE WIFI NETWORK FOR FREEBOARD. THIS HAS
-#BEEN TESTED ON THE RASPBERRY PI 3 WITH THE BUILTIN WIFI INTERFACE.
-#
-#BOAT_NETWORK_IFACE = ${BOAT_NETWORK_IFACE}
-#BOAT_NETWORK_ADDRESS = ${BOAT_NETWORK_ADDRESS}
-#BOAT_NETWORK_NETMASK = ${BOAT_NETWORK_NETMASK}
-#BOAT_NETWORK_MIN_DHCP = ${BOAT_NETWORK_MIN_DHCP}
-#BOAT_NETWORK_MAX_DHCP = ${BOAT_NETWORK_MAX_DHCP}
-#BOAT_NETWORK_WIFI_SSID = ${BOAT_NETWORK_WIFI_SSID}
-#BOAT_NETWORK_WIFI_PASS = ${BOAT_NETWORK_WIFI_PASS}
-#BOAT_NETWORK_WIFI_CHAN = ${BOAT_NETWORK_WIFI_CHAN}
-#
-#EOF
-#
-#IF YESNO "DO YOU WANT YOUR PI IN BOAT MODE"; THEN
-#    DO_BOAT_NETWORK=Y
-#ELSE
-#    DO_BOAT_NETWORK=N
-#FI
+
+if yesno "Do you have a hardware (RTC) clock module"; then
+	DO_RTC=Y
+	cat << EOF
+	RTC chip type selection. 
+	
+	The chip type will be on the documentation with the RTC module
+	or on the module itself (on the chip).
+	
+EOF
+	PS3='Enter selection: '
+	options=("ds1307" "pcf8523" "ds3231" "Quit")
+	select opt in "${options[@]}"
+	do
+	    case $opt in
+	        "ds1307")
+	        	RTC_CHIP=ds1307
+	        	break
+	            ;;
+	        "pcf8523")
+	            RTC_CHIP=pcf8523
+	            break
+	            ;;
+	        "ds3231")
+	            RTC_CHIP=ds3231
+	            break
+	            ;;
+	        "Quit")
+	            break
+	            ;;
+	        *) echo "invalid option $REPLY";;
+	    esac
+	done
+   echo "Selected ${RTC_CHIP}";
+else
+    DO_RTC=N
+fi
 
 set -x # Turn on debug output
 
 DO_REBOOT_SYSTEM=Y
 
+########
 STATIC_HOSTS_ENTRIES="127.0.0.1       localhost
 ::1             localhost ip6-localhost ip6-loopback
 ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters"
+########
+
+########
+HW_CLOCK_SET="
+#!/bin/sh
+# Reset the System Clock to UTC if the hardware clock from which it
+# was copied by the kernel was in localtime.
+
+dev=\$1
+
+#if [ -e /run/systemd/system ] ; then
+#    exit 0
+#fi
+
+if [ -e /run/udev/hwclock-set ]; then
+    exit 0
+fi
+
+if [ -f /etc/default/rcS ] ; then
+    . /etc/default/rcS
+fi
+
+# These defaults are user-overridable in /etc/default/hwclock
+BADYEAR=no
+HWCLOCKACCESS=yes
+HWCLOCKPARS=
+HCTOSYS_DEVICE=rtc0
+if [ -f /etc/default/hwclock ] ; then
+    . /etc/default/hwclock
+fi
+
+if [ yes = \"\$BADYEAR\" ] ; then
+    /sbin/hwclock --rtc=\$dev --systz --badyear
+    /sbin/hwclock --rtc=\$dev --hctosys --badyear
+else
+    /sbin/hwclock --rtc=\$dev --systz
+    /sbin/hwclock --rtc=\$dev --hctosys
+fi
+
+# Note 'touch' may not be available in initramfs
+> /run/udev/hwclock-set
+"
+########
 
 # Verify our running environment
 
@@ -205,18 +280,59 @@ sudo apt-get install -y libnss-mdns avahi-utils libavahi-compat-libdnssd-dev
 sudo systemctl stop systemd-timesyncd
 sudo systemctl disable systemd-timesyncd
 sudo apt-get install -y ntp
+#force time sync
+sudo service ntp stop
+sudo ntpd -gq
 sudo service ntp start
 
 # routing
 sudo apt-get install -y ifmetric
 	
+if [ "${DO_RTC}" == "Y" ]; then
+    # setup hwclock
+    sudo apt-get install python-smbus i2c-tools
+	# Add one of these to /boot/config.txt
+	# remove any current drivers
+	sudo sed -i 's/dtoverlay=i2c-rtc,ds1307//' /boot/config.txt
+	sudo sed -i 's/dtoverlay=i2c-rtc,pcf8523//' /boot/config.txt
+	sudo sed -i 's/dtoverlay=i2c-rtc,ds3231//' /boot/config.txt	 
+    echo "dtoverlay=i2c-rtc,${RTC_CHIP}" >> /boot/config.txt
+    
+    sudo apt-get -y remove fake-hwclock
+    sudo update-rc.d -f fake-hwclock remove
+    
+    # rewrite /lib/udev/hwclock-set
+    if [ ! -e /lib/udev/hwclock-set.orig ]; then
+    	sudo cp /lib/udev/hwclock-set /lib/udev/hwclock-set.orig
+ 	fi
+    echo "${HW_CLOCK_SET}" | sudo tee /lib/udev/hwclock-set
+
+    #set RTC time
+    sudo hwclock -w
+else
+	# remove any current drivers
+	sudo sed -i 's/dtoverlay=i2c-rtc,ds1307//' /boot/config.txt
+	sudo sed -i 's/dtoverlay=i2c-rtc,pcf8523//' /boot/config.txt
+	sudo sed -i 's/dtoverlay=i2c-rtc,ds3231//' /boot/config.txt
+	sudo apt-get -y install fake-hwclock
+	if [ -e /lib/udev/hwclock-set.orig ]; then
+		sudo cp /lib/udev/hwclock-set.orig /lib/udev/hwclock-set
+	fi
+fi
+
 curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
 echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
 
 sudo apt update
 
-sudo apt-get install -y influxdb=1.7.4-1
+sudo apt-get install -y influxdb=1.7.6-1
+
 sudo sed -i 's/store-enabled = true/store-enabled = false/' /etc/influxdb/influxdb.conf
+sudo sed -i 's/log-enabled = true/log-enabled = false/' /etc/influxdb/influxdb.conf
+sudo sed -i 's/# log-enabled = false/log-enabled = false/' /etc/influxdb/influxdb.conf
+	#max-connection-limit = 0
+	#max-enqueued-write-limit = 0
+	#enqueued-write-timeout = 3s
 sudo service influxdb restart
 
 if [ ! -f /tmp/bellsoft-jdk11.0.2-linux-arm32-vfp-hflt-lite.deb ]; then

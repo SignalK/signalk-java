@@ -10,7 +10,9 @@
 	<description>The Signalk java server, packaged as a maven install, ready to run.</description>
 	<properties>
 		<!-- <bundle.name>nsb-${project.version}</bundle.name> -->
+
 		<signalk.server.version>master-SNAPSHOT</signalk.server.version>
+
 		<graalvm.version>1.0.0-rc12</graalvm.version>
 		<compiler.dir>${project.build.directory}/compiler</compiler.dir>
 	</properties>
