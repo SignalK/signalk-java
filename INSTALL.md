@@ -106,11 +106,12 @@ The https://127.0.0.1:8443 address is only available if you are running the brow
 
 Make it autostart at boot
 -------------------------
-
+```
 pi@raspberrypi:~/signalk-java $ sudo cp systemd.signalk-java.environment /etc/default/signalk-java
 pi@raspberrypi:~/signalk-java $ sudo cp systemd.signalk-java.service /etc/systemd/system/signalk-java.service
 pi@raspberrypi:~/signalk-java $ sudo systemctl daemon-reload
 pi@raspberrypi:~/signalk-java $ sudo systemctl enable signalk-java
+```
 
 Configure wifi hotspot and other services (optional)
 ------------------
