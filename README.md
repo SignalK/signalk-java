@@ -1,3 +1,5 @@
+This software is no longer under active development.
+---
 Signal K Java Artemis Server
 ============================
 __Installer and Management Web-app__
