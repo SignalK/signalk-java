@@ -1,4 +1,4 @@
-This software is no longer under active development.
+This software is no longer under active development. New maintainer required.
 ---
 Signal K Java Artemis Server
 ============================
